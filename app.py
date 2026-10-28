@@ -1,369 +1,171 @@
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>לוח בקרה אישי - רפואה, משמרות וכושר</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+import os
+import pandas as pd
+import plotly.express as px
+import streamlit as st
+
+# הגדרת עמוד ב-Streamlit
+st.set_page_config(
+    page_title="לוח בקרה אישי",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
+# עיצוב מותאם לתמיכה בעברית (RTL)
+st.markdown(
+    """
     <style>
-        body { font-family: 'Heebo', sans-serif; }
+    div[data-testid="stAppViewContainer"] {
+        direction: rtl;
+        text-align: right;
+    }
+    div[data-testid="stSidebar"] {
+        direction: rtl;
+        text-align: right;
+    }
+    h1, h2, h3, h4, h5, h6, p, label {
+        text-align: right;
+    }
     </style>
-</head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+    """,
+    unsafe_allow_html=True,
+)
 
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-            <h1 class="text-2xl font-black flex items-center gap-2">
-                <span>📊</span> לוח בקרה אישי ושגרת חיים
-            </h1>
-            <p class="text-slate-400 text-sm mt-1 md:mt-0">רפואה, פראמדיק, משמרות וכושר</p>
-        </div>
-    </header>
+SHIFTS_FILE = "shifts_data.csv"
 
-    <!-- Navigation Tabs -->
-    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 flex gap-4 overflow-x-auto">
-            <button onclick="switchTab('shifts')" id="btn-shifts" class="tab-btn py-4 px-6 font-bold border-b-2 border-brand-600 text-brand-600 whitespace-nowrap transition">💼 ניהול משמרות</button>
-            <button onclick="switchTab('studies')" id="btn-studies" class="tab-btn py-4 px-6 font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition">📚 לימודי רפואה</button>
-            <button onclick="switchTab('fitness')" id="btn-fitness" class="tab-btn py-4 px-6 font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition">🏃 יומן כושר (3000מ' / קרוספיט)</button>
-        </div>
-    </nav>
+# טעינת נתוני משמרות מקובץ CSV (שמירה קבועה)
+def load_shifts():
+    if os.path.exists(SHIFTS_FILE):
+        return pd.read_csv(SHIFTS_FILE)
+    else:
+        return pd.DataFrame(
+            columns=["תאריך", "תפקיד", "שעות", "תעריף לשעה", "סה כ לתשלום"]
+        )
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+def save_shifts(df):
+    df.to_csv(SHIFTS_FILE, index=False)
 
-        <!-- TAB 1: SHIFTS -->
-        <section id="tab-shifts" class="tab-content space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Add Shift Form -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-1">
-                    <h2 class="text-lg font-bold mb-4 text-slate-900">הוספת משמרת חדשה</h2>
-                    <form id="shift-form" onsubmit="addShift(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">תאריך</label>
-                            <input type="date" id="shift-date" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">תפקיד</label>
-                            <select id="shift-role" class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                                <option value="פראמדיק">פראמדיק</option>
-                                <option value="סטודנט לרפואה">סטודנט לרפואה</option>
-                                <option value="הדרכה / איחוד הצלה">הדרכה / איחוד הצלה</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">מספר שעות</label>
-                            <input type="number" id="shift-hours" step="0.5" min="0.5" value="8" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">תעריף לשעה (₪)</label>
-                            <input type="number" id="shift-rate" min="0" value="65" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
-                        </div>
-                        <button type="submit" class="w-full bg-brand-600 text-white font-bold py-2.5 rounded-xl hover:bg-brand-700 transition shadow-lg shadow-blue-500/20">שמור משמרת</button>
-                    </form>
-                </div>
+# כותרת ראשית
+st.title("📊 לוח בקרה אישי - מעקב משמרות, לימודים וכושר")
+st.write("מערכת מרכזית לניהול שגרת העבודה, הלימודים והאימונים.")
 
-                <!-- Shift Statistics & List -->
-                <div class="md:col-span-2 space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">סה"כ שעות חודשי</p>
-                            <p id="stat-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">צפי הכנסה</p>
-                            <p id="stat-total-income" class="text-2xl font-black text-emerald-600 mt-1">₪0</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">ממוצע שעות למשמרת</p>
-                            <p id="stat-avg-hours" class="text-2xl font-black text-brand-600 mt-1">0 ש'</p>
-                        </div>
-                    </div>
+# חלוקה לכרטיסיות (Tabs)
+tab1, tab2, tab3 = st.tabs([
+    "💼 מעקב משמרות", 
+    "📚 לימודי רפואה", 
+    "🏃 יומן כושר (3,000מ' / קרוספיט)"
+])
 
-                    <!-- Shifts Table -->
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-slate-900">היסטוריית משמרות</h2>
-                            <button onclick="clearShifts()" class="text-xs text-red-500 hover:text-red-700 font-medium">איפוס נתונים</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-right border-collapse">
-                                <thead>
-                                    <tr class="border-b text-sm text-slate-500 bg-slate-50">
-                                        <th class="p-3 rounded-r-xl">תאריך</th>
-                                        <th class="p-3">תפקיד</th>
-                                        <th class="p-3">שעות</th>
-                                        <th class="p-3">תעריף</th>
-                                        <th class="p-3">סה"כ לתשלום</th>
-                                        <th class="p-3 rounded-l-xl">פעולות</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="shifts-table-body" class="text-sm divide-y">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+# ==========================================
+# כרטיסייה 1: מעקב משמרות
+# ==========================================
+with tab1:
+    st.header("ניהול וחישוב משמרות")
 
-        <!-- TAB 2: STUDIES -->
-        <section id="tab-studies" class="tab-content hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 max-w-3xl mx-auto">
-                <h2 class="text-lg font-bold mb-6 text-slate-900">מעקב מוכנות למבחנים קליניים</h2>
-                <div id="topics-container" class="space-y-6">
-                    <!-- Dynamic topic sliders -->
-                </div>
-            </div>
-        </section>
+    shifts_df = load_shifts()
 
-        <!-- TAB 3: FITNESS -->
-        <section id="tab-fitness" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <!-- Running 3000m -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                    <h2 class="text-lg font-bold text-slate-900">מעקב זמני ריצת 3,000 מטר</h2>
-                    <form onsubmit="addRunRecord(event)" class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700">תאריך ריצה</label>
-                            <input type="date" id="run-date" required class="w-full px-3 py-2 border rounded-xl text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700">זמן (דקות, לדוגמה: 18.2 עבור 18 דקות ו-12 שניות)</label>
-                            <input type="number" id="run-time" step="0.1" min="10" max="30" value="18.0" required class="w-full px-3 py-2 border rounded-xl text-sm">
-                        </div>
-                        <button type="submit" class="w-full bg-slate-900 text-white font-medium py-2 rounded-xl text-sm hover:bg-slate-800 transition">הוסף ריצה לגרף</button>
-                    </form>
-                    <div class="mt-4">
-                        <canvas id="runChart" height="200"></canvas>
-                    </div>
-                </div>
+    col_form, col_stats = st.columns([1, 2])
 
-                <!-- CrossFit Logger -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 space-y-4">
-                    <h2 class="text-lg font-bold text-slate-900">מעקב אימוני קרוספיט שבועיים</h2>
-                    <div class="space-y-3">
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700">מספר אימוני CrossFit השבוע</label>
-                            <input type="number" id="crossfit-count" min="0" max="7" value="2" onchange="saveCrossfit()" class="w-full px-3 py-2 border rounded-xl text-sm">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-medium text-slate-700">הערות / WOD / דגשים להמשך</label>
-                            <textarea id="crossfit-notes" rows="4" oninput="saveCrossfit()" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="תרגילים, משקלים, תחושות..."></textarea>
-                        </div>
-                        <div class="p-3 bg-blue-50 text-blue-800 rounded-xl text-xs">
-                            💡 הנתונים נשמרים אוטומטית בדפדפן שלך ב-LocalStorage בכל הקלדה.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    with col_form:
+        st.subheader("הוספת משמרת חדשה")
+        with st.form("add_shift_form", clear_on_submit=True):
+            shift_date = st.date_input("תאריך המשמרת")
+            role = st.selectbox("תפקיד", ["פראמדיק", "סטודנט לרפואה", "הדרכה/איחוד הצלה"])
+            hours = st.number_input("מספר שעות", min_value=0.5, max_value=24.0, value=8.0, step=0.5)
+            rate = st.number_input("תעריף לשעה (₪)", min_value=0, value=60, step=5)
 
-    </main>
+            submitted = st.form_submit_button("שמור משמרת")
+            if submitted:
+                total_pay = hours * rate
+                new_row = pd.DataFrame([{
+                    "תאריך": str(shift_date),
+                    "תפקיד": role,
+                    "שעות": hours,
+                    "תעריף לשעה": rate,
+                    "סה כ לתשלום": total_pay
+                }])
+                shifts_df = pd.concat([shifts_df, new_row], ignore_index=True)
+                save_shifts(shifts_df)
+                st.success("המשמרת נשמרה בהצלחה!")
+                st.rerun()
 
-    <!-- Script Logic -->
-    <script>
-        // Tab switching
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('border-brand-600', 'text-brand-600');
-                el.classList.add('border-transparent', 'text-slate-600');
-            });
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            const activeBtn = document.getElementById('btn-' + tabId);
-            activeBtn.classList.remove('border-transparent', 'text-slate-600');
-            activeBtn.classList.add('border-brand-600', 'text-brand-600');
-        }
+    with col_stats:
+        if not shifts_df.empty:
+            total_hours = shifts_df["שעות"].sum()
+            total_income = shifts_df["סה כ לתשלום"].sum()
+            avg_hours = shifts_df["שעות"].mean()
 
-        // --- Shifts Logic ---
-        let shifts = JSON.parse(localStorage.getItem('user_shifts')) || [
-            { id: 1, date: '2026-10-01', role: 'פראמדיק', hours: 8, rate: 70 },
-            { id: 2, date: '2026-10-05', role: 'סטודנט לרפואה', hours: 6, rate: 55 }
-        ];
+            m1, m2, m3 = st.columns(3)
+            m1.metric("סה\"כ שעות", f"{total_hours:.1f} ש'")
+            m2.metric("צפי הכנסה", f"₪{total_income:,.0f}")
+            m3.metric("ממוצע למשמרת", f"{avg_hours:.1f} ש'")
 
-        function saveShiftsToStorage() {
-            localStorage.setItem('user_shifts', JSON.stringify(shifts));
-            renderShifts();
-        }
+            st.subheader("חלוקת שעות לפי תפקיד")
+            fig = px.pie(
+                shifts_df,
+                values="שעות",
+                names="תפקיד",
+                hole=0.4,
+                color_discrete_sequence=px.colors.qualitative.Pastel
+            )
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("עדיין לא נרשמו משמרות. השתמש בטופס מימין כדי להוסיף.")
 
-        function addShift(e) {
-            e.preventDefault();
-            const date = document.getElementById('shift-date').value;
-            const role = document.getElementById('shift-role').value;
-            const hours = parseFloat(document.getElementById('shift-hours').value);
-            const rate = parseFloat(document.getElementById('shift-rate').value);
+    st.subheader("היסטוריית משמרות")
+    if not shifts_df.empty:
+        st.dataframe(shifts_df, use_container_width=True)
+        if st.button("מחק את כל הנתונים"):
+            if os.path.exists(SHIFTS_FILE):
+                os.remove(SHIFTS_FILE)
+                st.warning("הנתונים נמחקו.")
+                st.rerun()
 
-            shifts.push({ id: Date.now(), date, role, hours, rate });
-            saveShiftsToStorage();
-            document.getElementById('shift-form').reset();
-            document.getElementById('shift-date').valueAsDate = new Date();
-        }
+# ==========================================
+# כרטיסייה 2: לימודי רפואה
+# ==========================================
+with tab2:
+    st.header("מעקב מוכנות למבחנים")
 
-        function deleteShift(id) {
-            shifts = shifts.filter(s => s.id !== id);
-            saveShiftsToStorage();
-        }
+    topics = [
+        "רפואה דחופה וטראומה",
+        "רפואה פנימית",
+        "פרמקולוגיה",
+        "רפואת ילדים",
+        "כירורגיה"
+    ]
 
-        function clearShifts() {
-            if (confirm('האם למחוק את כל המשמרות?')) {
-                shifts = [];
-                saveShiftsToStorage();
-            }
-        }
+    for topic in topics:
+        key_name = f"progress_{topic}"
+        default_val = st.session_state.get(key_name, 50)
+        val = st.slider(f"אחוז מוכנות: {topic}", 0, 100, value=default_val, key=key_name)
+        st.progress(val / 100)
 
-        function renderShifts() {
-            const tbody = document.getElementById('shifts-table-body');
-            tbody.innerHTML = '';
-            let totalHours = 0;
-            let totalIncome = 0;
+# ==========================================
+# כרטיסייה 3: כושר
+# ==========================================
+with tab3:
+    st.header("מעקב אימונים")
 
-            shifts.forEach(s => {
-                const totalPay = s.hours * s.rate;
-                totalHours += s.hours;
-                totalIncome += totalPay;
+    col_run, col_crossfit = st.columns(2)
 
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b">
-                        <td class="p-3">${s.date}</td>
-                        <td class="p-3 font-medium">${s.role}</td>
-                        <td class="p-3">${s.hours} ש'</td>
-                        <td class="p-3">₪${s.rate}</td>
-                        <td class="p-3 font-bold text-emerald-600">₪${totalPay.toLocaleString()}</td>
-                        <td class="p-3">
-                            <button onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg">מחק</button>
-                        </td>
-                    </tr>
-                `;
-            });
+    with col_run:
+        st.subheader("מגמת ריצת 3,000 מטר")
+        run_data = pd.DataFrame({
+            "תאריך": ["2026-08-01", "2026-09-01", "2026-10-01"],
+            "זמן (בדקות)": [19.5, 18.8, 18.0]
+        })
+        fig_run = px.line(
+            run_data, 
+            x="תאריך", 
+            y="זמן (בדקות)", 
+            markers=True, 
+            title="שיפור זמנים ב-3000 מטר"
+        )
+        fig_run.update_yaxes(autorange="reversed")
+        st.plotly_chart(fig_run, use_container_width=True)
 
-            document.getElementById('stat-total-hours').innerText = totalHours.toFixed(1) + " ש'";
-            document.getElementById('stat-total-income').innerText = "₪" + totalIncome.toLocaleString();
-            document.getElementById('stat-avg-hours').innerText = shifts.length ? (totalHours / shifts.length).toFixed(1) + " ש'" : "0 ש'";
-        }
-
-        // --- Studies Logic ---
-        const studyTopics = [
-            { name: "רפואה דחופה וטראומה", progress: 75 },
-            { name: "רפואה פנימית", progress: 60 },
-            { name: "פרמקולוגיה", progress: 50 },
-            { name: "רפואת ילדים", progress: 40 },
-            { name: "כירורגיה", progress: 65 }
-        ];
-
-        let studiesProgress = JSON.parse(localStorage.getItem('user_studies')) || studyTopics;
-
-        function renderStudies() {
-            const container = document.getElementById('topics-container');
-            container.innerHTML = '';
-            studiesProgress.forEach((t, idx) => {
-                container.innerHTML += `
-                    <div>
-                        <div class="flex justify-between text-sm font-medium mb-1">
-                            <span>${t.name}</span>
-                            <span class="text-brand-600 font-bold">${t.progress}%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-brand-600">
-                    </div>
-                `;
-            });
-        }
-
-        function updateStudy(idx, val) {
-            studiesProgress[idx].progress = parseInt(val);
-            localStorage.setItem('user_studies', JSON.stringify(studiesProgress));
-            renderStudies();
-        }
-
-        // --- Fitness Logic ---
-        let runs = JSON.parse(localStorage.getItem('user_runs')) || [
-            { date: '2026-08-01', time: 19.5 },
-            { date: '2026-09-01', time: 18.5 },
-            { date: '2026-10-01', time: 18.0 }
-        ];
-
-        let runChartInstance = null;
-
-        function initRunChart() {
-            const ctx = document.getElementById('runChart').getContext('2d');
-            if (runChartInstance) runChartInstance.destroy();
-
-            runChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: runs.map(r => r.date),
-                    datasets: [{
-                        label: 'זמן ריצת 3000 מטר (דקות)',
-                        data: runs.map(r => r.time),
-                        borderColor: '#2563eb',
-                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
-                        fill: true,
-                        tension: 0.2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            reverse: true, // Lower minutes is better
-                            title: { display: true, text: 'דקות' }
-                        }
-                    }
-                }
-            });
-        }
-
-        function addRunRecord(e) {
-            e.preventDefault();
-            const date = document.getElementById('run-date').value;
-            const time = parseFloat(document.getElementById('run-time').value);
-            runs.push({ date, time });
-            runs.sort((a,b) => new Date(a.date) - new Date(b.date));
-            localStorage.setItem('user_runs', JSON.stringify(runs));
-            initRunChart();
-            document.getElementById('run-time').value = '';
-        }
-
-        function saveCrossfit() {
-            const count = document.getElementById('crossfit-count').value;
-            const notes = document.getElementById('crossfit-notes').value;
-            localStorage.setItem('user_crossfit', JSON.stringify({ count, notes }));
-        }
-
-        function loadCrossfit() {
-            const data = JSON.parse(localStorage.getItem('user_crossfit'));
-            if (data) {
-                document.getElementById('crossfit-count').value = data.count || 2;
-                document.getElementById('crossfit-notes').value = data.notes || '';
-            }
-        }
-
-        // Initialize on load
-        window.onload = () => {
-            document.getElementById('shift-date').valueAsDate = new Date();
-            document.getElementById('run-date').valueAsDate = new Date();
-            renderShifts();
-            renderStudies();
-            initRunChart();
-            loadCrossfit();
-        };
-    </script>
-</body>
-</html>
+    with col_crossfit:
+        st.subheader("אימוני קרוספיט שבועיים")
+        st.number_input("מספר אימונים השבוע", min_value=0, max_value=7, value=2)
+        st.text_area("הערות ל-WOD / דגשים להבא", "דגש על טכניקה ועבודה רציפה")

@@ -73,7 +73,7 @@
                             <label class="block text-sm font-medium text-slate-700 mb-1">תעריף לשעה (₪)</label>
                             <input type="number" id="shift-rate" min="0" value="65" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
                         </div>
-                        <button type="submit" class="w-full bg-brand-600 text-white font-bold py-2.5 rounded-xl hover:bg-brand-700 transition shadow-lg shadow-blue-500/25 cursor-pointer">שמור משמרת</button>
+                        <button type="submit" class="w-full bg-brand-600 text-white font-bold py-2.5 rounded-xl hover:bg-brand-700 transition shadow-lg cursor-pointer">שמור משמרת</button>
                     </form>
                 </div>
 
@@ -206,18 +206,278 @@
 
     </main>
 
-    <!-- Global Application Logic -->
+    <!-- Bulletproof Global Script -->
     <script>
-        // --- TABS LOGIC ---
         window.switchTab = function(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('border-brand-600', 'text-brand-600');
-                el.classList.add('border-transparent', 'text-slate-600');
-            });
-            const targetTab = document.getElementById('tab-' + tabId);
-            if (targetTab) targetTab.classList.remove('hidden');
+            try {
+                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+                document.querySelectorAll('.tab-btn').forEach(el => {
+                    el.classList.remove('border-brand-600', 'text-brand-600');
+                    el.classList.add('border-transparent', 'text-slate-600');
+                });
+                const targetTab = document.getElementById('tab-' + tabId);
+                if (targetTab) targetTab.classList.remove('hidden');
+                
+                const activeBtn = document.getElementById('btn-' + tabId);
+                if (activeBtn) {
+                    activeBtn.classList.remove('border-transparent', 'text-slate-600');
+                    activeBtn.classList.add('border-brand-600', 'text-brand-600');
+                }
+            } catch (err) {
+                alert('שגיאה במעבר לשונית: ' + err.message);
+            }
+        };
+
+        // Shifts Management
+        function getStoredShifts() {
+            try {
+                const data = localStorage.getItem('user_shifts');
+                return data ? JSON.parse(data) : [
+                    { id: 1, date: '2026-10-01', role: 'פראמדיק', hours: 8, rate: 70 },
+                    { id: 2, date: '2026-10-05', role: 'סטודנט לרפואה', hours: 6, rate: 55 }
+                ];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        window.addShift = function(e) {
+            try {
+                e.preventDefault();
+                const date = document.getElementById('shift-date').value;
+                const role = document.getElementById('shift-role').value;
+                const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
+                const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
+
+                if (!date) return;
+
+                const shifts = getStoredShifts();
+                shifts.push({ id: Date.now(), date, role, hours, rate });
+                localStorage.setItem('user_shifts', JSON.stringify(shifts));
+
+                renderShifts();
+                document.getElementById('shift-form').reset();
+                document.getElementById('shift-date').valueAsDate = new Date();
+            } catch (err) {
+                alert('שגיאה בשמירת משמרת: ' + err.message);
+            }
+        };
+
+        window.deleteShift = function(id) {
+            try {
+                let shifts = getStoredShifts();
+                shifts = shifts.filter(s => s.id !== id);
+                localStorage.setItem('user_shifts', JSON.stringify(shifts));
+                renderShifts();
+            } catch (err) {
+                alert('שגיאה במחיקת משמרת: ' + err.message);
+            }
+        };
+
+        window.clearShifts = function() {
+            if (confirm('האם למחוק את כל המשמרות?')) {
+                try {
+                    localStorage.removeItem('user_shifts');
+                    renderShifts();
+                } catch (err) {
+                    alert('שגיאה באיפוס: ' + err.message);
+                }
+            }
+        };
+
+        function renderShifts() {
+            const tbody = document.getElementById('shifts-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
             
-            const activeBtn = document.getElementById('btn-' + tabId);
-            if (activeBtn) {
-                activeBtn.classList.remove('border
+            const shifts = getStoredShifts();
+            let totalHours = 0;
+            let totalIncome = 0;
+
+            if (shifts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
+            }
+
+            shifts.forEach(s => {
+                const totalPay = (s.hours || 0) * (s.rate || 0);
+                totalHours += (s.hours || 0);
+                totalIncome += totalPay;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b">
+                        <td class="p-3">${s.date}</td>
+                        <td class="p-3 font-medium">${s.role}</td>
+                        <td class="p-3">${s.hours} ש'</td>
+                        <td class="p-3">₪${s.rate}</td>
+                        <td class="p-3 font-bold text-emerald-600">₪${totalPay.toLocaleString()}</td>
+                        <td class="p-3">
+                            <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg cursor-pointer">מחק</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const th = document.getElementById('stat-total-hours');
+            const ti = document.getElementById('stat-total-income');
+            const ah = document.getElementById('stat-avg-hours');
+            if (th) th.innerText = totalHours.toFixed(1) + " ש'";
+            if (ti) ti.innerText = "₪" + totalIncome.toLocaleString();
+            if (ah) ah.innerText = shifts.length ? (totalHours / shifts.length).toFixed(1) + " ש'" : "0 ש'";
+        }
+
+        // Studies Management
+        const defaultStudies = [
+            { name: "רפואה דחופה וטראומה", progress: 75 },
+            { name: "רפואה פנימית", progress: 60 },
+            { name: "פרמקולוגיה", progress: 50 },
+            { name: "רפואת ילדים", progress: 40 },
+            { name: "כירורגיה", progress: 65 }
+        ];
+
+        function getStoredStudies() {
+            try {
+                const data = localStorage.getItem('user_studies');
+                return data ? JSON.parse(data) : defaultStudies;
+            } catch (e) {
+                return defaultStudies;
+            }
+        }
+
+        function renderStudies() {
+            const container = document.getElementById('topics-container');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            const studiesProgress = getStoredStudies();
+            studiesProgress.forEach((t, idx) => {
+                container.innerHTML += `
+                    <div>
+                        <div class="flex justify-between text-sm font-medium mb-1">
+                            <span>${t.name}</span>
+                            <span class="text-brand-600 font-bold">${t.progress}%</span>
+                        </div>
+                        <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-brand-600 cursor-pointer">
+                    </div>
+                `;
+            });
+        }
+
+        window.updateStudy = function(idx, val) {
+            try {
+                const studiesProgress = getStoredStudies();
+                studiesProgress[idx].progress = parseInt(val);
+                localStorage.setItem('user_studies', JSON.stringify(studiesProgress));
+                renderStudies();
+            } catch (err) {
+                alert('שגיאה בעדכון לימודים: ' + err.message);
+            }
+        };
+
+        // Workouts Management
+        function getStoredWorkouts() {
+            try {
+                const data = localStorage.getItem('user_workouts');
+                return data ? JSON.parse(data) : [
+                    { id: 1, date: '2026-10-25', type: 'CrossFit', duration: 60, notes: 'עבודה על משקלים ו-WOD' },
+                    { id: 2, date: '2026-10-27', type: 'ריצה (3000מ\' / נפח)', duration: 30, notes: 'שיפור קצב' }
+                ];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        window.addWorkout = function(e) {
+            try {
+                e.preventDefault();
+                const date = document.getElementById('workout-date').value;
+                const type = document.getElementById('workout-type').value;
+                const duration = parseInt(document.getElementById('workout-duration').value) || 0;
+                const notes = document.getElementById('workout-notes').value;
+
+                if (!date) return;
+
+                const workouts = getStoredWorkouts();
+                workouts.push({ id: Date.now(), date, type, duration, notes });
+                localStorage.setItem('user_workouts', JSON.stringify(workouts));
+
+                renderWorkouts();
+                document.getElementById('workout-form').reset();
+                document.getElementById('workout-date').valueAsDate = new Date();
+            } catch (err) {
+                alert('שגיאה בשמירת אימון: ' + err.message);
+            }
+        };
+
+        window.deleteWorkout = function(id) {
+            try {
+                let workouts = getStoredWorkouts();
+                workouts = workouts.filter(w => w.id !== id);
+                localStorage.setItem('user_workouts', JSON.stringify(workouts));
+                renderWorkouts();
+            } catch (err) {
+                alert('שגיאה במחיקת אימון: ' + err.message);
+            }
+        };
+
+        window.clearWorkouts = function() {
+            if (confirm('האם למחוק את כל אימונים?')) {
+                try {
+                    localStorage.removeItem('user_workouts');
+                    renderWorkouts();
+                } catch (err) {
+                    alert('שגיאה באיפוס: ' + err.message);
+                }
+            }
+        };
+
+        function renderWorkouts() {
+            const tbody = document.getElementById('workouts-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const workouts = getStoredWorkouts();
+            let totalMinutes = 0;
+
+            if (workouts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">אין אימונים שמורים עדיין.</td></tr>`;
+            }
+
+            workouts.forEach(w => {
+                totalMinutes += (w.duration || 0);
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b">
+                        <td class="p-3">${w.date}</td>
+                        <td class="p-3 font-medium">${w.type}</td>
+                        <td class="p-3">${w.duration} דק'</td>
+                        <td class="p-3 text-slate-600">${w.notes || '-'}</td>
+                        <td class="p-3">
+                            <button type="button" onclick="deleteWorkout(${w.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg cursor-pointer">מחק</button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            const tw = document.getElementById('stat-total-workouts');
+            const tm = document.getElementById('stat-total-minutes');
+            if (tw) tw.innerText = workouts.length;
+            if (tm) tm.innerText = totalMinutes + " דק'";
+        }
+
+        // On Page Load
+        window.onload = function() {
+            try {
+                const shiftDate = document.getElementById('shift-date');
+                const workoutDate = document.getElementById('workout-date');
+                if (shiftDate) shiftDate.valueAsDate = new Date();
+                if (workoutDate) workoutDate.valueAsDate = new Date();
+                
+                renderShifts();
+                renderStudies();
+                renderWorkouts();
+            } catch (err) {
+                alert('שגיאה בטעינת העמוד: ' + err.message);
+            }
+        };
+    </script>
+</body>
+</html>

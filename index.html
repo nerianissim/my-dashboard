@@ -274,8 +274,8 @@
                 try {
                     const data = localStorage.getItem('user_shifts');
                     return data ? JSON.parse(data) : [
-                        { id: 1, date: '2026-10-01', dept: 'הדרכה', hours: 8, km: 50, kmRate: 2.5, rate: 70 },
-                        { id: 2, date: '2026-10-05', dept: 'מבצעים', hours: 6, km: 20, kmRate: 2.5, rate: 55 }
+                        { id: 1, date: '2026-10-01', dept: 'הדרכה', hours: 8, km: 50, kmRate: 2, rate: 70 },
+                        { id: 2, date: '2026-10-05', dept: 'מבצעים', hours: 6, km: 20, kmRate: 2, rate: 70 }
                     ];
                 } catch (e) {
                     return [];
@@ -287,6 +287,17 @@
                     localStorage.setItem('user_shifts', JSON.stringify(shifts));
                 } catch (e) {}
                 renderShifts();
+            }
+
+            function resetShiftFormDefaults() {
+                const shiftForm = document.getElementById('shift-form');
+                if (shiftForm) shiftForm.reset();
+                const shiftDate = document.getElementById('shift-date');
+                const kmRateInput = document.getElementById('shift-km-rate');
+                const rateInput = document.getElementById('shift-rate');
+                if (shiftDate) shiftDate.valueAsDate = new Date();
+                if (kmRateInput) kmRateInput.value = "2";
+                if (rateInput) rateInput.value = "70";
             }
 
             const shiftForm = document.getElementById('shift-form');
@@ -306,8 +317,7 @@
                     shifts.push({ id: Date.now(), date, dept, hours, km, kmRate, rate });
                     saveShifts(shifts);
 
-                    shiftForm.reset();
-                    document.getElementById('shift-date').valueAsDate = new Date();
+                    resetShiftFormDefaults();
                 });
             }
 
@@ -536,9 +546,8 @@
             }
 
             // Init Dates & Views
-            const shiftDate = document.getElementById('shift-date');
+            resetShiftFormDefaults();
             const workoutDate = document.getElementById('workout-date');
-            if (shiftDate) shiftDate.valueAsDate = new Date();
             if (workoutDate) workoutDate.valueAsDate = new Date();
 
             renderShifts();

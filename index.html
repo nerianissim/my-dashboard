@@ -63,14 +63,9 @@
 
         <!-- TAB 1: SHIFTS -->
         <section id="tab-shifts" class="tab-content space-y-8">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
-                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, קילומטרז', חישוב שכר וייצוא לאקסל.</p>
-                </div>
-                <button type="button" onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl transition shadow-md flex items-center gap-2 cursor-pointer text-sm">
-                    <span>📊</span> ייצוא לאקסל (CSV)
-                </button>
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
+                <p class="text-slate-500 text-sm mt-1">תיעוד שעות, מחלקות, נסיעות וחישוב שכר.</p>
             </div>
 
             <!-- Statistics Cards Grid -->
@@ -102,39 +97,40 @@
                 <!-- Add Form -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm">
                     <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת משמרת חדשה</h2>
-                    <form id="shift-form" onsubmit="addShift(event)" class="space-y-4">
+                    <form id="shift-form" onsubmit="addShift(event)" class="space-y-3">
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
-                            <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">מחלקה</label>
-                            <select id="shift-dept" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <select id="shift-dept" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                                 <option value="הדרכה">הדרכה</option>
                                 <option value="מבצעים">מבצעים</option>
                             </select>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">מספר שעות</label>
-                                <input type="number" id="shift-hours" step="0.5" min="0" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף לשעה (₪)</label>
-                                <input type="number" id="shift-rate" min="0" value="65" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מס' שעות</label>
+                            <input type="number" id="shift-hours" step="0.5" min="0" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">מספר קילומטרים</label>
-                                <input type="number" id="shift-km" min="0" value="0" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף לק"מ (₪)</label>
-                                <input type="number" id="shift-km-rate" step="0.1" min="0" value="2.5" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                            </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מס' קילומטרים</label>
+                            <input type="number" id="shift-km" min="0" value="0" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
-                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer mt-2">שמור משמרת</button>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף קילומטר (₪)</label>
+                            <input type="number" id="shift-km-rate" step="0.1" min="0" value="2.5" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף שעה (₪)</label>
+                            <input type="number" id="shift-rate" min="0" value="65" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer mt-1">שמור משמרת</button>
+                        
+                        <!-- Export Button underneath -->
+                        <button type="button" onclick="exportToExcel()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer mt-2 text-sm">
+                            <span>📊</span> ייצוא לאקסל
+                        </button>
                     </form>
                 </div>
 
@@ -222,295 +218,3 @@
                 <!-- Workouts List -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-slate-900">היסטוריית אימונים</h2>
-                        <button type="button" onclick="clearWorkouts()" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">איפוס אימונים</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
-                            <thead>
-                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
-                                    <th class="p-3 rounded-r-xl">תאריך</th>
-                                    <th class="p-3">סוג</th>
-                                    <th class="p-3">משך</th>
-                                    <th class="p-3">הערות ודגשים</th>
-                                    <th class="p-3 rounded-l-xl">פעולות</th>
-                                </tr>
-                            </thead>
-                            <tbody id="workouts-table-body" class="text-sm divide-y divide-slate-100">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- Application Script -->
-    <script>
-        // Tab Switching
-        window.switchTab = function(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
-                el.classList.add('text-slate-300');
-            });
-
-            const targetTab = document.getElementById('tab-' + tabId);
-            if (targetTab) targetTab.classList.remove('hidden');
-
-            const activeBtn = document.getElementById('btn-' + tabId);
-            if (activeBtn) {
-                activeBtn.classList.remove('text-slate-300');
-                activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
-            }
-        };
-
-        // Shifts Logic
-        function getStoredShifts() {
-            try {
-                const data = localStorage.getItem('user_shifts');
-                return data ? JSON.parse(data) : [
-                    { id: 1, date: '2026-10-01', dept: 'הדרכה', hours: 8, rate: 70, km: 50, kmRate: 2.5 },
-                    { id: 2, date: '2026-10-05', dept: 'מבצעים', hours: 6, rate: 55, km: 20, kmRate: 2.5 }
-                ];
-            } catch (e) { return []; }
-        }
-
-        window.addShift = function(e) {
-            e.preventDefault();
-            const date = document.getElementById('shift-date').value;
-            const dept = document.getElementById('shift-dept').value;
-            const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
-            const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
-            const km = parseFloat(document.getElementById('shift-km').value) || 0;
-            const kmRate = parseFloat(document.getElementById('shift-km-rate').value) || 0;
-
-            if (!date) return;
-
-            const shifts = getStoredShifts();
-            shifts.push({ id: Date.now(), date, dept, hours, rate, km, kmRate });
-            localStorage.setItem('user_shifts', JSON.stringify(shifts));
-
-            renderShifts();
-            document.getElementById('shift-form').reset();
-            document.getElementById('shift-date').valueAsDate = new Date();
-        };
-
-        window.deleteShift = function(id) {
-            let shifts = getStoredShifts();
-            shifts = shifts.filter(s => s.id !== id);
-            localStorage.setItem('user_shifts', JSON.stringify(shifts));
-            renderShifts();
-        };
-
-        window.clearShifts = function() {
-            if (confirm('האם למחוק את כל המשמרות?')) {
-                localStorage.removeItem('user_shifts');
-                renderShifts();
-            }
-        };
-
-        // Export to Excel (CSV with UTF-8 BOM)
-        window.exportToExcel = function() {
-            const shifts = getStoredShifts();
-            if (shifts.length === 0) {
-                alert('אין משמרות לייצוא');
-                return;
-            }
-
-            let csvContent = "\uFEFF"; // BOM for Hebrew encoding in Excel
-            csvContent += "תאריך,מחלקה,שעות עבודה,תעריף לשעה,שכר שעות,קילומטרים,תעריף לק\"מ,החזר נסיעות,סה\"כ לתשלום\n";
-
-            shifts.forEach(s => {
-                const hoursPay = (s.hours || 0) * (s.rate || 0);
-                const kmPay = (s.km || 0) * (s.kmRate || 0);
-                const totalPay = hoursPay + kmPay;
-                csvContent += `${s.date},${s.dept},${s.hours},${s.rate},${hoursPay},${s.km},${s.kmRate},${kmPay},${totalPay}\n`;
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.setAttribute('href', url);
-            a.setAttribute('download', 'MedControl_Shifts.csv');
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        };
-
-        function renderShifts() {
-            const tbody = document.getElementById('shifts-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            
-            const shifts = getStoredShifts();
-            let totalHours = 0;
-            let totalKm = 0;
-            let totalIncome = 0;
-
-            if (shifts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
-            }
-
-            shifts.forEach(s => {
-                const hoursPay = (s.hours || 0) * (s.rate || 0);
-                const kmPay = (s.km || 0) * (s.kmRate || 0);
-                const totalPay = hoursPay + kmPay;
-
-                totalHours += (s.hours || 0);
-                totalKm += (s.km || 0);
-                totalIncome += totalPay;
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                        <td class="p-3 text-slate-700">${s.date}</td>
-                        <td class="p-3 font-semibold text-slate-900">${s.dept}</td>
-                        <td class="p-3 text-slate-700">${s.hours} ש'</td>
-                        <td class="p-3 text-slate-700">${s.km} ק"מ</td>
-                        <td class="p-3 text-slate-600">₪${hoursPay.toLocaleString()}</td>
-                        <td class="p-3 text-slate-600">₪${kmPay.toLocaleString()}</td>
-                        <td class="p-3 font-bold text-emerald-600">₪${totalPay.toLocaleString()}</td>
-                        <td class="p-3">
-                            <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            const th = document.getElementById('stat-total-hours');
-            const tk = document.getElementById('stat-total-km');
-            const ti = document.getElementById('stat-total-income');
-            const ts = document.getElementById('stat-total-shifts');
-            if (th) th.innerText = totalHours.toFixed(1) + " ש'";
-            if (tk) tk.innerText = totalKm + " ק\"מ";
-            if (ti) ti.innerText = "₪" + totalIncome.toLocaleString();
-            if (ts) ts.innerText = shifts.length;
-        }
-
-        // Studies Logic
-        const defaultStudies = [
-            { name: "רפואה דחופה וטראומה", progress: 75 },
-            { name: "רפואה פנימית", progress: 60 },
-            { name: "פרמקולוגיה", progress: 50 },
-            { name: "רפואת ילדים", progress: 40 },
-            { name: "כירורגיה", progress: 65 }
-        ];
-
-        function getStoredStudies() {
-            try {
-                const data = localStorage.getItem('user_studies');
-                return data ? JSON.parse(data) : defaultStudies;
-            } catch (e) { return defaultStudies; }
-        }
-
-        function renderStudies() {
-            const container = document.getElementById('topics-container');
-            if (!container) return;
-            container.innerHTML = '';
-            
-            const studiesProgress = getStoredStudies();
-            studiesProgress.forEach((t, idx) => {
-                container.innerHTML += `
-                    <div>
-                        <div class="flex justify-between text-sm font-semibold mb-1.5 text-slate-700">
-                            <span>${t.name}</span>
-                            <span class="text-brand-600 font-bold">${t.progress}%</span>
-                        </div>
-                        <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-brand-600 cursor-pointer bg-slate-200">
-                    </div>
-                `;
-            });
-        }
-
-        window.updateStudy = function(idx, val) {
-            const studiesProgress = getStoredStudies();
-            studiesProgress[idx].progress = parseInt(val);
-            localStorage.setItem('user_studies', JSON.stringify(studiesProgress));
-            renderStudies();
-        };
-
-        // Workouts Logic
-        function getStoredWorkouts() {
-            try {
-                const data = localStorage.getItem('user_workouts');
-                return data ? JSON.parse(data) : [
-                    { id: 1, date: '2026-10-25', type: 'CrossFit', duration: 60, notes: 'עבודה על משקלים ו-WOD' },
-                    { id: 2, date: '2026-10-27', type: 'ריצה (3000מ\' / נפח)', duration: 30, notes: 'שיפור קצב' }
-                ];
-            } catch (e) { return []; }
-        }
-
-        window.addWorkout = function(e) {
-            e.preventDefault();
-            const date = document.getElementById('workout-date').value;
-            const type = document.getElementById('workout-type').value;
-            const duration = parseInt(document.getElementById('workout-duration').value) || 0;
-            const notes = document.getElementById('workout-notes').value;
-
-            if (!date) return;
-
-            const workouts = getStoredWorkouts();
-            workouts.push({ id: Date.now(), date, type, duration, notes });
-            localStorage.setItem('user_workouts', JSON.stringify(workouts));
-
-            renderWorkouts();
-            document.getElementById('workout-form').reset();
-            document.getElementById('workout-date').valueAsDate = new Date();
-        };
-
-        window.deleteWorkout = function(id) {
-            let workouts = getStoredWorkouts();
-            workouts = workouts.filter(w => w.id !== id);
-            localStorage.setItem('user_workouts', JSON.stringify(workouts));
-            renderWorkouts();
-        };
-
-        window.clearWorkouts = function() {
-            if (confirm('האם למחוק את כל האימונים?')) {
-                localStorage.removeItem('user_workouts');
-                renderWorkouts();
-            }
-        };
-
-        function renderWorkouts() {
-            const tbody = document.getElementById('workouts-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            const workouts = getStoredWorkouts();
-
-            if (workouts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">אין אימונים שמורים עדיין.</td></tr>`;
-            }
-
-            workouts.forEach(w => {
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                        <td class="p-3 text-slate-700">${w.date}</td>
-                        <td class="p-3 font-semibold text-slate-900">${w.type}</td>
-                        <td class="p-3 text-slate-700">${w.duration} דק'</td>
-                        <td class="p-3 text-slate-500">${w.notes || '-'}</td>
-                        <td class="p-3">
-                            <button type="button" onclick="deleteWorkout(${w.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // Initialize on load
-        window.onload = function() {
-            const shiftDate = document.getElementById('shift-date');
-            const workoutDate = document.getElementById('workout-date');
-            if (shiftDate) shiftDate.valueAsDate = new Date();
-            if (workoutDate) workoutDate.valueAsDate = new Date();
-
-            renderShifts();
-            renderStudies();
-            renderWorkouts();
-        };
-    </script>
-</body>
-</html>

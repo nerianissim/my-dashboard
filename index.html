@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>לוח בקרה אישי - רפואה, משמרות וכושר</title>
+    <title>MedControl - לוח בקרה אישי</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -11,7 +11,8 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' }
+                        dark: { 800: '#1e293b', 900: '#0f172a', 950: '#090d16' },
+                        brand: { 500: '#3b82f6', 600: '#2563eb' }
                     }
                 }
             }
@@ -22,130 +23,166 @@
         body { font-family: 'Heebo', sans-serif; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-dark-950 text-slate-100 min-h-screen flex flex-col md:flex-row-reverse selection:bg-brand-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="bg-slate-900 text-white shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center">
-            <h1 class="text-2xl font-black flex items-center gap-2">
-                <span>📊</span> לוח בקרה אישי ושגרת חיים
-            </h1>
-            <p class="text-slate-400 text-sm mt-1 md:mt-0">רפואה, פראמדיק, משמרות וכושר</p>
+    <!-- SIDEBAR (Right side in RTL) -->
+    <aside class="w-full md:w-72 bg-dark-900 border-l border-slate-800 p-6 flex flex-col justify-between shrink-0 shadow-xl">
+        <div class="space-y-8">
+            <!-- App Brand / Logo -->
+            <div class="flex items-center gap-3 pb-6 border-b border-slate-800/80">
+                <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xl">
+                    ⚡
+                </div>
+                <div>
+                    <h2 class="text-lg font-black tracking-wide text-white">MedControl</h2>
+                    <p class="text-xs text-slate-400 font-medium">לוח בקרה אישי</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-2">
+                <button type="button" onclick="switchTab('shifts')" id="btn-shifts" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium text-sm transition bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-sm cursor-pointer">
+                    <span class="text-lg">💼</span> ניהול משמרות
+                </button>
+                <button type="button" onclick="switchTab('studies')" id="btn-studies" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium text-sm transition text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 cursor-pointer">
+                    <span class="text-lg">📚</span> מרכז לימודים
+                </button>
+                <button type="button" onclick="switchTab('fitness')" id="btn-fitness" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium text-sm transition text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 cursor-pointer">
+                    <span class="text-lg">🏃</span> אימונים וכושר
+                </button>
+            </nav>
         </div>
-    </header>
 
-    <!-- Navigation Tabs -->
-    <nav class="bg-white border-b border-slate-200 shadow-sm sticky top-0 z-10">
-        <div class="max-w-7xl mx-auto px-4 flex gap-4 overflow-x-auto">
-            <button type="button" onclick="switchTab('shifts')" id="btn-shifts" class="tab-btn py-4 px-6 font-bold border-b-2 border-brand-600 text-brand-600 whitespace-nowrap transition cursor-pointer">💼 ניהול משמרות</button>
-            <button type="button" onclick="switchTab('studies')" id="btn-studies" class="tab-btn py-4 px-6 font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition cursor-pointer">📚 לימודי רפואה</button>
-            <button type="button" onclick="switchTab('fitness')" id="btn-fitness" class="tab-btn py-4 px-6 font-bold border-b-2 border-transparent text-slate-600 hover:text-slate-900 whitespace-nowrap transition cursor-pointer">🏃 יומן אימונים</button>
+        <!-- Footer / Info -->
+        <div class="pt-6 border-t border-slate-800 text-xs text-slate-500 text-center">
+            מערכת מנוהלת ומאובטחת מקומית 🔒
         </div>
-    </nav>
+    </aside>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-dark-950">
 
         <!-- TAB 1: SHIFTS -->
-        <section id="tab-shifts" class="tab-content space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Add Shift Form -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-1">
-                    <h2 class="text-lg font-bold mb-4 text-slate-900">הוספת משמרת חדשה</h2>
+        <section id="tab-shifts" class="tab-content space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-white">מחשבון ומעקב משמרות</h1>
+                <p class="text-slate-400 text-sm mt-1">תיעוד שעות עבודה, חישוב שכר חודשי ופילוח לפי תפקידים.</p>
+            </div>
+
+            <!-- Statistics Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">צפי הכנסה חודשי</p>
+                    <p id="stat-total-income" class="text-3xl font-black text-emerald-400 mt-2">₪0</p>
+                    <p class="text-[11px] text-slate-500 mt-1">כולל בונוסים / תעריפי בסיס</p>
+                </div>
+                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">סה"כ שעות החודש</p>
+                    <p id="stat-total-hours" class="text-3xl font-black text-white mt-2">0 ש'</p>
+                    <p class="text-[11px] text-slate-500 mt-1">מתוך יעד מומלץ של 120 שעות</p>
+                </div>
+                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">סה"כ משמרות</p>
+                    <p id="stat-total-shifts" class="text-3xl font-black text-blue-400 mt-2">0</p>
+                    <p class="text-[11px] text-slate-500 mt-1">החודש הנוכחי</p>
+                </div>
+                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-400 font-medium">ממוצע שעות למשמרת</p>
+                    <p id="stat-avg-hours" class="text-3xl font-black text-indigo-400 mt-2">0 ש'</p>
+                    <p class="text-[11px] text-slate-500 mt-1">אורך משמרת ממוצע</p>
+                </div>
+            </div>
+
+            <!-- Form & Table Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Add Form -->
+                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-1 shadow-sm">
+                    <h2 class="text-lg font-bold text-white mb-4">הוספת משמרת חדשה</h2>
                     <form id="shift-form" onsubmit="addShift(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">תאריך</label>
-                            <input type="date" id="shift-date" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">תאריך</label>
+                            <input type="date" id="shift-date" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">תפקיד</label>
-                            <select id="shift-role" class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">תפקיד</label>
+                            <select id="shift-role" class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                                 <option value="פראמדיק">פראמדיק</option>
                                 <option value="סטודנט לרפואה">סטודנט לרפואה</option>
                                 <option value="הדרכה / איחוד הצלה">הדרכה / איחוד הצלה</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">מספר שעות</label>
-                            <input type="number" id="shift-hours" step="0.5" min="0.5" value="8" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">מספר שעות</label>
+                            <input type="number" id="shift-hours" step="0.5" min="0.5" value="8" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">תעריף לשעה (₪)</label>
-                            <input type="number" id="shift-rate" min="0" value="65" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">תעריף לשעה (₪)</label>
+                            <input type="number" id="shift-rate" min="0" value="65" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                         </div>
-                        <button type="submit" class="w-full bg-brand-600 text-white font-bold py-2.5 rounded-xl hover:bg-brand-700 transition shadow-lg cursor-pointer">שמור משמרת</button>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-600/20 cursor-pointer">שמור משמרת</button>
                     </form>
                 </div>
 
-                <!-- Shift Statistics & List -->
-                <div class="md:col-span-2 space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">סה"כ שעות חודשי</p>
-                            <p id="stat-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">צפי הכנסה</p>
-                            <p id="stat-total-income" class="text-2xl font-black text-emerald-600 mt-1">₪0</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">ממוצע שעות למשמרת</p>
-                            <p id="stat-avg-hours" class="text-2xl font-black text-brand-600 mt-1">0 ש'</p>
-                        </div>
+                <!-- Shifts History Table -->
+                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white">היסטוריית משמרות</h2>
+                        <button type="button" onclick="clearShifts()" class="text-xs text-red-400 hover:text-red-300 font-medium cursor-pointer">איפוס נתונים</button>
                     </div>
-
-                    <!-- Shifts Table -->
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-slate-900">היסטוריית משמרות</h2>
-                            <button type="button" onclick="clearShifts()" class="text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer">איפוס נתונים</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-right border-collapse">
-                                <thead>
-                                    <tr class="border-b text-sm text-slate-500 bg-slate-50">
-                                        <th class="p-3 rounded-r-xl">תאריך</th>
-                                        <th class="p-3">תפקיד</th>
-                                        <th class="p-3">שעות</th>
-                                        <th class="p-3">תעריף</th>
-                                        <th class="p-3">סה"כ לתשלום</th>
-                                        <th class="p-3 rounded-l-xl">פעולות</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="shifts-table-body" class="text-sm divide-y">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-xs text-slate-400 bg-dark-800/50">
+                                    <th class="p-3 rounded-r-xl">תאריך</th>
+                                    <th class="p-3">תפקיד</th>
+                                    <th class="p-3">שעות</th>
+                                    <th class="p-3">תעריף</th>
+                                    <th class="p-3">סה"כ לתשלום</th>
+                                    <th class="p-3 rounded-l-xl">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shifts-table-body" class="text-sm divide-y divide-slate-800/60">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- TAB 2: STUDIES -->
-        <section id="tab-studies" class="tab-content hidden space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 max-w-3xl mx-auto">
-                <h2 class="text-lg font-bold mb-6 text-slate-900">מעקב מוכנות למבחנים קליניים</h2>
+        <section id="tab-studies" class="tab-content hidden space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-white">מרכז לימודים רפואיים</h1>
+                <p class="text-slate-400 text-sm mt-1">מעקב מוכנות למבחנים קליניים, התמחויות ותכנים מקצועיים.</p>
+            </div>
+            <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl max-w-3xl shadow-sm">
+                <h2 class="text-lg font-bold text-white mb-6">התקדמות בנושאים קליניים</h2>
                 <div id="topics-container" class="space-y-6">
                     <!-- Dynamic topic sliders -->
                 </div>
             </div>
         </section>
 
-        <!-- TAB 3: FITNESS (WORKOUTS) -->
-        <section id="tab-fitness" class="tab-content hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- TAB 3: FITNESS -->
+        <section id="tab-fitness" class="tab-content hidden space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-white">יומן אימונים וכושר</h1>
+                <p class="text-slate-400 text-sm mt-1">מעקב אחר אימוני קרוספיט, כוח, ריצה וספורט.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Add Workout Form -->
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 md:col-span-1">
-                    <h2 class="text-lg font-bold mb-4 text-slate-900">תיעוד אימון חדש</h2>
+                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-1 shadow-sm">
+                    <h2 class="text-lg font-bold text-white mb-4">תיעוד אימון חדש</h2>
                     <form id="workout-form" onsubmit="addWorkout(event)" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">תאריך האימון</label>
-                            <input type="date" id="workout-date" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">תאריך</label>
+                            <input type="date" id="workout-date" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">סוג אימון</label>
-                            <select id="workout-type" class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">סוג אימון</label>
+                            <select id="workout-type" class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                                 <option value="CrossFit">CrossFit</option>
                                 <option value="כוח / חדר כושר">כוח / חדר כושר</option>
                                 <option value="ריצה (3000מ' / נפח)">ריצה (3000מ' / נפח)</option>
@@ -154,51 +191,38 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">משך האימון (דקות)</label>
-                            <input type="number" id="workout-duration" min="5" value="60" required class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                            <label class="block text-xs font-medium text-slate-300 mb-1">משך האימון (דקות)</label>
+                            <input type="number" id="workout-duration" min="5" value="60" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">הערות / WOD / דגשים</label>
-                            <textarea id="workout-notes" rows="3" class="w-full px-3 py-2 border rounded-xl focus:ring-2 focus:ring-brand-500 outline-none" placeholder="תרגילים, משקלים, זמנים..."></textarea>
+                            <label class="block text-xs font-medium text-slate-300 mb-1">הערות / WOD / דגשים</label>
+                            <textarea id="workout-notes" rows="3" class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="תרגילים, משקלים, תחושות..."></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-slate-900 text-white font-bold py-2.5 rounded-xl hover:bg-slate-800 transition shadow-lg cursor-pointer">שמור אימון</button>
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg cursor-pointer">שמור אימון</button>
                     </form>
                 </div>
 
-                <!-- Workouts List & Stats -->
-                <div class="md:col-span-2 space-y-6">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">סה"כ אימונים מתועדים</p>
-                            <p id="stat-total-workouts" class="text-2xl font-black text-slate-900 mt-1">0</p>
-                        </div>
-                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                            <p class="text-sm text-slate-500">סך דקות אימון</p>
-                            <p id="stat-total-minutes" class="text-2xl font-black text-brand-600 mt-1">0 דק'</p>
-                        </div>
+                <!-- Workouts List -->
+                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-white">היסטוריית אימונים</h2>
+                        <button type="button" onclick="clearWorkouts()" class="text-xs text-red-400 hover:text-red-300 font-medium cursor-pointer">איפוס אימונים</button>
                     </div>
-
-                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                        <div class="flex justify-between items-center mb-4">
-                            <h2 class="text-lg font-bold text-slate-900">היסטוריית אימונים</h2>
-                            <button type="button" onclick="clearWorkouts()" class="text-xs text-red-500 hover:text-red-700 font-medium cursor-pointer">איפוס אימונים</button>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-right border-collapse">
-                                <thead>
-                                    <tr class="border-b text-sm text-slate-500 bg-slate-50">
-                                        <th class="p-3 rounded-r-xl">תאריך</th>
-                                        <th class="p-3">סוג</th>
-                                        <th class="p-3">משך</th>
-                                        <th class="p-3">הערות ודגשים</th>
-                                        <th class="p-3 rounded-l-xl">פעולות</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="workouts-table-body" class="text-sm divide-y">
-                                    <!-- Dynamic rows -->
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-xs text-slate-400 bg-dark-800/50">
+                                    <th class="p-3 rounded-r-xl">תאריך</th>
+                                    <th class="p-3">סוג</th>
+                                    <th class="p-3">משך</th>
+                                    <th class="p-3">הערות ודגשים</th>
+                                    <th class="p-3 rounded-l-xl">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workouts-table-body" class="text-sm divide-y divide-slate-800/60">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -206,29 +230,27 @@
 
     </main>
 
-    <!-- Bulletproof Global Script -->
+    <!-- Application Script -->
     <script>
+        // Tab Switching
         window.switchTab = function(tabId) {
-            try {
-                document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-                document.querySelectorAll('.tab-btn').forEach(el => {
-                    el.classList.remove('border-brand-600', 'text-brand-600');
-                    el.classList.add('border-transparent', 'text-slate-600');
-                });
-                const targetTab = document.getElementById('tab-' + tabId);
-                if (targetTab) targetTab.classList.remove('hidden');
-                
-                const activeBtn = document.getElementById('btn-' + tabId);
-                if (activeBtn) {
-                    activeBtn.classList.remove('border-transparent', 'text-slate-600');
-                    activeBtn.classList.add('border-brand-600', 'text-brand-600');
-                }
-            } catch (err) {
-                alert('שגיאה במעבר לשונית: ' + err.message);
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el => {
+                el.classList.remove('bg-blue-600/10', 'text-blue-400', 'border', 'border-blue-500/20', 'shadow-sm');
+                el.classList.add('text-slate-400');
+            });
+
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            const activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400');
+                activeBtn.classList.add('bg-blue-600/10', 'text-blue-400', 'border', 'border-blue-500/20', 'shadow-sm');
             }
         };
 
-        // Shifts Management
+        // Shifts Logic
         function getStoredShifts() {
             try {
                 const data = localStorage.getItem('user_shifts');
@@ -236,52 +258,38 @@
                     { id: 1, date: '2026-10-01', role: 'פראמדיק', hours: 8, rate: 70 },
                     { id: 2, date: '2026-10-05', role: 'סטודנט לרפואה', hours: 6, rate: 55 }
                 ];
-            } catch (e) {
-                return [];
-            }
+            } catch (e) { return []; }
         }
 
         window.addShift = function(e) {
-            try {
-                e.preventDefault();
-                const date = document.getElementById('shift-date').value;
-                const role = document.getElementById('shift-role').value;
-                const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
-                const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
+            e.preventDefault();
+            const date = document.getElementById('shift-date').value;
+            const role = document.getElementById('shift-role').value;
+            const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
+            const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
 
-                if (!date) return;
+            if (!date) return;
 
-                const shifts = getStoredShifts();
-                shifts.push({ id: Date.now(), date, role, hours, rate });
-                localStorage.setItem('user_shifts', JSON.stringify(shifts));
+            const shifts = getStoredShifts();
+            shifts.push({ id: Date.now(), date, role, hours, rate });
+            localStorage.setItem('user_shifts', JSON.stringify(shifts));
 
-                renderShifts();
-                document.getElementById('shift-form').reset();
-                document.getElementById('shift-date').valueAsDate = new Date();
-            } catch (err) {
-                alert('שגיאה בשמירת משמרת: ' + err.message);
-            }
+            renderShifts();
+            document.getElementById('shift-form').reset();
+            document.getElementById('shift-date').valueAsDate = new Date();
         };
 
         window.deleteShift = function(id) {
-            try {
-                let shifts = getStoredShifts();
-                shifts = shifts.filter(s => s.id !== id);
-                localStorage.setItem('user_shifts', JSON.stringify(shifts));
-                renderShifts();
-            } catch (err) {
-                alert('שגיאה במחיקת משמרת: ' + err.message);
-            }
+            let shifts = getStoredShifts();
+            shifts = shifts.filter(s => s.id !== id);
+            localStorage.setItem('user_shifts', JSON.stringify(shifts));
+            renderShifts();
         };
 
         window.clearShifts = function() {
             if (confirm('האם למחוק את כל המשמרות?')) {
-                try {
-                    localStorage.removeItem('user_shifts');
-                    renderShifts();
-                } catch (err) {
-                    alert('שגיאה באיפוס: ' + err.message);
-                }
+                localStorage.removeItem('user_shifts');
+                renderShifts();
             }
         };
 
@@ -295,7 +303,7 @@
             let totalIncome = 0;
 
             if (shifts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">אין משמרות שמורות עדיין.</td></tr>`;
             }
 
             shifts.forEach(s => {
@@ -304,14 +312,14 @@
                 totalIncome += totalPay;
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b">
-                        <td class="p-3">${s.date}</td>
-                        <td class="p-3 font-medium">${s.role}</td>
-                        <td class="p-3">${s.hours} ש'</td>
-                        <td class="p-3">₪${s.rate}</td>
-                        <td class="p-3 font-bold text-emerald-600">₪${totalPay.toLocaleString()}</td>
+                    <tr class="hover:bg-dark-800/40 transition border-b border-slate-800/60">
+                        <td class="p-3 text-slate-300">${s.date}</td>
+                        <td class="p-3 font-medium text-white">${s.role}</td>
+                        <td class="p-3 text-slate-300">${s.hours} ש'</td>
+                        <td class="p-3 text-slate-300">₪${s.rate}</td>
+                        <td class="p-3 font-bold text-emerald-400">₪${totalPay.toLocaleString()}</td>
                         <td class="p-3">
-                            <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg cursor-pointer">מחק</button>
+                            <button type="button" onclick="deleteShift(${s.id})" class="text-red-400 hover:text-red-300 text-xs bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 cursor-pointer">מחק</button>
                         </td>
                     </tr>
                 `;
@@ -319,13 +327,15 @@
 
             const th = document.getElementById('stat-total-hours');
             const ti = document.getElementById('stat-total-income');
+            const ts = document.getElementById('stat-total-shifts');
             const ah = document.getElementById('stat-avg-hours');
             if (th) th.innerText = totalHours.toFixed(1) + " ש'";
             if (ti) ti.innerText = "₪" + totalIncome.toLocaleString();
+            if (ts) ts.innerText = shifts.length;
             if (ah) ah.innerText = shifts.length ? (totalHours / shifts.length).toFixed(1) + " ש'" : "0 ש'";
         }
 
-        // Studies Management
+        // Studies Logic
         const defaultStudies = [
             { name: "רפואה דחופה וטראומה", progress: 75 },
             { name: "רפואה פנימית", progress: 60 },
@@ -338,9 +348,7 @@
             try {
                 const data = localStorage.getItem('user_studies');
                 return data ? JSON.parse(data) : defaultStudies;
-            } catch (e) {
-                return defaultStudies;
-            }
+            } catch (e) { return defaultStudies; }
         }
 
         function renderStudies() {
@@ -352,28 +360,24 @@
             studiesProgress.forEach((t, idx) => {
                 container.innerHTML += `
                     <div>
-                        <div class="flex justify-between text-sm font-medium mb-1">
+                        <div class="flex justify-between text-sm font-medium mb-1.5 text-slate-300">
                             <span>${t.name}</span>
-                            <span class="text-brand-600 font-bold">${t.progress}%</span>
+                            <span class="text-blue-400 font-bold">${t.progress}%</span>
                         </div>
-                        <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-brand-600 cursor-pointer">
+                        <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-blue-500 cursor-pointer bg-dark-800">
                     </div>
                 `;
             });
         }
 
         window.updateStudy = function(idx, val) {
-            try {
-                const studiesProgress = getStoredStudies();
-                studiesProgress[idx].progress = parseInt(val);
-                localStorage.setItem('user_studies', JSON.stringify(studiesProgress));
-                renderStudies();
-            } catch (err) {
-                alert('שגיאה בעדכון לימודים: ' + err.message);
-            }
+            const studiesProgress = getStoredStudies();
+            studiesProgress[idx].progress = parseInt(val);
+            localStorage.setItem('user_studies', JSON.stringify(studiesProgress));
+            renderStudies();
         };
 
-        // Workouts Management
+        // Workouts Logic
         function getStoredWorkouts() {
             try {
                 const data = localStorage.getItem('user_workouts');
@@ -381,52 +385,38 @@
                     { id: 1, date: '2026-10-25', type: 'CrossFit', duration: 60, notes: 'עבודה על משקלים ו-WOD' },
                     { id: 2, date: '2026-10-27', type: 'ריצה (3000מ\' / נפח)', duration: 30, notes: 'שיפור קצב' }
                 ];
-            } catch (e) {
-                return [];
-            }
+            } catch (e) { return []; }
         }
 
         window.addWorkout = function(e) {
-            try {
-                e.preventDefault();
-                const date = document.getElementById('workout-date').value;
-                const type = document.getElementById('workout-type').value;
-                const duration = parseInt(document.getElementById('workout-duration').value) || 0;
-                const notes = document.getElementById('workout-notes').value;
+            e.preventDefault();
+            const date = document.getElementById('workout-date').value;
+            const type = document.getElementById('workout-type').value;
+            const duration = parseInt(document.getElementById('workout-duration').value) || 0;
+            const notes = document.getElementById('workout-notes').value;
 
-                if (!date) return;
+            if (!date) return;
 
-                const workouts = getStoredWorkouts();
-                workouts.push({ id: Date.now(), date, type, duration, notes });
-                localStorage.setItem('user_workouts', JSON.stringify(workouts));
+            const workouts = getStoredWorkouts();
+            workouts.push({ id: Date.now(), date, type, duration, notes });
+            localStorage.setItem('user_workouts', JSON.stringify(workouts));
 
-                renderWorkouts();
-                document.getElementById('workout-form').reset();
-                document.getElementById('workout-date').valueAsDate = new Date();
-            } catch (err) {
-                alert('שגיאה בשמירת אימון: ' + err.message);
-            }
+            renderWorkouts();
+            document.getElementById('workout-form').reset();
+            document.getElementById('workout-date').valueAsDate = new Date();
         };
 
         window.deleteWorkout = function(id) {
-            try {
-                let workouts = getStoredWorkouts();
-                workouts = workouts.filter(w => w.id !== id);
-                localStorage.setItem('user_workouts', JSON.stringify(workouts));
-                renderWorkouts();
-            } catch (err) {
-                alert('שגיאה במחיקת אימון: ' + err.message);
-            }
+            let workouts = getStoredWorkouts();
+            workouts = workouts.filter(w => w.id !== id);
+            localStorage.setItem('user_workouts', JSON.stringify(workouts));
+            renderWorkouts();
         };
 
         window.clearWorkouts = function() {
-            if (confirm('האם למחוק את כל אימונים?')) {
-                try {
-                    localStorage.removeItem('user_workouts');
-                    renderWorkouts();
-                } catch (err) {
-                    alert('שגיאה באיפוס: ' + err.message);
-                }
+            if (confirm('האם למחוק את כל האימונים?')) {
+                localStorage.removeItem('user_workouts');
+                renderWorkouts();
             }
         };
 
@@ -436,47 +426,36 @@
             tbody.innerHTML = '';
 
             const workouts = getStoredWorkouts();
-            let totalMinutes = 0;
 
             if (workouts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">אין אימונים שמורים עדיין.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">אין אימונים שמורים עדיין.</td></tr>`;
             }
 
             workouts.forEach(w => {
-                totalMinutes += (w.duration || 0);
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b">
-                        <td class="p-3">${w.date}</td>
-                        <td class="p-3 font-medium">${w.type}</td>
-                        <td class="p-3">${w.duration} דק'</td>
-                        <td class="p-3 text-slate-600">${w.notes || '-'}</td>
+                    <tr class="hover:bg-dark-800/40 transition border-b border-slate-800/60">
+                        <td class="p-3 text-slate-300">${w.date}</td>
+                        <td class="p-3 font-medium text-white">${w.type}</td>
+                        <td class="p-3 text-slate-300">${w.duration} דק'</td>
+                        <td class="p-3 text-slate-400">${w.notes || '-'}</td>
                         <td class="p-3">
-                            <button type="button" onclick="deleteWorkout(${w.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg cursor-pointer">מחק</button>
+                            <button type="button" onclick="deleteWorkout(${w.id})" class="text-red-400 hover:text-red-300 text-xs bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 cursor-pointer">מחק</button>
                         </td>
                     </tr>
                 `;
             });
-
-            const tw = document.getElementById('stat-total-workouts');
-            const tm = document.getElementById('stat-total-minutes');
-            if (tw) tw.innerText = workouts.length;
-            if (tm) tm.innerText = totalMinutes + " דק'";
         }
 
-        // On Page Load
+        // Initialize on load
         window.onload = function() {
-            try {
-                const shiftDate = document.getElementById('shift-date');
-                const workoutDate = document.getElementById('workout-date');
-                if (shiftDate) shiftDate.valueAsDate = new Date();
-                if (workoutDate) workoutDate.valueAsDate = new Date();
-                
-                renderShifts();
-                renderStudies();
-                renderWorkouts();
-            } catch (err) {
-                alert('שגיאה בטעינת העמוד: ' + err.message);
-            }
+            const shiftDate = document.getElementById('shift-date');
+            const workoutDate = document.getElementById('workout-date');
+            if (shiftDate) shiftDate.valueAsDate = new Date();
+            if (workoutDate) workoutDate.valueAsDate = new Date();
+
+            renderShifts();
+            renderStudies();
+            renderWorkouts();
         };
     </script>
 </body>

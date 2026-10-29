@@ -40,16 +40,16 @@
 
             <!-- Navigation Links -->
             <nav class="space-y-3">
-                <button type="button" data-tab="main" class="nav-btn tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition bg-brand-600 text-white shadow-lg shadow-blue-600/30 cursor-pointer text-right">
+                <button type="button" data-tab="main" id="btn-main" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition bg-brand-600 text-white shadow-lg shadow-blue-600/30 cursor-pointer text-right">
                     <span class="text-xl">🏠</span> ראשי
                 </button>
-                <button type="button" data-tab="shifts" class="nav-btn tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                <button type="button" data-tab="shifts" id="btn-shifts" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">💼</span> ניהול משמרות
                 </button>
-                <button type="button" data-tab="studies" class="nav-btn tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                <button type="button" data-tab="studies" id="btn-studies" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">📚</span> מרכז לימודים
                 </button>
-                <button type="button" data-tab="fitness" class="nav-btn tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                <button type="button" data-tab="fitness" id="btn-fitness" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">🏃</span> אימונים וכושר
                 </button>
             </nav>
@@ -63,7 +63,7 @@
     <!-- MAIN CONTENT AREA (רקע בהיר) -->
     <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-slate-50">
 
-        <!-- TAB 0: MAIN / HOME -->
+        <!-- TAB 0: MAIN / HOME (נפתח ראשון!) -->
         <section id="tab-main" class="tab-content space-y-8">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">לוח בקרה ראשי</h1>

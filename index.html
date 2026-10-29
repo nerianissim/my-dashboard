@@ -154,7 +154,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
-                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, שעות נוספות לפי החוק, קילומטרז' וייצוא לאקסל.</p>
+                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, הפרדה לשעות נוספות לפי החוק, קילומטרז' וייצוא לאקסל.</p>
                 </div>
                 <!-- הגדרת יום תחילת חודש -->
                 <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm flex items-center gap-3">
@@ -246,17 +246,19 @@
                         <button type="button" id="clear-shifts-btn" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">איפוס נתונים</button>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
+                        <table class="w-full text-right border-collapse text-xs">
                             <thead>
-                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
-                                    <th class="p-3 rounded-r-xl">תאריך</th>
-                                    <th class="p-3">מחלקה</th>
-                                    <th class="p-3">שעות (רגיל + נוספות)</th>
-                                    <th class="p-3">ק"מ</th>
-                                    <th class="p-3">שכר שעות</th>
-                                    <th class="p-3">שכר ק"מ</th>
-                                    <th class="p-3">סה"כ משמרת</th>
-                                    <th class="p-3 rounded-l-xl">פעולות</th>
+                                <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                                    <th class="p-2.5 rounded-r-xl">תאריך</th>
+                                    <th class="p-2.5">מחלקה</th>
+                                    <th class="p-2.5 text-center">רגילות</th>
+                                    <th class="p-2.5 text-center">נוספות 125%</th>
+                                    <th class="p-2.5 text-center">נוספות 150%</th>
+                                    <th class="p-2.5 text-center">ק"מ</th>
+                                    <th class="p-2.5">שכר שעות</th>
+                                    <th class="p-2.5">שכר ק"מ</th>
+                                    <th class="p-2.5">סה"כ</th>
+                                    <th class="p-2.5 rounded-l-xl">פעולות</th>
                                 </tr>
                             </thead>
                             <tbody id="shifts-table-body" class="text-sm divide-y divide-slate-100">
@@ -446,10 +448,10 @@
                 evt.currentTarget.classList.add('active');
             };
 
-            // --- SHIFTS MANAGEMENT WITH ISRAELI OVERTIME LAWS ---
+            // --- SHIFTS MANAGEMENT WITH SEPARATED OVERTIME COLUMNS ---
             function getStoredShifts() {
                 try {
-                    const data = localStorage.getItem('user_shifts_v2');
+                    const data = localStorage.getItem('user_shifts_v3');
                     return data ? JSON.parse(data) : [
                         { id: 1, date: '2026-10-01', dept: 'הדרכה', hours: 9, km: 50, kmRate: 2, rate: 70 },
                         { id: 2, date: '2026-10-05', dept: 'מבצעים', hours: 11, km: 20, kmRate: 2, rate: 70 }
@@ -461,7 +463,7 @@
 
             function saveShifts(shifts) {
                 try {
-                    localStorage.setItem('user_shifts_v2', JSON.stringify(shifts));
+                    localStorage.setItem('user_shifts_v3', JSON.stringify(shifts));
                 } catch (e) {}
                 renderShifts();
             }
@@ -559,13 +561,13 @@
             if (clearShiftsBtn) {
                 clearShiftsBtn.addEventListener('click', () => {
                     if (confirm('האם למחוק את כל המשמרות?')) {
-                        localStorage.removeItem('user_shifts_v2');
+                        localStorage.removeItem('user_shifts_v3');
                         renderShifts();
                     }
                 });
             }
 
-            // Export to Excel CSV - תיקון סדר העמודות שיופיע מימין לשמאל בצורה מושלמת (כולל תאריך)
+            // Export to Excel CSV with separate columns
             const exportExcelBtn = document.getElementById('export-excel-btn');
             if (exportExcelBtn) {
                 exportExcelBtn.addEventListener('click', () => {
@@ -575,17 +577,15 @@
                         return;
                     }
 
-                    let csvContent = "\uFEFF"; // Hebrew BOM לזיהוי עברית באקסל
-                    // סדר הכותרות מימין לשמאל: תאריך ראשון משמאל לקובץ (עמודה A באקסל)
-                    csvContent += "תאריך,מחלקה,סה\"כ שעות,שעות רגילות,שעות נוספות 125%,שעות נוספות 150%,קילומטרים,שכר שעות,שכר ק\"מ,סה\"כ לתשלום\n";
+                    let csvContent = "\uFEFF";
+                    csvContent += "תאריך,מחלקה,שעות רגילות,שעות נוספות 125%,שעות נוספות 150%,סה\"כ שעות,קילומטרים,שכר שעות,שכר ק\"מ,סה\"כ לתשלום\n";
 
                     shifts.forEach(s => {
                         const payDetails = calculateShiftPay(s.hours || 0, s.rate || 0);
                         const kmPay = (s.km || 0) * (s.kmRate || 0);
                         const totalPay = payDetails.totalHoursPay + kmPay;
                         
-                        // וידוא שהתאריך מופיע כתעוד טקסט תקין באקסל
-                        csvContent += `"${s.date}",${s.dept},${s.hours},${payDetails.regularHours},${payDetails.overtime125},${payDetails.overtime150},${s.km},${payDetails.totalHoursPay},${kmPay},${totalPay}\n`;
+                        csvContent += `"${s.date}",${s.dept},${payDetails.regularHours},${payDetails.overtime125},${payDetails.overtime150},${s.hours},${s.km},${payDetails.totalHoursPay},${kmPay},${totalPay}\n`;
                     });
 
                     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -613,7 +613,7 @@
                 let currentMonthShiftsCount = 0;
 
                 if (shifts.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
                 }
 
                 shifts.forEach(s => {
@@ -628,25 +628,19 @@
                         currentMonthShiftsCount++;
                     }
 
-                    let hoursDetailStr = `${s.hours} ש'`;
-                    if (payDetails.overtime125 > 0 || payDetails.overtime150 > 0) {
-                        let otParts = [];
-                        if (payDetails.overtime125 > 0) otParts.push(`${payDetails.overtime125}ש' ב-125%`);
-                        if (payDetails.overtime150 > 0) otParts.push(`${payDetails.overtime150}ש' ב-150%`);
-                        hoursDetailStr += `<br><span class="text-[11px] text-amber-600 font-semibold">(${otParts.join(', ')})</span>`;
-                    }
-
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                            <td class="p-3 text-slate-700 font-medium">${s.date}</td>
-                            <td class="p-3 font-semibold text-slate-900">${s.dept}</td>
-                            <td class="p-3 text-slate-700">${hoursDetailStr}</td>
-                            <td class="p-3 text-slate-700">${s.km} ק"מ</td>
-                            <td class="p-3 text-slate-600">₪${payDetails.totalHoursPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
-                            <td class="p-3 text-slate-600">₪${kmPay.toLocaleString()}</td>
-                            <td class="p-3 font-bold text-emerald-600">₪${totalPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
-                            <td class="p-3">
-                                <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            <td class="p-2.5 text-slate-700 font-medium">${s.date}</td>
+                            <td class="p-2.5 font-semibold text-slate-900">${s.dept}</td>
+                            <td class="p-2.5 text-center text-slate-700">${payDetails.regularHours} ש'</td>
+                            <td class="p-2.5 text-center text-amber-600 font-medium">${payDetails.overtime125 > 0 ? payDetails.overtime125 + " ש'" : '-'}</td>
+                            <td class="p-2.5 text-center text-rose-600 font-medium">${payDetails.overtime150 > 0 ? payDetails.overtime150 + " ש'" : '-'}</td>
+                            <td class="p-2.5 text-center text-slate-700">${s.km} ק"מ</td>
+                            <td class="p-2.5 text-slate-600">₪${payDetails.totalHoursPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
+                            <td class="p-2.5 text-slate-600">₪${kmPay.toLocaleString()}</td>
+                            <td class="p-2.5 font-bold text-emerald-600">₪${totalPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
+                            <td class="p-2.5">
+                                <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
                             </td>
                         </tr>
                     `;

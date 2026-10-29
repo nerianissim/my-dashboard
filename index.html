@@ -297,29 +297,24 @@
             <div class="space-y-6">
                 <!-- תפריט לשוניות משנה -->
                 <div class="fitness-tabs-header">
-                    <button class="fitness-tab-btn active" onclick="openFitnessSubTab(event, 'fitnessSubTab')">🏋️ אימונים וכושר</button>
+                    <button class="fitness-tab-btn active" onclick="openFitnessSubTab(event, 'fitnessSubTab')">🏋️ מחשבון אחוזים ו-RIR</button>
                     <button class="fitness-tab-btn" onclick="openFitnessSubTab(event, 'gymnasticsSubTab')">🤸 ג'ימנסטיקה</button>
                 </div>
 
                 <!-- לשונית משנה 1: מחשבון אחוזים ו-RIR -->
                 <div id="fitnessSubTab" class="fitness-tab-content active bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
                     <h2 class="text-lg font-bold text-slate-900 mb-1">🧮 מחשבון אחוזים ו-RIR</h2>
-                    <p class="text-slate-500 text-sm mb-6">בחר תרגיל והזן משקל 1RM כדי לקבל את משקלי העבודה המותאמים שלך</p>
+                    <p class="text-slate-500 text-sm mb-6">בחר מרשימת השיאים השמורים שלך או הזן משקל באופן ידני</p>
                     
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="exerciseSelect">בחר תרגיל:</label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="exerciseSelect">בחר תרגיל מהשיאים שלך:</label>
                             <select id="exerciseSelect" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                                <option value="Back Squat">Back Squat</option>
-                                <option value="Front Squat">Front Squat</option>
-                                <option value="Deadlift">Deadlift</option>
-                                <option value="Power Clean">Power Clean</option>
-                                <option value="Clean & Jerk">Clean & Jerk</option>
-                                <option value="Snatch">Snatch</option>
+                                <!-- ייטען דינמית לפי השיאים השמורים -->
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="baseWeight">משקל בסיס (1RM בק"ג):</label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1" for="baseWeight">משקל / שיא בסיס (1RM בק"ג):</label>
                             <input type="number" id="baseWeight" value="100" step="2.5" min="0" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                     </div>
@@ -637,6 +632,7 @@
                     localStorage.setItem('user_prs', JSON.stringify(prs));
                 } catch (e) {}
                 renderPRs();
+                updateExerciseSelectOptions();
             }
 
             const prForm = document.getElementById('pr-form');
@@ -695,6 +691,7 @@
 
             // --- RIR CALCULATOR LOGIC ---
             const baseWeightInput = document.getElementById('baseWeight');
+            const exerciseSelect = document.getElementById('exerciseSelect');
             const tableBody = document.getElementById('tableBody');
 
             const rirLevels = [
@@ -704,6 +701,46 @@
                 { desc: "עצימות בינונית-גבוהה (3 RIR)", perc: "80%", multiplier: 0.80 },
                 { desc: "עצימות טכנית / נפח (4+ RIR)", perc: "72%", multiplier: 0.72 }
             ];
+
+            function updateExerciseSelectOptions() {
+                if (!exerciseSelect) return;
+                const prs = getStoredPRs();
+                exerciseSelect.innerHTML = '';
+
+                prs.forEach(p => {
+                    const numMatch = p.value.match(/[\d.]+/);
+                    const weightVal = numMatch ? parseFloat(numMatch[0]) : 100;
+                    exerciseSelect.innerHTML += `<option value="${weightVal}">${p.exercise} (${p.value})</option>`;
+                });
+
+                // תרגילים כלליים נוספים
+                const defaultExercises = [
+                    { name: 'Back Squat', val: 100 },
+                    { name: 'Front Squat', val: 85 },
+                    { name: 'Deadlift', val: 120 },
+                    { name: 'Power Clean', val: 80 },
+                    { name: 'Clean & Jerk', val: 85 },
+                    { name: 'Snatch', val: 70 }
+                ];
+
+                defaultExercises.forEach(d => {
+                    if (!prs.some(p => p.exercise.toLowerCase() === d.name.toLowerCase())) {
+                        exerciseSelect.innerHTML += `<option value="${d.val}">${d.name}</option>`;
+                    }
+                });
+
+                if (exerciseSelect.options.length > 0) {
+                    baseWeightInput.value = exerciseSelect.value;
+                }
+                updateRIRTable();
+            }
+
+            if (exerciseSelect) {
+                exerciseSelect.addEventListener('change', (e) => {
+                    baseWeightInput.value = e.target.value;
+                    updateRIRTable();
+                });
+            }
 
             function updateRIRTable() {
                 if (!baseWeightInput || !tableBody) return;
@@ -724,7 +761,6 @@
 
             if (baseWeightInput) {
                 baseWeightInput.addEventListener('input', updateRIRTable);
-                updateRIRTable();
             }
 
             // --- WORKOUTS MANAGEMENT ---
@@ -816,6 +852,7 @@
 
             renderShifts();
             renderPRs();
+            updateExerciseSelectOptions();
             renderWorkouts();
         });
     </script>

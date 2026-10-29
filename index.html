@@ -606,7 +606,8 @@
                                 <input type="number" step="2.5" id="wl_input_${ex}" value="${val}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                         `;
-                        calcSelect.innerHTML += `<option value="${val}">${ex} (${val} ק"ג)</option>`;
+                        // הצגת שם התרגיל בלבד בתיבת הבחירה ללא משקל בסוגריים
+                        calcSelect.innerHTML += `<option value="${val}">${ex}</option>`;
                     }
                 }
 

@@ -154,7 +154,7 @@
             <!-- Exams Countdown Section on Home -->
             <div class="space-y-4 pt-4">
                 <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                    <span>⏳</span> ספירה לאחור למבחנים
+                    <span>⏳</span> מבחנים
                 </h2>
                 <div id="home-exams-countdown-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <!-- Dynamic Exam Countdown Cards -->
@@ -591,7 +591,7 @@
 
                     if (daysLeft < 0) {
                         daysBadgeColor = "bg-slate-100 text-slate-500 border-slate-200";
-                        daysText = "הסתייע";
+                        daysText = "הסתיים";
                     } else if (daysLeft === 0) {
                         daysBadgeColor = "bg-red-50 text-red-600 border-red-200";
                         daysText = "היום!";
@@ -613,7 +613,7 @@
                         </tr>
                     `;
 
-                    // 2. ריבועי ספירה לאחור בדף הראשי
+                    // 2. ריבועי ספירה לאחור בדף הראשי (ללא המילה "למבחן" בשורה השניה)
                     homeGrid.innerHTML += `
                         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
                             <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl font-bold shrink-0">
@@ -621,7 +621,7 @@
                             </div>
                             <div class="overflow-hidden">
                                 <p class="text-xs text-slate-500 font-semibold truncate" title="${ex.name}">${ex.name}</p>
-                                <p class="text-lg font-black text-slate-900 mt-0.5">${daysLeft >= 0 ? daysLeft + ' ימים למבחן' : 'הסתיים'}</p>
+                                <p class="text-lg font-black text-slate-900 mt-0.5">${daysLeft >= 0 ? daysLeft + ' ימים' : 'הסתיים'}</p>
                             </div>
                         </div>
                     `;

@@ -551,15 +551,34 @@
                 if (homeTh) homeTh.innerText = totalHours.toFixed(1) + " ש'";
             }
 
-            // --- CROSSFIT PRO SUITE (LOCALSTORAGE & RIR) ---
+            // --- CROSSFIT PRO SUITE (LOCALSTORAGE & RIR) מדויק לפי התמונה ---
             const DEFAULT_FITNESS_DATA = {
                 "Weightlifting": {
-                    "Back Squat": 120, "Front Squat": 95, "Deadlift": 150, "Power Clean": 85,
-                    "Clean & Jerk": 80, "Snatch": 70, "Strict Press": 60, "Bench Press": 90
+                    "Back Squat": 120,
+                    "Front Squat": 65,
+                    "Overhead Squat": 0,
+                    "Deadlift": 110,
+                    "Power Clean": 70,
+                    "Squat Clean": 0,
+                    "Squat Snatch": 0,
+                    "Clean & Jerk": 0,
+                    "Push Jerk": 60,
+                    "Split Jerk": 0,
+                    "Strict Press": 50,
+                    "Push-Press": 55,
+                    "Bench Press": 60,
+                    "Power Snatch": 55
                 },
                 "Gymnastics": {
-                    "Strict Pull-Ups": 15, "Kipping Pull-Ups": 40, "Strict Handstand Push-Ups": 10,
-                    "Ring Muscle-Ups": 5, "Toes to Bar": 30, "Bar Muscle-Ups": 8
+                    "Strict Pull-Ups": 0,
+                    "Kipping Pull-Ups": 0,
+                    "Strict Handstand Push-Ups": 0,
+                    "Kipping Handstand Push-Ups": 0,
+                    "Strict Chest to Bar Pull-Ups": 0,
+                    "Kipping Chest to Bar Pull-Ups": 0,
+                    "Ring Muscle-Ups": 0,
+                    "Toes to Bar": 0,
+                    "Bar Muscle-Ups": 0
                 },
                 "Metcon_Benchmarks": {
                     "500m Row (sec)": 95, "3000m Run (min)": 18.0, "Fran (sec)": 240, "Grace (sec)": 180
@@ -606,7 +625,7 @@
                                 <input type="number" step="2.5" id="wl_input_${ex}" value="${val}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                         `;
-                        // הצגת שם התרגיל בלבד בתיבת הבחירה ללא משקל בסוגריים
+                        // שם התרגיל נקי בתיבת הבחירה (ללא מספרים)
                         calcSelect.innerHTML += `<option value="${val}">${ex}</option>`;
                     }
                 }
@@ -706,6 +725,12 @@
             resetShiftFormDefaults();
             renderShifts();
             renderFitnessSuite();
+            
+            // הגדרת משקל בסיס התחלתי לפי התרגיל הנבחר הראשון
+            if (calcSelect && calcSelect.options.length > 0 && baseWeightInput) {
+                baseWeightInput.value = calcSelect.value;
+                updateRIRTable();
+            }
         });
     </script>
 </body>

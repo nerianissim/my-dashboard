@@ -151,9 +151,22 @@
 
         <!-- TAB 1: SHIFTS -->
         <section id="tab-shifts" class="tab-content hidden space-y-8">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
-                <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, קילומטרז', חישוב שכר וייצוא לאקסל.</p>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
+                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, קילומטרז', חישוב שכר וייצוא לאקסל.</p>
+                </div>
+                <!-- הגדרת יום תחילת חודש -->
+                <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm flex items-center gap-3">
+                    <label for="start-day-select" class="text-xs font-bold text-slate-700">תחילת חודש ביום:</label>
+                    <select id="start-day-select" class="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-bold text-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="1">1 בחודש</option>
+                        <option value="10">10 בחודש</option>
+                        <option value="15">15 בחודש</option>
+                        <option value="20" selected>20 בחודש</option>
+                        <option value="25">25 בחודש</option>
+                    </select>
+                </div>
             </div>
 
             <!-- Statistics Cards -->
@@ -161,17 +174,17 @@
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">צפי הכנסה חודשי</p>
                     <p id="stat-total-income" class="text-3xl font-black text-emerald-600 mt-2">₪0</p>
-                    <p class="text-[11px] text-slate-400 mt-1">שעות + נסיעות</p>
+                    <p class="text-[11px] text-slate-400 mt-1">שעות + נסיעות (לפי הגדרת החודש)</p>
                 </div>
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">סה"כ שעות החודש</p>
                     <p id="stat-total-hours" class="text-3xl font-black text-slate-900 mt-2">0 ש'</p>
-                    <p class="text-[11px] text-slate-400 mt-1">סך שעות עבודה</p>
+                    <p class="text-[11px] text-slate-400 mt-1">סך שעות עבודה (לפי הגדרת החודש)</p>
                 </div>
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">סה"כ קילומטרים</p>
                     <p id="stat-total-km" class="text-3xl font-black text-blue-600 mt-2">0 ק"מ</p>
-                    <p class="text-[11px] text-slate-400 mt-1">נסיעות מצטברות</p>
+                    <p class="text-[11px] text-slate-400 mt-1">נסיעות מצטברות החודש</p>
                 </div>
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">סה"כ משמרות</p>
@@ -420,6 +433,41 @@
                 renderShifts();
             }
 
+            function getStartDay() {
+                const select = document.getElementById('start-day-select');
+                return select ? parseInt(select.value) || 20 : 20;
+            }
+
+            // בדיקה האם משמרת שייכת לחודש הנוכחי לפי יום תחילת החודש המוגדר
+            function isShiftInCurrentCycle(shiftDateStr, startDay) {
+                const shiftDate = new Date(shiftDateStr);
+                const now = new Date();
+                
+                let currentCycleStart = new Date(now.getFullYear(), now.getMonth(), startDay);
+                let nextCycleStart = new Date(now.getFullYear(), now.getMonth() + 1, startDay);
+
+                // אם היום לפני יום תחילת החודש, המחזור הנוכחי התחיל בחודש שעבר
+                if (now.getDate() < startDay) {
+                    currentCycleStart = new Date(now.getFullYear(), now.getMonth() - 1, startDay);
+                    nextCycleStart = new Date(now.getFullYear(), now.getMonth(), startDay);
+                }
+
+                return shiftDate >= currentCycleStart && shiftDate < nextCycleStart;
+            }
+
+            const startDaySelect = document.getElementById('start-day-select');
+            if (startDaySelect) {
+                // טעינת בחירה קודמת אם קיימת
+                const savedStartDay = localStorage.getItem('shift_start_day');
+                if (savedStartDay) {
+                    startDaySelect.value = savedStartDay;
+                }
+                startDaySelect.addEventListener('change', () => {
+                    localStorage.setItem('shift_start_day', startDaySelect.value);
+                    renderShifts();
+                });
+            }
+
             function resetShiftFormDefaults() {
                 const shiftForm = document.getElementById('shift-form');
                 if (shiftForm) shiftForm.reset();
@@ -505,9 +553,12 @@
                 tbody.innerHTML = '';
 
                 const shifts = getStoredShifts();
+                const startDay = getStartDay();
+
                 let totalHours = 0;
                 let totalKm = 0;
                 let totalIncome = 0;
+                let currentMonthShiftsCount = 0;
 
                 if (shifts.length === 0) {
                     tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
@@ -518,9 +569,13 @@
                     const kmPay = (s.km || 0) * (s.kmRate || 0);
                     const totalPay = hoursPay + kmPay;
 
-                    totalHours += (s.hours || 0);
-                    totalKm += (s.km || 0);
-                    totalIncome += totalPay;
+                    // סינון וחישוב סטטיסטיקות רק למשמרות בתוך מחזור החודש המוגדר
+                    if (isShiftInCurrentCycle(s.date, startDay)) {
+                        totalHours += (s.hours || 0);
+                        totalKm += (s.km || 0);
+                        totalIncome += totalPay;
+                        currentMonthShiftsCount++;
+                    }
 
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50 transition border-b border-slate-100">
@@ -547,7 +602,7 @@
                 if (th) th.innerText = totalHours.toFixed(1) + " ש'";
                 if (tk) tk.innerText = totalKm + " ק\"מ";
                 if (ti) ti.innerText = "₪" + totalIncome.toLocaleString();
-                if (ts) ts.innerText = shifts.length;
+                if (ts) ts.innerText = currentMonthShiftsCount;
                 if (homeTh) homeTh.innerText = totalHours.toFixed(1) + " ש'";
             }
 
@@ -625,7 +680,6 @@
                                 <input type="number" step="2.5" id="wl_input_${ex}" value="${val}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                         `;
-                        // שם התרגיל נקי בתיבת הבחירה (ללא מספרים)
                         calcSelect.innerHTML += `<option value="${val}">${ex}</option>`;
                     }
                 }
@@ -726,7 +780,6 @@
             renderShifts();
             renderFitnessSuite();
             
-            // הגדרת משקל בסיס התחלתי לפי התרגיל הנבחר הראשון
             if (calcSelect && calcSelect.options.length > 0 && baseWeightInput) {
                 baseWeightInput.value = calcSelect.value;
                 updateRIRTable();

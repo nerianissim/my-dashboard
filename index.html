@@ -151,8 +151,35 @@
                 </div>
             </div>
 
+            <!-- Current & Next Rotations Section on Home -->
+            <div class="space-y-4 pt-2">
+                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                    <span>🏥</span> סבבים קליניים
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
+                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0">
+                            🟢
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold">סבב נוכחי</p>
+                            <p id="home-current-rotation" class="text-lg font-black text-slate-900 mt-0.5">אין סבב פעיל</p>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0">
+                            🔜
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold">סבב הבא</p>
+                            <p id="home-next-rotation" class="text-lg font-black text-slate-900 mt-0.5">אין סבב עתידי</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Exams Countdown Section on Home -->
-            <div class="space-y-4 pt-4">
+            <div class="space-y-4 pt-2">
                 <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                     <span>⏳</span> מבחנים
                 </h2>
@@ -403,18 +430,62 @@
             </div>
         </section>
 
-        <!-- TAB 3: STUDIES / EXAMS -->
+        <!-- TAB 3: STUDIES / EXAMS & ROTATIONS -->
         <section id="tab-studies" class="tab-content hidden space-y-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">ניהול לימודים ומבחנים</h1>
-                <p class="text-slate-500 text-sm mt-1">הוספת מבחני רפואה, תאריכים, ומעקב ספירה לאחור.</p>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">ניהול לימודים, סבבים ומבחנים</h1>
+                <p class="text-slate-500 text-sm mt-1">הוספת סבבים קליניים, מבחני רפואה ותאריכים.</p>
             </div>
 
-            <!-- Form & Table Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Add Exam Form -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm flex flex-col justify-between">
-                    <div>
+            <!-- Grid for Rotations and Exams -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <!-- Add Rotation Form & List -->
+                <div class="space-y-6">
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת סבב קליני חדש</h2>
+                        <form id="rotation-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">שם הסבב</label>
+                                <input type="text" id="rotation-name" placeholder="לדוגמה: כירורגיה / פנימית" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך התחלה</label>
+                                    <input type="date" id="rotation-start" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך סיום</label>
+                                    <input type="date" id="rotation-end" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer mt-2">הוסף סבב</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 mb-4">רשימת הסבבים</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-right border-collapse text-sm">
+                               <thead>
+                                    <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+                                        <th class="p-2.5 rounded-r-xl">סבב</th>
+                                        <th class="p-2.5">התחלה</th>
+                                        <th class="p-2.5">סיום</th>
+                                        <th class="p-2.5 rounded-l-xl">פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rotations-table-body" class="divide-y divide-slate-100">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Exam Form & List -->
+                <div class="space-y-6">
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
                         <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת מבחן חדש</h2>
                         <form id="exam-form" class="space-y-4">
                             <div>
@@ -428,29 +499,27 @@
                             <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer mt-2">הוסף מבחן</button>
                         </form>
                     </div>
+
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+                        <h2 class="text-lg font-bold text-slate-900 mb-4">רשימת המבחנים</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-right border-collapse text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+                                        <th class="p-2.5 rounded-r-xl">שם המבחן</th>
+                                        <th class="p-2.5">תאריך</th>
+                                        <th class="p-2.5">ימים שנותרו</th>
+                                        <th class="p-2.5 rounded-l-xl">פעולות</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="exams-table-body" class="divide-y divide-slate-100">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Exams List Table -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-slate-900">רשימת המבחנים</h2>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse text-sm">
-                            <thead>
-                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
-                                    <th class="p-3 rounded-r-xl">שם המבחן</th>
-                                    <th class="p-3">תאריך</th>
-                                    <th class="p-3">ימים שנותרו</th>
-                                    <th class="p-3 rounded-l-xl">פעולות</th>
-                                </tr>
-                            </thead>
-                            <tbody id="exams-table-body" class="divide-y divide-slate-100">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -510,6 +579,103 @@
                 document.getElementById(subTabId).classList.add('active');
                 evt.currentTarget.classList.add('active');
             };
+
+            // --- STUDIES: ROTATIONS MANAGEMENT ---
+            function getStoredRotations() {
+                try {
+                    const data = localStorage.getItem('user_rotations');
+                    return data ? JSON.parse(data) : [
+                        { id: 1, name: 'הרדמה טיפול נמרץ', start: '2026-10-10', end: '2026-11-05' }
+                    ];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveRotations(rotations) {
+                try {
+                    localStorage.setItem('user_rotations', JSON.stringify(rotations));
+                } catch (e) {}
+                renderRotations();
+            }
+
+            const rotationForm = document.getElementById('rotation-form');
+            if (rotationForm) {
+                rotationForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('rotation-name').value.trim();
+                    const start = document.getElementById('rotation-start').value;
+                    const end = document.getElementById('rotation-end').value;
+
+                    if (!name || !start || !end) return;
+
+                    const rotations = getStoredRotations();
+                    rotations.push({ id: Date.now(), name, start, end });
+                    saveRotations(rotations);
+
+                    rotationForm.reset();
+                });
+            }
+
+            window.deleteRotation = function(id) {
+                let rotations = getStoredRotations();
+                rotations = rotations.filter(r => r.id !== id);
+                saveRotations(rotations);
+            };
+
+            function renderRotations() {
+                const tbody = document.getElementById('rotations-table-body');
+                const homeCurrent = document.getElementById('home-current-rotation');
+                const homeNext = document.getElementById('home-next-rotation');
+
+                if (!tbody || !homeCurrent || !homeNext) return;
+
+                tbody.innerHTML = '';
+                const rotations = getStoredRotations();
+
+                // מיון לפי תאריך התחלה
+                rotations.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                let currentRotation = null;
+                let nextRotation = null;
+
+                if (rotations.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">אין סבבים שמורים עדיין.</td></tr>`;
+                    homeCurrent.innerText = "אין סבב פעיל";
+                    homeNext.innerText = "אין סבב עתידי";
+                    return;
+                }
+
+                rotations.forEach(r => {
+                    const startDate = new Date(r.start);
+                    startDate.setHours(0, 0, 0, 0);
+                    const endDate = new Date(r.end);
+                    endDate.setHours(23, 59, 59, 999);
+
+                    if (today >= startDate && today <= endDate) {
+                        currentRotation = r;
+                    } else if (startDate > today && !nextRotation) {
+                        nextRotation = r;
+                    }
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                            <td class="p-2.5 font-semibold text-slate-900">${r.name}</td>
+                            <td class="p-2.5 text-slate-700">${r.start}</td>
+                            <td class="p-2.5 text-slate-700">${r.end}</td>
+                            <td class="p-2.5">
+                                <button type="button" onclick="deleteRotation(${r.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                homeCurrent.innerText = currentRotation ? currentRotation.name : "אין סבב פעיל כרגע";
+                homeNext.innerText = nextRotation ? nextRotation.name : "אין סבב עתידי ברשימה";
+            }
 
             // --- STUDIES & EXAMS MANAGEMENT ---
             function getStoredExams() {
@@ -574,8 +740,6 @@
                 homeGrid.innerHTML = '';
 
                 const exams = getStoredExams();
-
-                // מיון לפי תאריך קרוב רחוק
                 exams.sort((a, b) => new Date(a.date) - new Date(b.date));
 
                 if (exams.length === 0) {
@@ -599,21 +763,19 @@
                         daysBadgeColor = "bg-amber-50 text-amber-700 border-amber-200";
                     }
 
-                    // 1. טבלה בלשונית הלימודים
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                            <td class="p-3 font-semibold text-slate-900">${ex.name}</td>
-                            <td class="p-3 text-slate-700">${ex.date}</td>
-                            <td class="p-3">
+                            <td class="p-2.5 font-semibold text-slate-900">${ex.name}</td>
+                            <td class="p-2.5 text-slate-700">${ex.date}</td>
+                            <td class="p-2.5">
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${daysBadgeColor}">${daysText}</span>
                             </td>
-                            <td class="p-3">
-                                <button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            <td class="p-2.5">
+                                <button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
                             </td>
                         </tr>
                     `;
 
-                    // 2. ריבועי ספירה לאחור בדף הראשי (ללא המילה "למבחן" בשורה השניה)
                     homeGrid.innerHTML += `
                         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
                             <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl font-bold shrink-0">
@@ -1037,6 +1199,7 @@
             renderShifts();
             renderFitnessSuite();
             renderExams();
+            renderRotations();
             
             if (calcSelect && calcSelect.options.length > 0 && baseWeightInput) {
                 baseWeightInput.value = calcSelect.value;

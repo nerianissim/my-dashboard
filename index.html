@@ -94,6 +94,9 @@
                 <button type="button" data-tab="fitness" id="btn-fitness" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">🏃</span> אימונים וכושר
                 </button>
+                <button type="button" data-tab="studies" id="btn-studies" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                    <span class="text-xl">📚</span> לימודים ומבחנים
+                </button>
             </nav>
         </div>
 
@@ -147,6 +150,16 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Exams Countdown Section on Home -->
+            <div class="space-y-4 pt-4">
+                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                    <span>⏳</span> ספירה לאחור למבחנים
+                </h2>
+                <div id="home-exams-countdown-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Dynamic Exam Countdown Cards -->
+                </div>
+            </div>
         </section>
 
         <!-- TAB 1: SHIFTS -->
@@ -156,7 +169,6 @@
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
                     <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, הפרדה לשעות נוספות לפי החוק, קילומטרז' וייצוא לאקסל.</p>
                 </div>
-                <!-- הגדרת יום תחילת חודש -->
                 <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm flex items-center gap-3">
                     <label for="start-day-select" class="text-xs font-bold text-slate-700">תחילת חודש ביום:</label>
                     <select id="start-day-select" class="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-bold text-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500">
@@ -391,6 +403,57 @@
             </div>
         </section>
 
+        <!-- TAB 3: STUDIES / EXAMS -->
+        <section id="tab-studies" class="tab-content hidden space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">ניהול לימודים ומבחנים</h1>
+                <p class="text-slate-500 text-sm mt-1">הוספת מבחני רפואה, תאריכים, ומעקב ספירה לאחור.</p>
+            </div>
+
+            <!-- Form & Table Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Add Exam Form -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת מבחן חדש</h2>
+                        <form id="exam-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">שם המבחן</label>
+                                <input type="text" id="exam-name" placeholder="לדוגמה: מבחן בקרדיולוגיה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך המבחן</label>
+                                <input type="date" id="exam-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer mt-2">הוסף מבחן</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Exams List Table -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-slate-900">רשימת המבחנים</h2>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+                                    <th class="p-3 rounded-r-xl">שם המבחן</th>
+                                    <th class="p-3">תאריך</th>
+                                    <th class="p-3">ימים שנותרו</th>
+                                    <th class="p-3 rounded-l-xl">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exams-table-body" class="divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Application Script Engine -->
@@ -448,7 +511,124 @@
                 evt.currentTarget.classList.add('active');
             };
 
-            // --- SHIFTS MANAGEMENT WITH SEPARATED OVERTIME COLUMNS ---
+            // --- STUDIES & EXAMS MANAGEMENT ---
+            function getStoredExams() {
+                try {
+                    const data = localStorage.getItem('user_exams');
+                    return data ? JSON.parse(data) : [
+                        { id: 1, name: 'מבחן גמר ברפואה פנימית', date: '2026-10-14' }
+                    ];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveExams(exams) {
+                try {
+                    localStorage.setItem('user_exams', JSON.stringify(exams));
+                } catch (e) {}
+                renderExams();
+            }
+
+            const examForm = document.getElementById('exam-form');
+            if (examForm) {
+                examForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('exam-name').value.trim();
+                    const date = document.getElementById('exam-date').value;
+
+                    if (!name || !date) return;
+
+                    const exams = getStoredExams();
+                    exams.push({ id: Date.now(), name, date });
+                    saveExams(exams);
+
+                    examForm.reset();
+                });
+            }
+
+            window.deleteExam = function(id) {
+                let exams = getStoredExams();
+                exams = exams.filter(ex => ex.id !== id);
+                saveExams(exams);
+            };
+
+            function getDaysUntil(dateStr) {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const targetDate = new Date(dateStr);
+                targetDate.setHours(0, 0, 0, 0);
+                
+                const diffTime = targetDate - today;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                return diffDays;
+            }
+
+            function renderExams() {
+                const tbody = document.getElementById('exams-table-body');
+                const homeGrid = document.getElementById('home-exams-countdown-grid');
+                
+                if (!tbody || !homeGrid) return;
+
+                tbody.innerHTML = '';
+                homeGrid.innerHTML = '';
+
+                const exams = getStoredExams();
+
+                // מיון לפי תאריך קרוב רחוק
+                exams.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+                if (exams.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">אין מבחנים שמורים עדיין.</td></tr>`;
+                    homeGrid.innerHTML = `<p class="text-xs text-slate-400">אין מבחנים קרובים ברשימה.</p>`;
+                    return;
+                }
+
+                exams.forEach(ex => {
+                    const daysLeft = getDaysUntil(ex.date);
+                    let daysBadgeColor = "bg-blue-50 text-blue-700 border-blue-200";
+                    let daysText = `${daysLeft} ימים`;
+
+                    if (daysLeft < 0) {
+                        daysBadgeColor = "bg-slate-100 text-slate-500 border-slate-200";
+                        daysText = "הסתייע";
+                    } else if (daysLeft === 0) {
+                        daysBadgeColor = "bg-red-50 text-red-600 border-red-200";
+                        daysText = "היום!";
+                    } else if (daysLeft <= 7) {
+                        daysBadgeColor = "bg-amber-50 text-amber-700 border-amber-200";
+                    }
+
+                    // 1. טבלה בלשונית הלימודים
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                            <td class="p-3 font-semibold text-slate-900">${ex.name}</td>
+                            <td class="p-3 text-slate-700">${ex.date}</td>
+                            <td class="p-3">
+                                <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${daysBadgeColor}">${daysText}</span>
+                            </td>
+                            <td class="p-3">
+                                <button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            </td>
+                        </tr>
+                    `;
+
+                    // 2. ריבועי ספירה לאחור בדף הראשי
+                    homeGrid.innerHTML += `
+                        <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl font-bold shrink-0">
+                                📖
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-xs text-slate-500 font-semibold truncate" title="${ex.name}">${ex.name}</p>
+                                <p class="text-lg font-black text-slate-900 mt-0.5">${daysLeft >= 0 ? daysLeft + ' ימים למבחן' : 'הסתיים'}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // --- SHIFTS MANAGEMENT ---
             function getStoredShifts() {
                 try {
                     const data = localStorage.getItem('user_shifts_v3');
@@ -459,13 +639,6 @@
                 } catch (e) {
                     return [];
                 }
-            }
-
-            function saveShifts(shifts) {
-                try {
-                    localStorage.setItem('user_shifts_v3', JSON.stringify(shifts));
-                } catch (e) {}
-                renderShifts();
             }
 
             function getStartDay() {
@@ -545,7 +718,8 @@
 
                     const shifts = getStoredShifts();
                     shifts.push({ id: Date.now(), date, dept, hours, km, kmRate, rate });
-                    saveShifts(shifts);
+                    try { localStorage.setItem('user_shifts_v3', JSON.stringify(shifts)); } catch (e) {}
+                    renderShifts();
 
                     resetShiftFormDefaults();
                 });
@@ -554,7 +728,8 @@
             window.deleteShift = function(id) {
                 let shifts = getStoredShifts();
                 shifts = shifts.filter(s => s.id !== id);
-                saveShifts(shifts);
+                try { localStorage.setItem('user_shifts_v3', JSON.stringify(shifts)); } catch (e) {}
+                renderShifts();
             };
 
             const clearShiftsBtn = document.getElementById('clear-shifts-btn');
@@ -567,7 +742,6 @@
                 });
             }
 
-            // Export to Excel CSV with separate columns
             const exportExcelBtn = document.getElementById('export-excel-btn');
             if (exportExcelBtn) {
                 exportExcelBtn.addEventListener('click', () => {
@@ -858,10 +1032,11 @@
                 });
             }
 
-            // Init Dates & Views
+            // Init All Views
             resetShiftFormDefaults();
             renderShifts();
             renderFitnessSuite();
+            renderExams();
             
             if (calcSelect && calcSelect.options.length > 0 && baseWeightInput) {
                 baseWeightInput.value = calcSelect.value;

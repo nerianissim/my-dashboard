@@ -3,279 +3,612 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>מערכת אימונים וכושר - קרוספיט</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap');
-        
-        body {
-            font-family: 'Heebo', sans-serif;
-            background-color: #F8FAFC;
-            color: #1E293B;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 750px;
-        }
-
-        /* עיצוב הלשוניות (Tabs) */
-        .tabs-header {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            background-color: #FFFFFF;
-            padding: 8px;
-            border-radius: 12px;
-            border: 1px solid #E2E8F0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            background-color: transparent;
-            color: #64748B;
-            border-radius: 8px;
-            padding: 10px 20px;
-            font-weight: 600;
-            font-family: 'Heebo', sans-serif;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .tab-btn.active {
-            background-color: #2563EB;
-            color: #FFFFFF;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        /* תוכן הלשוניות */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-        
-        .card {
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid #E2E8F0;
-            padding: 24px;
-            box-sizing: border-box;
-            text-align: right;
-        }
-        
-        h2 {
-            color: #0F172A;
-            font-size: 1.5rem;
-            margin-top: 0;
-            margin-bottom: 8px;
-        }
-        
-        p.subtitle {
-            color: #64748B;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 20px;
-        }
-        
-        .form-group {
-            text-align: right;
-        }
-        
-        label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: #334155;
-            font-size: 0.95rem;
-        }
-        
-        select, input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #CBD5E1;
-            border-radius: 8px;
-            font-family: 'Heebo', sans-serif;
-            font-size: 1rem;
-            box-sizing: border-box;
-            background-color: #F8FAFC;
-            color: #1E293B;
-        }
-        
-        select:focus, input:focus {
-            outline: none;
-            border-color: #2563EB;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-            background: #ffffff;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #E2E8F0;
-        }
-        
-        th, td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #E2E8F0;
-        }
-        
-        th {
-            background-color: #F1F5F9;
-            color: #475569;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-align: right;
-        }
-        
-        td {
-            font-size: 0.95rem;
-            color: #1E293B;
-            text-align: right;
-        }
-        
-        /* יישור שמאלי למספרים ואחוזים לנוחות קריאה */
-        .text-left {
-            text-align: left;
-            direction: ltr;
-        }
-        
-        th.text-left {
-            text-align: left;
-        }
-
-        @media (max-width: 500px) {
-            .form-row {
-                grid-template-columns: 1fr;
+    <title>MedControl - לוח בקרה אישי</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af' }
+                    }
+                }
             }
         }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Heebo', sans-serif; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row selection:bg-brand-500 selection:text-white">
 
-    <div class="container">
-        <!-- תפריט לשוניות -->
-        <div class="tabs-header">
-            <button class="tab-btn active" onclick="openTab(event, 'fitnessTab')">🏋️ אימונים וכושר</button>
-            <button class="tab-btn" onclick="openTab(event, 'gymnasticsTab')">🤸 ג'ימנסטיקה</button>
+    <!-- SIDEBAR (מימין, כהה וקריא) -->
+    <aside class="w-full md:w-72 bg-slate-900 text-white p-6 flex flex-col justify-between shrink-0 shadow-2xl z-20 border-l border-slate-800">
+        <div class="space-y-8">
+            <!-- App Logo -->
+            <div class="flex items-center gap-3 pb-6 border-b border-slate-800">
+                <div class="w-11 h-11 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/30 shrink-0">
+                    🩺
+                </div>
+                <div>
+                    <h2 class="text-xl font-black tracking-wide text-white">MedControl</h2>
+                    <p class="text-xs text-slate-400 font-medium">לוח בקרה אישי ושגרה</p>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-3">
+                <button type="button" data-tab="main" id="btn-main" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition bg-brand-600 text-white shadow-lg shadow-blue-600/30 cursor-pointer text-right">
+                    <span class="text-xl">🏠</span> ראשי
+                </button>
+                <button type="button" data-tab="shifts" id="btn-shifts" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                    <span class="text-xl">💼</span> ניהול משמרות
+                </button>
+                <button type="button" data-tab="studies" id="btn-studies" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                    <span class="text-xl">📚</span> מרכז לימודים
+                </button>
+                <button type="button" data-tab="fitness" id="btn-fitness" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                    <span class="text-xl">🏃</span> אימונים וכושר
+                </button>
+            </nav>
         </div>
 
-        <!-- לשונית 1: אימונים וכושר (כולל מחשבון וטבלת RIR) -->
-        <div id="fitnessTab" class="tab-content active">
-            <div class="card">
-                <h2>🧮 מחשבון אחוזים ו-RIR</h2>
-                <p class="subtitle">בחר תרגיל והזן משקל 1RM כדי לקבל את משקלי העבודה המותאמים שלך</p>
-                
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="exerciseSelect">בחר תרגיל:</label>
-                        <select id="exerciseSelect">
-                            <option value="Back Squat">Back Squat</option>
-                            <option value="Front Squat">Front Squat</option>
-                            <option value="Deadlift">Deadlift</option>
-                            <option value="Power Clean">Power Clean</option>
-                            <option value="Clean & Jerk">Clean & Jerk</option>
-                            <option value="Snatch">Snatch</option>
-                        </select>
+        <div class="pt-6 border-t border-slate-800 text-xs text-slate-400 font-medium text-center">
+            מערכת אישית מאובטחת 🔒
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA (רקע בהיר) -->
+    <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-slate-50">
+
+        <!-- TAB 0: MAIN / HOME (נפתח ראשון!) -->
+        <section id="tab-main" class="tab-content space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">לוח בקרה ראשי</h1>
+                <p class="text-slate-500 text-sm mt-1">ברוך הבא למערכת הניהול האישית שלך.</p>
+            </div>
+
+            <!-- Date & Time Display Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold shrink-0">
+                        📅
                     </div>
-                    <div class="form-group">
-                        <label for="baseWeight">משקל בסיס (1RM בק"ג):</label>
-                        <input type="number" id="baseWeight" value="100" step="2.5" min="0">
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold">התאריך של היום</p>
+                        <p id="live-date" class="text-lg font-black text-slate-900 mt-1">טוען...</p>
                     </div>
                 </div>
 
-                <table id="rirTable">
-                    <thead>
-                        <tr>
-                            <th>תיאור עצימות</th>
-                            <th class="text-left">אחוז מ-1RM</th>
-                            <th class="text-left">משקל עבודה (ק"ג)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody">
-                        <!-- נתונים מתעדכנים דינמית דרך JavaScript -->
-                    </tbody>
-                </table>
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-bold shrink-0">
+                        ⏰
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold">השעה הנוכחית</p>
+                        <p id="live-time" class="text-2xl font-black text-slate-900 mt-1">טוען...</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <!-- לשונית 2: ג'ימנסטיקה (לדוגמה) -->
-        <div id="gymnasticsTab" class="tab-content">
-            <div class="card">
-                <h2>🤸 תרגילי משקל גוף</h2>
-                <p class="subtitle">מעקב אחר חזרות רצופות (Unbroken)</p>
-                <p style="color: #64748B;">כאן יופיעו שדות ניהול התרגילים והחזרות שלך.</p>
+        <!-- TAB 1: SHIFTS -->
+        <section id="tab-shifts" class="tab-content hidden space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
+                <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, קילומטרז', חישוב שכר וייצוא לאקסל.</p>
             </div>
-        </div>
-    </div>
 
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">צפי הכנסה חודשי</p>
+                    <p id="stat-total-income" class="text-3xl font-black text-emerald-600 mt-2">₪0</p>
+                    <p class="text-[11px] text-slate-400 mt-1">שעות + נסיעות</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ שעות החודש</p>
+                    <p id="stat-total-hours" class="text-3xl font-black text-slate-900 mt-2">0 ש'</p>
+                    <p class="text-[11px] text-slate-400 mt-1">סך שעות עבודה</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ קילומטרים</p>
+                    <p id="stat-total-km" class="text-3xl font-black text-blue-600 mt-2">0 ק"מ</p>
+                    <p class="text-[11px] text-slate-400 mt-1">נסיעות מצטברות</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ משמרות</p>
+                    <p id="stat-total-shifts" class="text-3xl font-black text-indigo-600 mt-2">0</p>
+                    <p class="text-[11px] text-slate-400 mt-1">החודש הנוכחי</p>
+                </div>
+            </div>
+
+            <!-- Form & Table Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Add Shift Form -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת משמרת חדשה</h2>
+                        <form id="shift-form" class="space-y-3.5">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                                <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מחלקה</label>
+                                <select id="shift-dept" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="הדרכה">הדרכה</option>
+                                    <option value="מבצעים">מבצעים</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מס' שעות</label>
+                                <input type="number" id="shift-hours" step="0.5" min="0" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מס' קילומטרים</label>
+                                <input type="number" id="shift-km" min="0" value="0" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף קילומטר (₪)</label>
+                                <input type="number" id="shift-km-rate" step="0.1" min="0" value="2" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף שעה (₪)</label>
+                                <input type="number" id="shift-rate" min="0" value="70" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer mt-2">שמור משמרת</button>
+                        </form>
+                    </div>
+
+                    <!-- Export Button -->
+                    <div class="mt-6 pt-4 border-t border-slate-200">
+                        <button type="button" id="export-excel-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm">
+                            <span>📊</span> ייצוא לאקסל
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Shifts History Table -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-slate-900">היסטוריית משמרות</h2>
+                        <button type="button" id="clear-shifts-btn" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">איפוס נתונים</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+                                    <th class="p-3 rounded-r-xl">תאריך</th>
+                                    <th class="p-3">מחלקה</th>
+                                    <th class="p-3">שעות</th>
+                                    <th class="p-3">ק"מ</th>
+                                    <th class="p-3">שכר שעות</th>
+                                    <th class="p-3">שכר ק"מ</th>
+                                    <th class="p-3">סה"כ</th>
+                                    <th class="p-3 rounded-l-xl">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shifts-table-body" class="text-sm divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: STUDIES -->
+        <section id="tab-studies" class="tab-content hidden space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">מרכז לימודים רפואיים</h1>
+                <p class="text-slate-500 text-sm mt-1">מעקב מוכנות למבחנים קליניים, התמחויות ותכנים מקצועיים.</p>
+            </div>
+            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl max-w-3xl shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-6">התקדמות בנושאים קליניים</h2>
+                <div id="topics-container" class="space-y-6">
+                    <!-- Dynamic sliders -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: FITNESS -->
+        <section id="tab-fitness" class="tab-content hidden space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">יומן אימונים וכושר</h1>
+                <p class="text-slate-500 text-sm mt-1">מעקב אחר אימוני קרוספיט, כוח, ריצה וספורט.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Add Workout Form -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 mb-4">תיעוד אימון חדש</h2>
+                    <form id="workout-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                            <input type="date" id="workout-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">סוג אימון</label>
+                            <select id="workout-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="CrossFit">CrossFit</option>
+                                <option value="כוח / חדר כושר">כוח / חדר כושר</option>
+                                <option value="ריצה (3000מ' / נפח)">ריצה (3000מ' / נפח)</option>
+                                <option value="כדורסל">כדורסל</option>
+                                <option value="אחר">אחר</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">משך האימון (דקות)</label>
+                            <input type="number" id="workout-duration" min="5" value="60" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">הערות / WOD / דגשים</label>
+                            <textarea id="workout-notes" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="תרגילים, משקלים, תחושות..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow-lg cursor-pointer">שמור אימון</button>
+                    </form>
+                </div>
+
+                <!-- Workouts History Table -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-slate-900">היסטוריית אימונים</h2>
+                        <button type="button" id="clear-workouts-btn" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">איפוס אימונים</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+                                    <th class="p-3 rounded-r-xl">תאריך</th>
+                                    <th class="p-3">סוג</th>
+                                    <th class="p-3">משך</th>
+                                    <th class="p-3">הערות ודגשים</th>
+                                    <th class="p-3 rounded-l-xl">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="workouts-table-body" class="text-sm divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Application Script Engine -->
     <script>
-        // פונקציית מעבר בין לשוניות
-        function openTab(evt, tabName) {
-            const contents = document.getElementsByClassName("tab-content");
-            for (let i = 0; i < contents.length; i++) {
-                contents[i].classList.remove("active");
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LIVE CLOCK & DATE ---
+            function updateDateTime() {
+                const now = new Date();
+                const dateEl = document.getElementById('live-date');
+                const timeEl = document.getElementById('live-time');
+
+                if (dateEl) {
+                    dateEl.innerText = now.toLocaleDateString('he-IL', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric' 
+                    });
+                }
+                if (timeEl) {
+                    timeEl.innerText = now.toLocaleTimeString('he-IL');
+                }
             }
-            
-            const buttons = document.getElementsByClassName("tab-btn");
-            for (let i = 0; i < buttons.length; i++) {
-                buttons[i].classList.remove("active");
-            }
-            
-            document.getElementById(tabName).classList.add("active");
-            evt.currentTarget.classList.add("active");
-        }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
 
-        // פונקציונליות חישוב RIR דינמי
-        const baseWeightInput = document.getElementById('baseWeight');
-        const tableBody = document.getElementById('tableBody');
+            // --- TAB NAVIGATION ---
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
 
-        const rirLevels = [
-            { desc: "כשל מוחלט (0 RIR)", perc: "100%", multiplier: 1.0 },
-            { desc: "חזרה 1 נוספת בבנק (1 RIR)", perc: "92%", multiplier: 0.92 },
-            { desc: "2 חזרות נוספות בבנק (2 RIR)", perc: "86%", multiplier: 0.86 },
-            { desc: "עצימות בינונית-גבוהה (3 RIR)", perc: "80%", multiplier: 0.80 },
-            { desc: "עצימות טכנית / נפח (4+ RIR)", perc: "72%", multiplier: 0.72 }
-        ];
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.getAttribute('data-tab');
+                    tabContents.forEach(content => content.classList.add('hidden'));
+                    tabButtons.forEach(b => {
+                        b.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+                        b.classList.add('text-slate-300');
+                    });
 
-        function updateTable() {
-            const baseWeight = parseFloat(baseWeightInput.value) || 0;
-            tableBody.innerHTML = '';
-
-            rirLevels.forEach(level => {
-                const weight = Math.round((baseWeight * level.multiplier) * 10) / 10;
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${level.desc}</td>
-                    <td class="text-left">${level.perc}</td>
-                    <td class="text-left">${weight}</td>
-                `;
-                tableBody.appendChild(row);
+                    const activeContent = document.getElementById('tab-' + targetTab);
+                    if (activeContent) activeContent.classList.remove('hidden');
+                    btn.classList.remove('text-slate-300');
+                    btn.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+                });
             });
-        }
 
-        baseWeightInput.addEventListener('input', updateTable);
-        updateTable();
+            // --- SHIFTS MANAGEMENT ---
+            function getStoredShifts() {
+                try {
+                    const data = localStorage.getItem('user_shifts');
+                    return data ? JSON.parse(data) : [
+                        { id: 1, date: '2026-10-01', dept: 'הדרכה', hours: 8, km: 50, kmRate: 2, rate: 70 },
+                        { id: 2, date: '2026-10-05', dept: 'מבצעים', hours: 6, km: 20, kmRate: 2, rate: 70 }
+                    ];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveShifts(shifts) {
+                try {
+                    localStorage.setItem('user_shifts', JSON.stringify(shifts));
+                } catch (e) {}
+                renderShifts();
+            }
+
+            function resetShiftFormDefaults() {
+                const shiftForm = document.getElementById('shift-form');
+                if (shiftForm) shiftForm.reset();
+                const shiftDate = document.getElementById('shift-date');
+                const kmRateInput = document.getElementById('shift-km-rate');
+                const rateInput = document.getElementById('shift-rate');
+                if (shiftDate) shiftDate.valueAsDate = new Date();
+                if (kmRateInput) kmRateInput.value = "2";
+                if (rateInput) rateInput.value = "70";
+            }
+
+            const shiftForm = document.getElementById('shift-form');
+            if (shiftForm) {
+                shiftForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const date = document.getElementById('shift-date').value;
+                    const dept = document.getElementById('shift-dept').value;
+                    const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
+                    const km = parseFloat(document.getElementById('shift-km').value) || 0;
+                    const kmRate = parseFloat(document.getElementById('shift-km-rate').value) || 0;
+                    const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
+
+                    if (!date) return;
+
+                    const shifts = getStoredShifts();
+                    shifts.push({ id: Date.now(), date, dept, hours, km, kmRate, rate });
+                    saveShifts(shifts);
+
+                    resetShiftFormDefaults();
+                });
+            }
+
+            window.deleteShift = function(id) {
+                let shifts = getStoredShifts();
+                shifts = shifts.filter(s => s.id !== id);
+                saveShifts(shifts);
+            };
+
+            const clearShiftsBtn = document.getElementById('clear-shifts-btn');
+            if (clearShiftsBtn) {
+                clearShiftsBtn.addEventListener('click', () => {
+                    if (confirm('האם למחוק את כל המשמרות?')) {
+                        localStorage.removeItem('user_shifts');
+                        renderShifts();
+                    }
+                });
+            }
+
+            // Export to Excel CSV
+            const exportExcelBtn = document.getElementById('export-excel-btn');
+            if (exportExcelBtn) {
+                exportExcelBtn.addEventListener('click', () => {
+                    const shifts = getStoredShifts();
+                    if (shifts.length === 0) {
+                        alert('אין משמרות לייצוא');
+                        return;
+                    }
+
+                    let csvContent = "\uFEFF"; // Hebrew BOM
+                    csvContent += "תאריך,מחלקה,שעות עבודה,קילומטרים,תעריף קילומטר,תעריף שעה,שכר שעות,שכר ק\"מ,סה\"כ לתשלום\n";
+
+                    shifts.forEach(s => {
+                        const hoursPay = (s.hours || 0) * (s.rate || 0);
+                        const kmPay = (s.km || 0) * (s.kmRate || 0);
+                        const totalPay = hoursPay + kmPay;
+                        csvContent += `${s.date},${s.dept},${s.hours},${s.km},${s.kmRate},${s.rate},${hoursPay},${kmPay},${totalPay}\n`;
+                    });
+
+                    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.setAttribute('href', url);
+                    link.setAttribute('download', 'MedControl_Shifts.csv');
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                });
+            }
+
+            function renderShifts() {
+                const tbody = document.getElementById('shifts-table-body');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                const shifts = getStoredShifts();
+                let totalHours = 0;
+                let totalKm = 0;
+                let totalIncome = 0;
+
+                if (shifts.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
+                }
+
+                shifts.forEach(s => {
+                    const hoursPay = (s.hours || 0) * (s.rate || 0);
+                    const kmPay = (s.km || 0) * (s.kmRate || 0);
+                    const totalPay = hoursPay + kmPay;
+
+                    totalHours += (s.hours || 0);
+                    totalKm += (s.km || 0);
+                    totalIncome += totalPay;
+
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                            <td class="p-3 text-slate-700">${s.date}</td>
+                            <td class="p-3 font-semibold text-slate-900">${s.dept}</td>
+                            <td class="p-3 text-slate-700">${s.hours} ש'</td>
+                            <td class="p-3 text-slate-700">${s.km} ק"מ</td>
+                            <td class="p-3 text-slate-600">₪${hoursPay.toLocaleString()}</td>
+                            <td class="p-3 text-slate-600">₪${kmPay.toLocaleString()}</td>
+                            <td class="p-3 font-bold text-emerald-600">₪${totalPay.toLocaleString()}</td>
+                            <td class="p-3">
+                                <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                const th = document.getElementById('stat-total-hours');
+                const tk = document.getElementById('stat-total-km');
+                const ti = document.getElementById('stat-total-income');
+                const ts = document.getElementById('stat-total-shifts');
+                if (th) th.innerText = totalHours.toFixed(1) + " ש'";
+                if (tk) tk.innerText = totalKm + " ק\"מ";
+                if (ti) ti.innerText = "₪" + totalIncome.toLocaleString();
+                if (ts) ts.innerText = shifts.length;
+            }
+
+            // --- STUDIES MANAGEMENT ---
+            const defaultStudies = [
+                { name: "רפואה דחופה וטראומה", progress: 75 },
+                { name: "רפואה פנימית", progress: 60 },
+                { name: "פרמקולוגיה", progress: 50 },
+                { name: "רפואת ילדים", progress: 40 },
+                { name: "כירורגיה", progress: 65 }
+            ];
+
+            function getStoredStudies() {
+                try {
+                    const data = localStorage.getItem('user_studies');
+                    return data ? JSON.parse(data) : defaultStudies;
+                } catch (e) {
+                    return defaultStudies;
+                }
+            }
+
+            function renderStudies() {
+                const container = document.getElementById('topics-container');
+                if (!container) return;
+                container.innerHTML = '';
+
+                const studiesProgress = getStoredStudies();
+                studiesProgress.forEach((t, idx) => {
+                    container.innerHTML += `
+                        <div>
+                            <div class="flex justify-between text-sm font-semibold mb-1.5 text-slate-700">
+                                <span>${t.name}</span>
+                                <span class="text-brand-600 font-bold">${t.progress}%</span>
+                            </div>
+                            <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-brand-600 cursor-pointer bg-slate-200">
+                        </div>
+                    `;
+                });
+            }
+
+            window.updateStudy = function(idx, val) {
+                const studiesProgress = getStoredStudies();
+                studiesProgress[idx].progress = parseInt(val);
+                try {
+                    localStorage.setItem('user_studies', JSON.stringify(studiesProgress));
+                } catch (e) {}
+                renderStudies();
+            };
+
+            // --- WORKOUTS MANAGEMENT ---
+            function getStoredWorkouts() {
+                try {
+                    const data = localStorage.getItem('user_workouts');
+                    return data ? JSON.parse(data) : [
+                        { id: 1, date: '2026-10-25', type: 'CrossFit', duration: 60, notes: 'עבודה על משקלים ו-WOD' },
+                        { id: 2, date: '2026-10-27', type: 'ריצה (3000מ\' / נפח)', duration: 30, notes: 'שיפור קצב' }
+                    ];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveWorkouts(workouts) {
+                try {
+                    localStorage.setItem('user_workouts', JSON.stringify(workouts));
+                } catch (e) {}
+                renderWorkouts();
+            }
+
+            const workoutForm = document.getElementById('workout-form');
+            if (workoutForm) {
+                workoutForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const date = document.getElementById('workout-date').value;
+                    const type = document.getElementById('workout-type').value;
+                    const duration = parseInt(document.getElementById('workout-duration').value) || 0;
+                    const notes = document.getElementById('workout-notes').value;
+
+                    if (!date) return;
+
+                    const workouts = getStoredWorkouts();
+                    workouts.push({ id: Date.now(), date, type, duration, notes });
+                    saveWorkouts(workouts);
+
+                    workoutForm.reset();
+                    document.getElementById('workout-date').valueAsDate = new Date();
+                });
+            }
+
+            window.deleteWorkout = function(id) {
+                let workouts = getStoredWorkouts();
+                workouts = workouts.filter(w => w.id !== id);
+                saveWorkouts(workouts);
+            };
+
+            const clearWorkoutsBtn = document.getElementById('clear-workouts-btn');
+            if (clearWorkoutsBtn) {
+                clearWorkoutsBtn.addEventListener('click', () => {
+                    if (confirm('האם למחוק את כל האימונים?')) {
+                        localStorage.removeItem('user_workouts');
+                        renderWorkouts();
+                    }
+                });
+            }
+
+            function renderWorkouts() {
+                const tbody = document.getElementById('workouts-table-body');
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                const workouts = getStoredWorkouts();
+
+                if (workouts.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">אין אימונים שמורים עדיין.</td></tr>`;
+                }
+
+                workouts.forEach(w => {
+                    tbody.innerHTML += `
+                        <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                            <td class="p-3 text-slate-700">${w.date}</td>
+                            <td class="p-3 font-semibold text-slate-900">${w.type}</td>
+                            <td class="p-3 text-slate-700">${w.duration} דק'</td>
+                            <td class="p-3 text-slate-500">${w.notes || '-'}</td>
+                            <td class="p-3">
+                                <button type="button" onclick="deleteWorkout(${w.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            }
+
+            // Init Dates & Views
+            resetShiftFormDefaults();
+            const workoutDate = document.getElementById('workout-date');
+            if (workoutDate) workoutDate.valueAsDate = new Date();
+
+            renderShifts();
+            renderStudies();
+            renderWorkouts();
+        });
     </script>
 </body>
 </html>

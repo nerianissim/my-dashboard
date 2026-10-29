@@ -438,7 +438,6 @@
                 return select ? parseInt(select.value) || 20 : 20;
             }
 
-            // בדיקה האם משמרת שייכת לחודש הנוכחי לפי יום תחילת החודש המוגדר
             function isShiftInCurrentCycle(shiftDateStr, startDay) {
                 const shiftDate = new Date(shiftDateStr);
                 const now = new Date();
@@ -446,7 +445,6 @@
                 let currentCycleStart = new Date(now.getFullYear(), now.getMonth(), startDay);
                 let nextCycleStart = new Date(now.getFullYear(), now.getMonth() + 1, startDay);
 
-                // אם היום לפני יום תחילת החודש, המחזור הנוכחי התחיל בחודש שעבר
                 if (now.getDate() < startDay) {
                     currentCycleStart = new Date(now.getFullYear(), now.getMonth() - 1, startDay);
                     nextCycleStart = new Date(now.getFullYear(), now.getMonth(), startDay);
@@ -457,7 +455,6 @@
 
             const startDaySelect = document.getElementById('start-day-select');
             if (startDaySelect) {
-                // טעינת בחירה קודמת אם קיימת
                 const savedStartDay = localStorage.getItem('shift_start_day');
                 if (savedStartDay) {
                     startDaySelect.value = savedStartDay;
@@ -516,7 +513,6 @@
                 });
             }
 
-            // Export to Excel CSV
             const exportExcelBtn = document.getElementById('export-excel-btn');
             if (exportExcelBtn) {
                 exportExcelBtn.addEventListener('click', () => {
@@ -526,7 +522,7 @@
                         return;
                     }
 
-                    let csvContent = "\uFEFF"; // Hebrew BOM
+                    let csvContent = "\uFEFF";
                     csvContent += "תאריך,מחלקה,שעות עבודה,קילומטרים,תעריף קילומטר,תעריף שעה,שכר שעות,שכר ק\"מ,סה\"כ לתשלום\n";
 
                     shifts.forEach(s => {
@@ -569,7 +565,6 @@
                     const kmPay = (s.km || 0) * (s.kmRate || 0);
                     const totalPay = hoursPay + kmPay;
 
-                    // סינון וחישוב סטטיסטיקות רק למשמרות בתוך מחזור החודש המוגדר
                     if (isShiftInCurrentCycle(s.date, startDay)) {
                         totalHours += (s.hours || 0);
                         totalKm += (s.km || 0);
@@ -606,7 +601,7 @@
                 if (homeTh) homeTh.innerText = totalHours.toFixed(1) + " ש'";
             }
 
-            // --- CROSSFIT PRO SUITE (LOCALSTORAGE & RIR) מדויק לפי התמונה ---
+            // --- CROSSFIT PRO SUITE (UPDATED WITH ALL EXERCISES & VERSION V3) ---
             const DEFAULT_FITNESS_DATA = {
                 "Weightlifting": {
                     "Back Squat": 120,
@@ -622,18 +617,19 @@
                     "Strict Press": 50,
                     "Push-Press": 55,
                     "Bench Press": 60,
-                    "Power Snatch": 55
+                    "Power Snatch": 55,
+                    "Snatch": 70
                 },
                 "Gymnastics": {
-                    "Strict Pull-Ups": 0,
-                    "Kipping Pull-Ups": 0,
-                    "Strict Handstand Push-Ups": 0,
+                    "Strict Pull-Ups": 15,
+                    "Kipping Pull-Ups": 40,
+                    "Strict Handstand Push-Ups": 10,
                     "Kipping Handstand Push-Ups": 0,
                     "Strict Chest to Bar Pull-Ups": 0,
                     "Kipping Chest to Bar Pull-Ups": 0,
-                    "Ring Muscle-Ups": 0,
-                    "Toes to Bar": 0,
-                    "Bar Muscle-Ups": 0
+                    "Ring Muscle-Ups": 5,
+                    "Toes to Bar": 30,
+                    "Bar Muscle-Ups": 8
                 },
                 "Metcon_Benchmarks": {
                     "500m Row (sec)": 95, "3000m Run (min)": 18.0, "Fran (sec)": 240, "Grace (sec)": 180
@@ -642,7 +638,7 @@
 
             function getStoredFitnessData() {
                 try {
-                    const data = localStorage.getItem('crossfit_pro_data');
+                    const data = localStorage.getItem('crossfit_pro_data_v3');
                     return data ? JSON.parse(data) : DEFAULT_FITNESS_DATA;
                 } catch (e) {
                     return DEFAULT_FITNESS_DATA;
@@ -651,7 +647,7 @@
 
             function saveFitnessDataToStorage(data) {
                 try {
-                    localStorage.setItem('crossfit_pro_data', JSON.stringify(data));
+                    localStorage.setItem('crossfit_pro_data_v3', JSON.stringify(data));
                 } catch (e) {}
             }
 

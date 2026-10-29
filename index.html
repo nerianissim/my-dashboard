@@ -99,4 +99,183 @@
             text-align: right;
         }
         
-        label
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 0.95rem;
+        }
+        
+        select, input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #CBD5E1;
+            border-radius: 8px;
+            font-family: 'Heebo', sans-serif;
+            font-size: 1rem;
+            box-sizing: border-box;
+            background-color: #F8FAFC;
+            color: #1E293B;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #E2E8F0;
+        }
+        
+        th, td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        
+        th {
+            background-color: #F1F5F9;
+            color: #475569;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: right;
+        }
+        
+        td {
+            font-size: 0.95rem;
+            color: #1E293B;
+            text-align: right;
+        }
+        
+        /* יישור שמאלי למספרים ואחוזים לנוחות קריאה */
+        .text-left {
+            text-align: left;
+            direction: ltr;
+        }
+        
+        th.text-left {
+            text-align: left;
+        }
+
+        @media (max-width: 500px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- תפריט לשוניות -->
+        <div class="tabs-header">
+            <button class="tab-btn active" onclick="openTab(event, 'fitnessTab')">🏋️ אימונים וכושר</button>
+            <button class="tab-btn" onclick="openTab(event, 'gymnasticsTab')">🤸 ג'ימנסטיקה</button>
+        </div>
+
+        <!-- לשונית 1: אימונים וכושר (כולל מחשבון וטבלת RIR) -->
+        <div id="fitnessTab" class="tab-content active">
+            <div class="card">
+                <h2>🧮 מחשבון אחוזים ו-RIR</h2>
+                <p class="subtitle">בחר תרגיל והזן משקל 1RM כדי לקבל את משקלי העבודה המותאמים שלך</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="exerciseSelect">בחר תרגיל:</label>
+                        <select id="exerciseSelect">
+                            <option value="Back Squat">Back Squat</option>
+                            <option value="Front Squat">Front Squat</option>
+                            <option value="Deadlift">Deadlift</option>
+                            <option value="Power Clean">Power Clean</option>
+                            <option value="Clean & Jerk">Clean & Jerk</option>
+                            <option value="Snatch">Snatch</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="baseWeight">משקל בסיס (1RM בק"ג):</label>
+                        <input type="number" id="baseWeight" value="100" step="2.5" min="0">
+                    </div>
+                </div>
+
+                <table id="rirTable">
+                    <thead>
+                        <tr>
+                            <th>תיאור עצימות</th>
+                            <th class="text-left">אחוז מ-1RM</th>
+                            <th class="text-left">משקל עבודה (ק"ג)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- נתונים מתעדכנים דינמית דרך JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- לשונית 2: ג'ימנסטיקה (לדוגמה) -->
+        <div id="gymnasticsTab" class="tab-content">
+            <div class="card">
+                <h2>🤸 תרגילי משקל גוף</h2>
+                <p class="subtitle">מעקב אחר חזרות רצופות (Unbroken)</p>
+                <p style="color: #64748B;">כאן יופיעו שדות ניהול התרגילים והחזרות שלך.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // פונקציית מעבר בין לשוניות
+        function openTab(evt, tabName) {
+            const contents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.remove("active");
+            }
+            
+            const buttons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // פונקציונליות חישוב RIR דינמי
+        const baseWeightInput = document.getElementById('baseWeight');
+        const tableBody = document.getElementById('tableBody');
+
+        const rirLevels = [
+            { desc: "כשל מוחלט (0 RIR)", perc: "100%", multiplier: 1.0 },
+            { desc: "חזרה 1 נוספת בבנק (1 RIR)", perc: "92%", multiplier: 0.92 },
+            { desc: "2 חזרות נוספות בבנק (2 RIR)", perc: "86%", multiplier: 0.86 },
+            { desc: "עצימות בינונית-גבוהה (3 RIR)", perc: "80%", multiplier: 0.80 },
+            { desc: "עצימות טכנית / נפח (4+ RIR)", perc: "72%", multiplier: 0.72 }
+        ];
+
+        function updateTable() {
+            const baseWeight = parseFloat(baseWeightInput.value) || 0;
+            tableBody.innerHTML = '';
+
+            rirLevels.forEach(level => {
+                const weight = Math.round((baseWeight * level.multiplier) * 10) / 10;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${level.desc}</td>
+                    <td class="text-left">${level.perc}</td>
+                    <td class="text-left">${weight}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        baseWeightInput.addEventListener('input', updateTable);
+        updateTable();
+    </script>
+</body>
+</html>

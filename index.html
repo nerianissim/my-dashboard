@@ -467,14 +467,20 @@
                     "Deadlift": 110, "Power Clean": 70,
                     "Push Jerk": 60, "Strict Press": 50,
                     "Push-Press": 55, "Bench Press": 60,
-                    "Power Snatch": 55
+                    "Power Snatch": 55,
+                    "Snatch": "", "Clean & Jerk": "", "Overhead Squat": ""
                 },
                 "Gymnastics": {
                     "Strict Pull-Ups": 15, "Kipping Pull-Ups": 40,
                     "Strict Handstand Push-Ups": 10, "Ring Muscle-Ups": 5,
-                    "Toes to Bar": 30, "Bar Muscle-Ups": 8
+                    "Toes to Bar": 30, "Bar Muscle-Ups": 8,
+                    "Handstand Walk (m)": "", "Double Unders": ""
                 },
-                "Metcon_Benchmarks": { "500m Row (sec)": 95, "3000m Run (min)": 18.0, "Fran (sec)": 240, "Grace (sec)": 180 }
+                "Metcon_Benchmarks": { 
+                    "500m Row (sec)": 95, "3000m Run (min)": 18.0, 
+                    "Fran (sec)": 240, "Grace (sec)": 180,
+                    "Helen (sec)": "", "Murph (min)": ""
+                }
             },
             rotations: [{ id: 1, name: 'הרדמה טיפול נמרץ', start: '2026-10-10', end: '2026-11-05' }],
             exams: [
@@ -681,7 +687,7 @@
                 calcSelect.innerHTML = '';
                 for (const [ex, val] of Object.entries(appData.fitness.Weightlifting)) {
                     wlGrid.innerHTML += `<div><label class="block text-xs font-semibold text-slate-700 mb-1">${ex}</label><input type="number" step="2.5" id="wl_${ex}" value="${val}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800"></div>`;
-                    calcSelect.innerHTML += `<option value="${val}">${ex}</option>`;
+                    calcSelect.innerHTML += `<option value="${val || 100}">${ex}</option>`;
                 }
             }
 
@@ -692,7 +698,7 @@
                 gymCalcSelect.innerHTML = '';
                 for (const [ex, val] of Object.entries(appData.fitness.Gymnastics)) {
                     gymGrid.innerHTML += `<div><label class="block text-xs font-semibold text-slate-700 mb-1">${ex}</label><input type="number" step="1" id="gym_${ex}" value="${val}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800"></div>`;
-                    gymCalcSelect.innerHTML += `<option value="${val}">${ex}</option>`;
+                    gymCalcSelect.innerHTML += `<option value="${val || 30}">${ex}</option>`;
                 }
             }
 
@@ -742,28 +748,28 @@
 
         document.getElementById('calc-exercise-select')?.addEventListener('change', (e) => {
             const bw = document.getElementById('calc-base-weight');
-            if (bw) { bw.value = e.target.value; updateRIRTable(); }
+            if (bw && e.target.value) { bw.value = e.target.value; updateRIRTable(); }
         });
         document.getElementById('calc-base-weight')?.addEventListener('input', updateRIRTable);
 
         document.getElementById('calc-gym-exercise-select')?.addEventListener('change', (e) => {
             const br = document.getElementById('calc-gym-base-reps');
-            if (br) { br.value = e.target.value; updateGymRIRTable(); }
+            if (br && e.target.value) { br.value = e.target.value; updateGymRIRTable(); }
         });
         document.getElementById('calc-gym-base-reps')?.addEventListener('input', updateGymRIRTable);
 
         document.getElementById('save-fitness-btn')?.addEventListener('click', () => {
             for (const ex of Object.keys(appData.fitness.Weightlifting)) {
                 const el = document.getElementById(`wl_${ex}`);
-                if (el) appData.fitness.Weightlifting[ex] = parseFloat(el.value) || 0;
+                if (el) appData.fitness.Weightlifting[ex] = el.value !== "" ? parseFloat(el.value) : "";
             }
             for (const ex of Object.keys(appData.fitness.Gymnastics)) {
                 const el = document.getElementById(`gym_${ex}`);
-                if (el) appData.fitness.Gymnastics[ex] = parseInt(el.value) || 0;
+                if (el) appData.fitness.Gymnastics[ex] = el.value !== "" ? parseInt(el.value) : "";
             }
             for (const ex of Object.keys(appData.fitness.Metcon_Benchmarks)) {
                 const el = document.getElementById(`met_${ex}`);
-                if (el) appData.fitness.Metcon_Benchmarks[ex] = parseFloat(el.value) || 0;
+                if (el) appData.fitness.Metcon_Benchmarks[ex] = el.value !== "" ? parseFloat(el.value) : "";
             }
             saveDataToCloud();
             alert('השיאים נשמרו לענן בהצלחה! 🎉');

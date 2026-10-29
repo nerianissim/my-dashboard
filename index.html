@@ -11,128 +11,127 @@
             theme: {
                 extend: {
                     colors: {
-                        dark: { 800: '#1e293b', 900: '#0f172a', 950: '#090d16' },
-                        brand: { 500: '#3b82f6', 600: '#2563eb' }
+                        brand: { 50: '#eff6ff', 100: '#dbeafe', 500: '#2563eb', 600: '#1d4ed8', 700: '#1e40af' }
                     }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Heebo', sans-serif; }
     </style>
 </head>
-<body class="bg-dark-950 text-slate-100 min-h-screen flex flex-col md:flex-row-reverse selection:bg-brand-500 selection:text-white">
+<body class="bg-white text-slate-800 min-h-screen flex flex-col md:flex-row selection:bg-brand-500 selection:text-white">
 
-    <!-- SIDEBAR (Right side in RTL) -->
-    <aside class="w-full md:w-72 bg-dark-900 border-l border-slate-800 p-6 flex flex-col justify-between shrink-0 shadow-xl">
+    <!-- SIDEBAR (בצד ימין קבוע, כהה וברור לקריאה) -->
+    <aside class="w-full md:w-72 bg-slate-900 text-white p-6 flex flex-col justify-between shrink-0 shadow-2xl z-20 border-l border-slate-800">
         <div class="space-y-8">
-            <!-- App Brand / Logo -->
-            <div class="flex items-center gap-3 pb-6 border-b border-slate-800/80">
-                <div class="w-10 h-10 rounded-xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-xl">
-                    ⚡
+            <!-- App Logo / Title -->
+            <div class="flex items-center gap-3 pb-6 border-b border-slate-800">
+                <div class="w-11 h-11 rounded-2xl bg-brand-600 text-white flex items-center justify-center font-black text-xl shadow-lg shadow-blue-500/30 shrink-0">
+                    🩺
                 </div>
                 <div>
-                    <h2 class="text-lg font-black tracking-wide text-white">MedControl</h2>
-                    <p class="text-xs text-slate-400 font-medium">לוח בקרה אישי</p>
+                    <h2 class="text-xl font-black tracking-wide text-white">MedControl</h2>
+                    <p class="text-xs text-slate-400 font-medium">לוח בקרה אישי ושגרה</p>
                 </div>
             </div>
 
             <!-- Navigation Links -->
-            <nav class="space-y-2">
-                <button type="button" onclick="switchTab('shifts')" id="btn-shifts" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium text-sm transition bg-blue-600/10 text-blue-400 border border-blue-500/20 shadow-sm cursor-pointer">
-                    <span class="text-lg">💼</span> ניהול משמרות
+            <nav class="space-y-3">
+                <button type="button" onclick="switchTab('shifts')" id="btn-shifts" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition bg-brand-600 text-white shadow-lg shadow-blue-600/30 cursor-pointer text-right">
+                    <span class="text-xl">💼</span> ניהול משמרות
                 </button>
-                <button type="button" onclick="switchTab('studies')" id="btn-studies" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium text-sm transition text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 cursor-pointer">
-                    <span class="text-lg">📚</span> מרכז לימודים
+                <button type="button" onclick="switchTab('studies')" id="btn-studies" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                    <span class="text-xl">📚</span> מרכז לימודים
                 </button>
-                <button type="button" onclick="switchTab('fitness')" id="btn-fitness" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3 rounded-xl font-medium text-sm transition text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 cursor-pointer">
-                    <span class="text-lg">🏃</span> אימונים וכושר
+                <button type="button" onclick="switchTab('fitness')" id="btn-fitness" class="nav-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                    <span class="text-xl">🏃</span> אימונים וכושר
                 </button>
             </nav>
         </div>
 
-        <!-- Footer / Info -->
-        <div class="pt-6 border-t border-slate-800 text-xs text-slate-500 text-center">
-            מערכת מנוהלת ומאובטחת מקומית 🔒
+        <!-- Footer -->
+        <div class="pt-6 border-t border-slate-800 text-xs text-slate-400 font-medium text-center">
+            מערכת אישית מאובטחת 🔒
         </div>
     </aside>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-dark-950">
+    <!-- MAIN CONTENT AREA (רקע בהיר ולבן) -->
+    <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-slate-50">
 
         <!-- TAB 1: SHIFTS -->
         <section id="tab-shifts" class="tab-content space-y-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black text-white">מחשבון ומעקב משמרות</h1>
-                <p class="text-slate-400 text-sm mt-1">תיעוד שעות עבודה, חישוב שכר חודשי ופילוח לפי תפקידים.</p>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
+                <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, חישוב שכר חודשי ופילוח לפי תפקידים.</p>
             </div>
 
             <!-- Statistics Cards Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <p class="text-xs text-slate-400 font-medium">צפי הכנסה חודשי</p>
-                    <p id="stat-total-income" class="text-3xl font-black text-emerald-400 mt-2">₪0</p>
-                    <p class="text-[11px] text-slate-500 mt-1">כולל בונוסים / תעריפי בסיס</p>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">צפי הכנסה חודשי</p>
+                    <p id="stat-total-income" class="text-3xl font-black text-emerald-600 mt-2">₪0</p>
+                    <p class="text-[11px] text-slate-400 mt-1">כולל בונוסים ותעריפים</p>
                 </div>
-                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <p class="text-xs text-slate-400 font-medium">סה"כ שעות החודש</p>
-                    <p id="stat-total-hours" class="text-3xl font-black text-white mt-2">0 ש'</p>
-                    <p class="text-[11px] text-slate-500 mt-1">מתוך יעד מומלץ של 120 שעות</p>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ שעות החודש</p>
+                    <p id="stat-total-hours" class="text-3xl font-black text-slate-900 mt-2">0 ש'</p>
+                    <p class="text-[11px] text-slate-400 mt-1">מתוך יעד חודשי מומלץ</p>
                 </div>
-                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <p class="text-xs text-slate-400 font-medium">סה"כ משמרות</p>
-                    <p id="stat-total-shifts" class="text-3xl font-black text-blue-400 mt-2">0</p>
-                    <p class="text-[11px] text-slate-500 mt-1">החודש הנוכחי</p>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ משמרות</p>
+                    <p id="stat-total-shifts" class="text-3xl font-black text-brand-600 mt-2">0</p>
+                    <p class="text-[11px] text-slate-400 mt-1">החודש הנוכחי</p>
                 </div>
-                <div class="bg-dark-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                    <p class="text-xs text-slate-400 font-medium">ממוצע שעות למשמרת</p>
-                    <p id="stat-avg-hours" class="text-3xl font-black text-indigo-400 mt-2">0 ש'</p>
-                    <p class="text-[11px] text-slate-500 mt-1">אורך משמרת ממוצע</p>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">ממוצע שעות למשמרת</p>
+                    <p id="stat-avg-hours" class="text-3xl font-black text-indigo-600 mt-2">0 ש'</p>
+                    <p class="text-[11px] text-slate-400 mt-1">אורך משמרת ממוצע</p>
                 </div>
             </div>
 
             <!-- Form & Table Grid -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Add Form -->
-                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-1 shadow-sm">
-                    <h2 class="text-lg font-bold text-white mb-4">הוספת משמרת חדשה</h2>
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת משמרת חדשה</h2>
                     <form id="shift-form" onsubmit="addShift(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">תאריך</label>
-                            <input type="date" id="shift-date" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                            <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">תפקיד</label>
-                            <select id="shift-role" class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תפקיד</label>
+                            <select id="shift-role" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                                 <option value="פראמדיק">פראמדיק</option>
                                 <option value="סטודנט לרפואה">סטודנט לרפואה</option>
                                 <option value="הדרכה / איחוד הצלה">הדרכה / איחוד הצלה</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">מספר שעות</label>
-                            <input type="number" id="shift-hours" step="0.5" min="0.5" value="8" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מספר שעות</label>
+                            <input type="number" id="shift-hours" step="0.5" min="0.5" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">תעריף לשעה (₪)</label>
-                            <input type="number" id="shift-rate" min="0" value="65" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף לשעה (₪)</label>
+                            <input type="number" id="shift-rate" min="0" value="65" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-600/20 cursor-pointer">שמור משמרת</button>
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer">שמור משמרת</button>
                     </form>
                 </div>
 
                 <!-- Shifts History Table -->
-                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-white">היסטוריית משמרות</h2>
-                        <button type="button" onclick="clearShifts()" class="text-xs text-red-400 hover:text-red-300 font-medium cursor-pointer">איפוס נתונים</button>
+                        <h2 class="text-lg font-bold text-slate-900">היסטוריית משמרות</h2>
+                        <button type="button" onclick="clearShifts()" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">איפוס נתונים</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right border-collapse">
                             <thead>
-                                <tr class="border-b border-slate-800 text-xs text-slate-400 bg-dark-800/50">
+                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
                                     <th class="p-3 rounded-r-xl">תאריך</th>
                                     <th class="p-3">תפקיד</th>
                                     <th class="p-3">שעות</th>
@@ -141,7 +140,7 @@
                                     <th class="p-3 rounded-l-xl">פעולות</th>
                                 </tr>
                             </thead>
-                            <tbody id="shifts-table-body" class="text-sm divide-y divide-slate-800/60">
+                            <tbody id="shifts-table-body" class="text-sm divide-y divide-slate-100">
                                 <!-- Dynamic rows -->
                             </tbody>
                         </table>
@@ -153,11 +152,11 @@
         <!-- TAB 2: STUDIES -->
         <section id="tab-studies" class="tab-content hidden space-y-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black text-white">מרכז לימודים רפואיים</h1>
-                <p class="text-slate-400 text-sm mt-1">מעקב מוכנות למבחנים קליניים, התמחויות ותכנים מקצועיים.</p>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">מרכז לימודים רפואיים</h1>
+                <p class="text-slate-500 text-sm mt-1">מעקב מוכנות למבחנים קליניים, התמחויות ותכנים מקצועיים.</p>
             </div>
-            <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl max-w-3xl shadow-sm">
-                <h2 class="text-lg font-bold text-white mb-6">התקדמות בנושאים קליניים</h2>
+            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl max-w-3xl shadow-sm">
+                <h2 class="text-lg font-bold text-slate-900 mb-6">התקדמות בנושאים קליניים</h2>
                 <div id="topics-container" class="space-y-6">
                     <!-- Dynamic topic sliders -->
                 </div>
@@ -167,22 +166,22 @@
         <!-- TAB 3: FITNESS -->
         <section id="tab-fitness" class="tab-content hidden space-y-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black text-white">יומן אימונים וכושר</h1>
-                <p class="text-slate-400 text-sm mt-1">מעקב אחר אימוני קרוספיט, כוח, ריצה וספורט.</p>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">יומן אימונים וכושר</h1>
+                <p class="text-slate-500 text-sm mt-1">מעקב אחר אימוני קרוספיט, כוח, ריצה וספורט.</p>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Add Workout Form -->
-                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-1 shadow-sm">
-                    <h2 class="text-lg font-bold text-white mb-4">תיעוד אימון חדש</h2>
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 mb-4">תיעוד אימון חדש</h2>
                     <form id="workout-form" onsubmit="addWorkout(event)" class="space-y-4">
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">תאריך</label>
-                            <input type="date" id="workout-date" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                            <input type="date" id="workout-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">סוג אימון</label>
-                            <select id="workout-type" class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">סוג אימון</label>
+                            <select id="workout-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                                 <option value="CrossFit">CrossFit</option>
                                 <option value="כוח / חדר כושר">כוח / חדר כושר</option>
                                 <option value="ריצה (3000מ' / נפח)">ריצה (3000מ' / נפח)</option>
@@ -191,27 +190,27 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">משך האימון (דקות)</label>
-                            <input type="number" id="workout-duration" min="5" value="60" required class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">משך האימון (דקות)</label>
+                            <input type="number" id="workout-duration" min="5" value="60" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-medium text-slate-300 mb-1">הערות / WOD / דגשים</label>
-                            <textarea id="workout-notes" rows="3" class="w-full bg-dark-800 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:border-blue-500" placeholder="תרגילים, משקלים, תחושות..."></textarea>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">הערות / WOD / דגשים</label>
+                            <textarea id="workout-notes" rows="3" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500" placeholder="תרגילים, משקלים, תחושות..."></textarea>
                         </div>
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl transition shadow-lg cursor-pointer">שמור אימון</button>
+                        <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition shadow-lg cursor-pointer">שמור אימון</button>
                     </form>
                 </div>
 
                 <!-- Workouts List -->
-                <div class="bg-dark-900 border border-slate-800 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-white">היסטוריית אימונים</h2>
-                        <button type="button" onclick="clearWorkouts()" class="text-xs text-red-400 hover:text-red-300 font-medium cursor-pointer">איפוס אימונים</button>
+                        <h2 class="text-lg font-bold text-slate-900">היסטוריית אימונים</h2>
+                        <button type="button" onclick="clearWorkouts()" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">איפוס אימונים</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-right border-collapse">
                             <thead>
-                                <tr class="border-b border-slate-800 text-xs text-slate-400 bg-dark-800/50">
+                                <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
                                     <th class="p-3 rounded-r-xl">תאריך</th>
                                     <th class="p-3">סוג</th>
                                     <th class="p-3">משך</th>
@@ -219,7 +218,7 @@
                                     <th class="p-3 rounded-l-xl">פעולות</th>
                                 </tr>
                             </thead>
-                            <tbody id="workouts-table-body" class="text-sm divide-y divide-slate-800/60">
+                            <tbody id="workouts-table-body" class="text-sm divide-y divide-slate-100">
                                 <!-- Dynamic rows -->
                             </tbody>
                         </table>
@@ -236,8 +235,8 @@
         window.switchTab = function(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el => {
-                el.classList.remove('bg-blue-600/10', 'text-blue-400', 'border', 'border-blue-500/20', 'shadow-sm');
-                el.classList.add('text-slate-400');
+                el.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+                el.classList.add('text-slate-300');
             });
 
             const targetTab = document.getElementById('tab-' + tabId);
@@ -245,8 +244,8 @@
 
             const activeBtn = document.getElementById('btn-' + tabId);
             if (activeBtn) {
-                activeBtn.classList.remove('text-slate-400');
-                activeBtn.classList.add('bg-blue-600/10', 'text-blue-400', 'border', 'border-blue-500/20', 'shadow-sm');
+                activeBtn.classList.remove('text-slate-300');
+                activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
             }
         };
 
@@ -303,7 +302,7 @@
             let totalIncome = 0;
 
             if (shifts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-500">אין משמרות שמורות עדיין.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
             }
 
             shifts.forEach(s => {
@@ -312,14 +311,14 @@
                 totalIncome += totalPay;
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-dark-800/40 transition border-b border-slate-800/60">
-                        <td class="p-3 text-slate-300">${s.date}</td>
-                        <td class="p-3 font-medium text-white">${s.role}</td>
-                        <td class="p-3 text-slate-300">${s.hours} ש'</td>
-                        <td class="p-3 text-slate-300">₪${s.rate}</td>
-                        <td class="p-3 font-bold text-emerald-400">₪${totalPay.toLocaleString()}</td>
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-3 text-slate-700">${s.date}</td>
+                        <td class="p-3 font-semibold text-slate-900">${s.role}</td>
+                        <td class="p-3 text-slate-700">${s.hours} ש'</td>
+                        <td class="p-3 text-slate-700">₪${s.rate}</td>
+                        <td class="p-3 font-bold text-emerald-600">₪${totalPay.toLocaleString()}</td>
                         <td class="p-3">
-                            <button type="button" onclick="deleteShift(${s.id})" class="text-red-400 hover:text-red-300 text-xs bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 cursor-pointer">מחק</button>
+                            <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
                         </td>
                     </tr>
                 `;
@@ -360,11 +359,11 @@
             studiesProgress.forEach((t, idx) => {
                 container.innerHTML += `
                     <div>
-                        <div class="flex justify-between text-sm font-medium mb-1.5 text-slate-300">
+                        <div class="flex justify-between text-sm font-semibold mb-1.5 text-slate-700">
                             <span>${t.name}</span>
-                            <span class="text-blue-400 font-bold">${t.progress}%</span>
+                            <span class="text-brand-600 font-bold">${t.progress}%</span>
                         </div>
-                        <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-blue-500 cursor-pointer bg-dark-800">
+                        <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-brand-600 cursor-pointer bg-slate-200">
                     </div>
                 `;
             });
@@ -428,18 +427,18 @@
             const workouts = getStoredWorkouts();
 
             if (workouts.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-500">אין אימונים שמורים עדיין.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">אין אימונים שמורים עדיין.</td></tr>`;
             }
 
             workouts.forEach(w => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-dark-800/40 transition border-b border-slate-800/60">
-                        <td class="p-3 text-slate-300">${w.date}</td>
-                        <td class="p-3 font-medium text-white">${w.type}</td>
-                        <td class="p-3 text-slate-300">${w.duration} דק'</td>
-                        <td class="p-3 text-slate-400">${w.notes || '-'}</td>
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-3 text-slate-700">${w.date}</td>
+                        <td class="p-3 font-semibold text-slate-900">${w.type}</td>
+                        <td class="p-3 text-slate-700">${w.duration} דק'</td>
+                        <td class="p-3 text-slate-500">${w.notes || '-'}</td>
                         <td class="p-3">
-                            <button type="button" onclick="deleteWorkout(${w.id})" class="text-red-400 hover:text-red-300 text-xs bg-red-500/10 px-2.5 py-1 rounded-lg border border-red-500/20 cursor-pointer">מחק</button>
+                            <button type="button" onclick="deleteWorkout(${w.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
                         </td>
                     </tr>
                 `;

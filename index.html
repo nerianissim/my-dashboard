@@ -138,15 +138,23 @@
                         <p id="live-time" class="text-2xl font-black text-slate-900 mt-1">טוען...</p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Total Work Hours Card -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shrink-0">
-                        ⏱️
-                    </div>
-                    <div>
-                        <p class="text-xs text-slate-500 font-semibold">שעות עבודה החודש</p>
-                        <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
+            <!-- Work Hours Section with Header -->
+            <div class="space-y-4 pt-2">
+                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                    <span>💼</span> עבודה
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
+                    <!-- Total Work Hours Card -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center justify-between gap-4">
+                        <div class="overflow-hidden">
+                            <p class="text-xs text-slate-500 font-semibold">שעות עבודה החודש</p>
+                            <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
+                        </div>
+                        <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shrink-0 shadow-inner">
+                            ⏱️
+                        </div>
                     </div>
                 </div>
             </div>
@@ -633,7 +641,6 @@
                 tbody.innerHTML = '';
                 const rotations = getStoredRotations();
 
-                // מיון לפי תאריך התחלה
                 rotations.sort((a, b) => new Date(a.start) - new Date(b.start));
 
                 const today = new Date();
@@ -677,12 +684,32 @@
                 homeNext.innerText = nextRotation ? nextRotation.name : "אין סבב עתידי ברשימה";
             }
 
-            // --- STUDIES & EXAMS MANAGEMENT ---
+            // --- STUDIES & EXAMS MANAGEMENT WITH CUTE ICONS ---
+            function getCuteExamIcon(examName) {
+                const name = examName.toLowerCase();
+                if (name.includes('ילדים') || name.includes('פדיאטריה')) return '🧸';
+                if (name.includes('כירורגיה') || name.includes('ניתוח')) return '🩺';
+                if (name.includes('פנימית') || name.includes('קרדיו')) return '🫀';
+                if (name.includes('הרדמה') || name.includes('טיפול נמרץ')) return '💉';
+                if (name.includes('נוירו') || name.includes('מוח') || name.includes('פסיכיאטריה')) return '🧠';
+                if (name.includes('נשים') || name.includes('מיילדות')) return '👶';
+                
+                const cuteFallbackIcons = ['🎓', '🧠', '🎯', '📑', '✍️', '🩺'];
+                let hash = 0;
+                for (let i = 0; i < examName.length; i++) {
+                    hash = examName.charCodeAt(i) + ((hash << 5) - hash);
+                }
+                return cuteFallbackIcons[Math.abs(hash) % cuteFallbackIcons.length];
+            }
+
             function getStoredExams() {
                 try {
                     const data = localStorage.getItem('user_exams');
                     return data ? JSON.parse(data) : [
-                        { id: 1, name: 'מבחן גמר ברפואה פנימית', date: '2026-10-14' }
+                        { id: 1, name: 'הרדמה טיפול נמרץ', date: '2026-11-12' },
+                        { id: 2, name: 'פנימית', date: '2027-07-08' },
+                        { id: 3, name: 'כירורגיה', date: '2027-08-08' },
+                        { id: 4, name: 'ילדים', date: '2027-09-20' }
                     ];
                 } catch (e) {
                     return [];
@@ -763,6 +790,8 @@
                         daysBadgeColor = "bg-amber-50 text-amber-700 border-amber-200";
                     }
 
+                    const examIcon = getCuteExamIcon(ex.name);
+
                     tbody.innerHTML += `
                         <tr class="hover:bg-slate-50 transition border-b border-slate-100">
                             <td class="p-2.5 font-semibold text-slate-900">${ex.name}</td>
@@ -771,19 +800,19 @@
                                 <span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${daysBadgeColor}">${daysText}</span>
                             </td>
                             <td class="p-2.5">
-                                <button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                                <button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2.5 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
                             </td>
                         </tr>
                     `;
 
                     homeGrid.innerHTML += `
-                        <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
-                            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl font-bold shrink-0">
-                                📖
-                            </div>
+                        <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4">
                             <div class="overflow-hidden">
                                 <p class="text-xs text-slate-500 font-semibold truncate" title="${ex.name}">${ex.name}</p>
                                 <p class="text-lg font-black text-slate-900 mt-0.5">${daysLeft >= 0 ? daysLeft + ' ימים' : 'הסתיים'}</p>
+                            </div>
+                            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl shrink-0 shadow-inner">
+                                ${examIcon}
                             </div>
                         </div>
                     `;

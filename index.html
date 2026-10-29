@@ -46,9 +46,6 @@
                 <button type="button" data-tab="shifts" id="btn-shifts" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">💼</span> ניהול משמרות
                 </button>
-                <button type="button" data-tab="studies" id="btn-studies" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
-                    <span class="text-xl">📚</span> מרכז לימודים
-                </button>
                 <button type="button" data-tab="fitness" id="btn-fitness" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">🏃</span> אימונים וכושר
                 </button>
@@ -63,15 +60,16 @@
     <!-- MAIN CONTENT AREA (רקע בהיר) -->
     <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-slate-50">
 
-        <!-- TAB 0: MAIN / HOME (נפתח ראשון!) -->
+        <!-- TAB 0: MAIN / HOME (נפתח ראשון) -->
         <section id="tab-main" class="tab-content space-y-8">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">לוח בקרה ראשי</h1>
                 <p class="text-slate-500 text-sm mt-1">ברוך הבא למערכת הניהול האישית שלך.</p>
             </div>
 
-            <!-- Date & Time Display Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl">
+            <!-- Dashboard Cards Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
+                <!-- Date Card -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center gap-4">
                     <div class="w-14 h-14 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold shrink-0">
                         📅
@@ -82,6 +80,7 @@
                     </div>
                 </div>
 
+                <!-- Clock Card -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center gap-4">
                     <div class="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl font-bold shrink-0">
                         ⏰
@@ -89,6 +88,17 @@
                     <div>
                         <p class="text-xs text-slate-500 font-semibold">השעה הנוכחית</p>
                         <p id="live-time" class="text-2xl font-black text-slate-900 mt-1">טוען...</p>
+                    </div>
+                </div>
+
+                <!-- Total Work Hours Card -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shrink-0">
+                        ⏱️
+                    </div>
+                    <div>
+                        <p class="text-xs text-slate-500 font-semibold">שעות עבודה החודש</p>
+                        <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
                     </div>
                 </div>
             </div>
@@ -200,27 +210,45 @@
             </div>
         </section>
 
-        <!-- TAB 2: STUDIES -->
-        <section id="tab-studies" class="tab-content hidden space-y-8">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">מרכז לימודים רפואיים</h1>
-                <p class="text-slate-500 text-sm mt-1">מעקב מוכנות למבחנים קליניים, התמחויות ותכנים מקצועיים.</p>
-            </div>
-            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl max-w-3xl shadow-sm">
-                <h2 class="text-lg font-bold text-slate-900 mb-6">התקדמות בנושאים קליניים</h2>
-                <div id="topics-container" class="space-y-6">
-                    <!-- Dynamic sliders -->
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 3: FITNESS -->
+        <!-- TAB 2: FITNESS -->
         <section id="tab-fitness" class="tab-content hidden space-y-8">
             <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">יומן אימונים וכושר</h1>
-                <p class="text-slate-500 text-sm mt-1">מעקב אחר אימוני קרוספיט, כוח, ריצה וספורט.</p>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">יומן אימונים ושיאים אישיים</h1>
+                <p class="text-slate-500 text-sm mt-1">מעקב אחר אימוני קרוספיט, כוח, ריצה ושיאים אישיים (PRs).</p>
             </div>
 
+            <!-- PERSONAL RECORDS (PR) SECTION -->
+            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-6">
+                <div class="flex justify-between items-center pb-4 border-b border-slate-100">
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <span>🏆</span> שיאים אישיים (Personal Records)
+                    </h2>
+                </div>
+
+                <!-- PR Add Form -->
+                <form id="pr-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">שם התרגיל</label>
+                        <input type="text" id="pr-exercise" placeholder="למשל: סקואט, דדליפט, ריצת 3000m" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">תוצאה / שיא</label>
+                        <input type="text" id="pr-value" placeholder="למשל: 120 ק&quot;ג / 12:30 דקות" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2 rounded-xl transition shadow-md cursor-pointer text-sm">
+                            הוסף / עדכן שיא
+                        </button>
+                    </div>
+                </form>
+
+                <!-- PR Cards List -->
+                <div id="pr-cards-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+                    <!-- Dynamic PR Cards -->
+                </div>
+            </div>
+
+            <!-- WORKOUT LOG SECTION -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Add Workout Form -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm">
@@ -466,57 +494,88 @@
                 const tk = document.getElementById('stat-total-km');
                 const ti = document.getElementById('stat-total-income');
                 const ts = document.getElementById('stat-total-shifts');
+                const homeTh = document.getElementById('home-total-hours');
+
                 if (th) th.innerText = totalHours.toFixed(1) + " ש'";
                 if (tk) tk.innerText = totalKm + " ק\"מ";
                 if (ti) ti.innerText = "₪" + totalIncome.toLocaleString();
                 if (ts) ts.innerText = shifts.length;
+                if (homeTh) homeTh.innerText = totalHours.toFixed(1) + " ש'";
             }
 
-            // --- STUDIES MANAGEMENT ---
-            const defaultStudies = [
-                { name: "רפואה דחופה וטראומה", progress: 75 },
-                { name: "רפואה פנימית", progress: 60 },
-                { name: "פרמקולוגיה", progress: 50 },
-                { name: "רפואת ילדים", progress: 40 },
-                { name: "כירורגיה", progress: 65 }
-            ];
-
-            function getStoredStudies() {
+            // --- PERSONAL RECORDS (PR) MANAGEMENT ---
+            function getStoredPRs() {
                 try {
-                    const data = localStorage.getItem('user_studies');
-                    return data ? JSON.parse(data) : defaultStudies;
+                    const data = localStorage.getItem('user_prs');
+                    return data ? JSON.parse(data) : [
+                        { id: 1, exercise: 'סקוואט', value: '100 ק"ג' },
+                        { id: 2, exercise: 'ריצת 3000m', value: '18:00 דקות' }
+                    ];
                 } catch (e) {
-                    return defaultStudies;
+                    return [];
                 }
             }
 
-            function renderStudies() {
-                const container = document.getElementById('topics-container');
+            function savePRs(prs) {
+                try {
+                    localStorage.setItem('user_prs', JSON.stringify(prs));
+                } catch (e) {}
+                renderPRs();
+            }
+
+            const prForm = document.getElementById('pr-form');
+            if (prForm) {
+                prForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    const exerciseInput = document.getElementById('pr-exercise').value.trim();
+                    const valueInput = document.getElementById('pr-value').value.trim();
+
+                    if (!exerciseInput || !valueInput) return;
+
+                    let prs = getStoredPRs();
+                    const existingIdx = prs.findIndex(p => p.exercise.toLowerCase() === exerciseInput.toLowerCase());
+
+                    if (existingIdx !== -1) {
+                        prs[existingIdx].value = valueInput;
+                    } else {
+                        prs.push({ id: Date.now(), exercise: exerciseInput, value: valueInput });
+                    }
+
+                    savePRs(prs);
+                    prForm.reset();
+                });
+            }
+
+            window.deletePR = function(id) {
+                let prs = getStoredPRs();
+                prs = prs.filter(p => p.id !== id);
+                savePRs(prs);
+            };
+
+            function renderPRs() {
+                const container = document.getElementById('pr-cards-container');
                 if (!container) return;
                 container.innerHTML = '';
 
-                const studiesProgress = getStoredStudies();
-                studiesProgress.forEach((t, idx) => {
+                const prs = getStoredPRs();
+
+                if (prs.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-slate-400 col-span-full">אין שיאים שמורים עדיין. הוסף שיא ראשון למעלה!</p>`;
+                    return;
+                }
+
+                prs.forEach(p => {
                     container.innerHTML += `
-                        <div>
-                            <div class="flex justify-between text-sm font-semibold mb-1.5 text-slate-700">
-                                <span>${t.name}</span>
-                                <span class="text-brand-600 font-bold">${t.progress}%</span>
+                        <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl flex justify-between items-center relative group">
+                            <div>
+                                <p class="text-xs text-slate-500 font-medium">${p.exercise}</p>
+                                <p class="text-lg font-black text-brand-600 mt-0.5">${p.value}</p>
                             </div>
-                            <input type="range" min="0" max="100" value="${t.progress}" oninput="updateStudy(${idx}, this.value)" class="w-full accent-brand-600 cursor-pointer bg-slate-200">
+                            <button type="button" onclick="deletePR(${p.id})" class="text-slate-400 hover:text-red-500 text-xs p-1 rounded transition">✕</button>
                         </div>
                     `;
                 });
             }
-
-            window.updateStudy = function(idx, val) {
-                const studiesProgress = getStoredStudies();
-                studiesProgress[idx].progress = parseInt(val);
-                try {
-                    localStorage.setItem('user_studies', JSON.stringify(studiesProgress));
-                } catch (e) {}
-                renderStudies();
-            };
 
             // --- WORKOUTS MANAGEMENT ---
             function getStoredWorkouts() {
@@ -606,7 +665,7 @@
             if (workoutDate) workoutDate.valueAsDate = new Date();
 
             renderShifts();
-            renderStudies();
+            renderPRs();
             renderWorkouts();
         });
     </script>

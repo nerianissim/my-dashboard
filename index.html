@@ -335,6 +335,39 @@
                         <!-- Dynamic Gym inputs -->
                     </div>
                 </div>
+
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <h2 class="text-lg font-bold text-slate-900">🧮 מחשבון עצימות לג'ימנסטיקה (יעדי חזרות לסט)</h2>
+                    <p class="text-xs text-slate-500">בחר תרגיל משקל גוף כדי לראות את פילוג החזרות לסטים לפי אחוזים:</p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">בחר תרגיל מהג'ימנסטיקה:</label>
+                            <select id="gym-calc-exercise-select" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <!-- Dynamic options -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מקסימום חזרות בסיס (Max Reps):</label>
+                            <input type="number" id="gym-calc-base-reps" step="1" value="10" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto pt-2">
+                        <table class="w-full border-collapse border border-slate-200 rounded-xl overflow-hidden">
+                            <thead>
+                                <tr class="bg-slate-100 text-xs text-slate-600">
+                                    <th class="p-3 text-right">רמת עצימות / מטרה</th>
+                                    <th class="p-3 text-left-nums">אחוז מהמקסימום</th>
+                                    <th class="p-3 text-left-nums">יעד חזרות לסט</th>
+                                </tr>
+                            </thead>
+                            <tbody id="gym-rir-table-body" class="text-sm divide-y divide-slate-100">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             <!-- SUB-TAB 3: METCON & ENDURANCE -->
@@ -601,7 +634,7 @@
                 if (homeTh) homeTh.innerText = totalHours.toFixed(1) + " ש'";
             }
 
-            // --- CROSSFIT PRO SUITE (UPDATED WITH ALL EXERCISES & VERSION V3) ---
+            // --- CROSSFIT PRO SUITE (UPDATED: NO SNATCH, GYMNASTICS RIR TABLE ADDED) ---
             const DEFAULT_FITNESS_DATA = {
                 "Weightlifting": {
                     "Back Squat": 120,
@@ -617,8 +650,7 @@
                     "Strict Press": 50,
                     "Push-Press": 55,
                     "Bench Press": 60,
-                    "Power Snatch": 55,
-                    "Snatch": 70
+                    "Power Snatch": 55
                 },
                 "Gymnastics": {
                     "Strict Pull-Ups": 15,
@@ -638,7 +670,7 @@
 
             function getStoredFitnessData() {
                 try {
-                    const data = localStorage.getItem('crossfit_pro_data_v3');
+                    const data = localStorage.getItem('crossfit_pro_data_v5');
                     return data ? JSON.parse(data) : DEFAULT_FITNESS_DATA;
                 } catch (e) {
                     return DEFAULT_FITNESS_DATA;
@@ -647,7 +679,7 @@
 
             function saveFitnessDataToStorage(data) {
                 try {
-                    localStorage.setItem('crossfit_pro_data_v3', JSON.stringify(data));
+                    localStorage.setItem('crossfit_pro_data_v5', JSON.stringify(data));
                 } catch (e) {}
             }
 
@@ -657,6 +689,14 @@
                 { desc: "2 חזרות נוספות בבנק (2 RIR)", perc: "86%", mult: 0.86 },
                 { desc: "עצימות בינונית-גבוהה (3 RIR)", perc: "80%", mult: 0.80 },
                 { desc: "עצימות טכנית / נפח (4+ RIR)", perc: "72%", mult: 0.72 }
+            ];
+
+            const gymRirLevels = [
+                { desc: "מקסימום חזרות (100% Max)", perc: "100%", mult: 1.0 },
+                { desc: "סט כבד / עצימות גבוהה (90%)", perc: "90%", mult: 0.90 },
+                { desc: "עצימות עבודה / נפח (80%)", perc: "80%", mult: 0.80 },
+                { desc: "עצימות בינונית (70%)", perc: "70%", mult: 0.70 },
+                { desc: "טכניקה / שליטה (60%)", perc: "60%", mult: 0.60 }
             ];
 
             function renderFitnessSuite() {
@@ -680,10 +720,12 @@
                     }
                 }
 
-                // 2. Gymnastics inputs
+                // 2. Gymnastics inputs & Calculator select
                 const gymGrid = document.getElementById('gym-inputs-grid');
-                if (gymGrid) {
+                const gymCalcSelect = document.getElementById('gym-calc-exercise-select');
+                if (gymGrid && gymCalcSelect) {
                     gymGrid.innerHTML = '';
+                    gymCalcSelect.innerHTML = '';
                     for (const [ex, val] of Object.entries(fitnessData.Gymnastics)) {
                         gymGrid.innerHTML += `
                             <div>
@@ -691,6 +733,7 @@
                                 <input type="number" step="1" id="gym_input_${ex}" value="${val}" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                         `;
+                        gymCalcSelect.innerHTML += `<option value="${val}">${ex}</option>`;
                     }
                 }
 
@@ -709,6 +752,7 @@
                 }
 
                 updateRIRTable();
+                updateGymRIRTable();
             }
 
             function updateRIRTable() {
@@ -731,6 +775,26 @@
                 });
             }
 
+            function updateGymRIRTable() {
+                const gymBaseRepsInput = document.getElementById('gym-calc-base-reps');
+                const gymRirTableBody = document.getElementById('gym-rir-table-body');
+                if (!gymBaseRepsInput || !gymRirTableBody) return;
+
+                const baseReps = parseFloat(gymBaseRepsInput.value) || 0;
+                gymRirTableBody.innerHTML = '';
+
+                gymRirLevels.forEach(level => {
+                    const targetReps = Math.round(baseReps * level.mult);
+                    gymRirTableBody.innerHTML += `
+                        <tr class="hover:bg-slate-50">
+                            <td class="p-3 text-right text-slate-800">${level.desc}</td>
+                            <td class="p-3 text-left-nums text-slate-600">${level.perc}</td>
+                            <td class="p-3 text-left-nums font-bold text-slate-900">${targetReps} חזרות</td>
+                        </tr>
+                    `;
+                });
+            }
+
             const calcSelect = document.getElementById('calc-exercise-select');
             const baseWeightInput = document.getElementById('calc-base-weight');
 
@@ -745,6 +809,22 @@
 
             if (baseWeightInput) {
                 baseWeightInput.addEventListener('input', updateRIRTable);
+            }
+
+            const gymCalcSelect = document.getElementById('gym-calc-exercise-select');
+            const gymBaseRepsInput = document.getElementById('gym-calc-base-reps');
+
+            if (gymCalcSelect) {
+                gymCalcSelect.addEventListener('change', (e) => {
+                    if (gymBaseRepsInput) {
+                        gymBaseRepsInput.value = e.target.value;
+                        updateGymRIRTable();
+                    }
+                });
+            }
+
+            if (gymBaseRepsInput) {
+                gymBaseRepsInput.addEventListener('input', updateGymRIRTable);
             }
 
             const saveFitnessBtn = document.getElementById('save-fitness-btn');
@@ -779,6 +859,11 @@
             if (calcSelect && calcSelect.options.length > 0 && baseWeightInput) {
                 baseWeightInput.value = calcSelect.value;
                 updateRIRTable();
+            }
+
+            if (gymCalcSelect && gymCalcSelect.options.length > 0 && gymBaseRepsInput) {
+                gymBaseRepsInput.value = gymCalcSelect.value;
+                updateGymRIRTable();
             }
         });
     </script>

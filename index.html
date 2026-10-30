@@ -465,18 +465,31 @@
             ],
             fitness: {
                 "Weightlifting": {
-                    "Back Squat": 120, "Front Squat": 65,
-                    "Deadlift": 110, "Power Clean": 70,
-                    "Push Jerk": 60, "Strict Press": 50,
-                    "Push-Press": 55, "Bench Press": 60,
-                    "Power Snatch": 55,
-                    "Snatch": "", "Clean & Jerk": "", "Overhead Squat": ""
+                    "Back Squat": 120,
+                    "Front Squat": 65,
+                    "Overhead Squat": "",
+                    "Deadlift": 110,
+                    "Power Clean": 70,
+                    "Squat Clean": "",
+                    "Squat Snatch": "",
+                    "Clean & Jerk": "",
+                    "Push Jerk": 60,
+                    "Split Jerk": "",
+                    "Strict Press": 50,
+                    "Push-Press": 55,
+                    "Bench Press": 60,
+                    "Power Snatch": 55
                 },
                 "Gymnastics": {
-                    "Strict Pull-Ups": 15, "Kipping Pull-Ups": 40,
-                    "Strict Handstand Push-Ups": 10, "Ring Muscle-Ups": 5,
-                    "Toes to Bar": 30, "Bar Muscle-Ups": 8,
-                    "Handstand Walk (m)": "", "Double Unders": ""
+                    "Strict Pull-Ups": 15,
+                    "Kipping Pull-Ups": 40,
+                    "Strict Handstand Push-Ups": 10,
+                    "Kipping Handstand Push-Ups": "",
+                    "Strict Chest to Bar Pull-Ups": "",
+                    "Kipping Chest to Bar Pull-Ups": "",
+                    "Ring Muscle-Ups": 5,
+                    "Toes to Bar": 30,
+                    "Bar Muscle-Ups": 8
                 },
                 "Metcon_Benchmarks": { 
                     "500m Row (sec)": 95, "3000m Run (min)": 18.0, 
@@ -572,7 +585,7 @@
                 evt.currentTarget.classList.add('active');
             };
 
-            // Export to Excel Functionality using SheetJS
+            // Export to Excel Functionality
             document.getElementById('export-excel-btn')?.addEventListener('click', exportShiftsToExcel);
         });
 
@@ -690,31 +703,83 @@
             }
 
             try {
-                const excelData = appData.shifts.map(s => {
-                    const pay = calculateShiftPay(s.hours || 0, s.rate || 0);
-                    const kmPay = (s.km || 0) * (s.kmRate || 0);
-                    const totalPay = pay.totalHoursPay + kmPay;
+                function createSheetData(shiftsArray) {
+                    if (!shiftsArray || shiftsArray.length === 0) {
+                        return [{
+                            "תאריך": "אין משמרות",
+                            "מחלקה": "-",
+                            "שעות רגילות": 0,
+                            "שעות 125%": 0,
+                            "שעות 150%": 0,
+                            "קילומטראז'": 0,
+                            "שכר שעות (₪)": 0,
+                            "שכר ק\"מ (₪)": 0,
+                            "סה\"כ לתשלום (₪)": 0
+                        }];
+                    }
 
-                    return {
-                        "תאריך": s.date,
-                        "מחלקה": s.dept,
-                        "שעות רגילות": pay.regularHours,
-                        "שעות 125%": pay.overtime125,
-                        "שעות 150%": pay.overtime150,
-                        "קילומטראז'": s.km,
-                        "שכר שעות (₪)": Number(pay.totalHoursPay.toFixed(2)),
-                        "שכר ק\"מ (₪)": Number(kmPay.toFixed(2)),
-                        "סה\"כ לתשלום (₪)": Number(totalPay.toFixed(2))
-                    };
-                });
+                    let totalReg = 0, total125 = 0, total150 = 0, totalKm = 0;
+                    let totalHoursPay = 0, totalKmPay = 0, totalPayAll = 0;
 
-                const worksheet = XLSX.utils.json_to_sheet(excelData);
+                    const rows = shiftsArray.map(s => {
+                        const pay = calculateShiftPay(s.hours || 0, s.rate || 0);
+                        const kmPay = (s.km || 0) * (s.kmRate || 0);
+                        const totalPay = pay.totalHoursPay + kmPay;
+
+                        totalReg += pay.regularHours;
+                        total125 += pay.overtime125;
+                        total150 += pay.overtime150;
+                        totalKm += (s.km || 0);
+                        totalHoursPay += pay.totalHoursPay;
+                        totalKmPay += kmPay;
+                        totalPayAll += totalPay;
+
+                        return {
+                            "תאריך": s.date,
+                            "מחלקה": s.dept,
+                            "שעות רגילות": pay.regularHours,
+                            "שעות 125%": pay.overtime125,
+                            "שעות 150%": pay.overtime150,
+                            "קילומטראז'": s.km,
+                            "שכר שעות (₪)": Number(pay.totalHoursPay.toFixed(2)),
+                            "שכר ק\"מ (₪)": Number(kmPay.toFixed(2)),
+                            "סה\"כ לתשלום (₪)": Number(totalPay.toFixed(2))
+                        };
+                    });
+
+                    rows.push({
+                        "תאריך": "סה\"כ כולל",
+                        "מחלקה": `${shiftsArray.length} משמרות`,
+                        "שעות רגילות": Number(totalReg.toFixed(1)),
+                        "שעות 125%": Number(total125.toFixed(1)),
+                        "שעות 150%": Number(total150.toFixed(1)),
+                        "קילומטראז'": totalKm,
+                        "שכר שעות (₪)": Number(totalHoursPay.toFixed(2)),
+                        "שכר ק\"מ (₪)": Number(totalKmPay.toFixed(2)),
+                        "סה\"כ לתשלום (₪)": Number(totalPayAll.toFixed(2))
+                    });
+
+                    return rows;
+                }
+
                 const workbook = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(workbook, worksheet, "משמרות");
 
-                // הגדרת תצוגה מימין לשמאל בתוך Excel
-                if (!worksheet['!views']) worksheet['!views'] = [];
-                worksheet['!views'].push({ RTL: true });
+                // 1. גליון הדרכה
+                const hidrachaShifts = appData.shifts.filter(s => s.dept === 'הדרכה');
+                const ws1 = XLSX.utils.json_to_sheet(createSheetData(hidrachaShifts));
+                ws1['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws1, "הדרכה");
+
+                // 2. גליון מבצעים
+                const mivtsaimShifts = appData.shifts.filter(s => s.dept === 'מבצעים');
+                const ws2 = XLSX.utils.json_to_sheet(createSheetData(mivtsaimShifts));
+                ws2['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws2, "מבצעים");
+
+                // 3. גליון סה"כ (כולל)
+                const ws3 = XLSX.utils.json_to_sheet(createSheetData(appData.shifts));
+                ws3['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws3, "סה\"כ");
 
                 const fileName = `MedControl_Shifts_${new Date().toISOString().slice(0,10)}.xlsx`;
                 XLSX.writeFile(workbook, fileName);

@@ -2,16 +2,16 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MedControl - לוח בקרה אישי</title>
-    
-    <!-- PWA & Mobile Settings -->
+
+    <!-- PWA & Mobile Meta Tags -->
     <meta name="theme-color" content="#2563eb">
-    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MedControl">
-    <link id="manifest-placeholder" rel="manifest">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063822.png">
+    <link rel="manifest" href='data:application/manifest+json,{"name":"MedControl - לוח בקרה אישי","short_name":"MedControl","start_url":"./","display":"standalone","background_color":"#0f172a","theme_color":"#2563eb","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3063/3063822.png","sizes":"512x512","type":"image/png"}]}'>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -42,7 +42,6 @@
             border: 1px solid #E2E8F0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
             margin-bottom: 20px;
-            flex-wrap: wrap;
         }
 
         .sub-tab-btn {
@@ -102,7 +101,7 @@
 
         <div class="pt-6 border-t border-slate-800 text-xs text-slate-400 font-medium text-center space-y-2">
             <p>מערכת אישית מאובטחת 🔒</p>
-            <p class="text-[11px] text-brand-400">📲 זמינה כ-PWA בנייד</p>
+            <button onclick="installPWA()" id="install-pwa-btn" class="hidden text-brand-500 hover:underline text-[11px] font-bold">📲 התקן אפליקציה במסך הבית</button>
         </div>
     </aside>
 
@@ -301,13 +300,13 @@
             </div>
 
             <div class="sub-tabs-header">
-                <button type="button" class="sub-tab-btn fitness-tab-btn active" onclick="openFitnessSubTab(event, 'sub-wl')">🏋️ משקלי עבודה & RIR</button>
-                <button type="button" class="sub-tab-btn fitness-tab-btn" onclick="openFitnessSubTab(event, 'sub-gym')">🤸 ג׳ימנסטיקה & RIR</button>
-                <button type="button" class="sub-tab-btn fitness-tab-btn" onclick="openFitnessSubTab(event, 'sub-metcon')">⏱️ בנצ'מארקים ומדדי אירובי</button>
+                <button type="button" class="sub-tab-btn active" onclick="openFitnessSubTab(event, 'sub-wl')">🏋️ משקלי עבודה & RIR</button>
+                <button type="button" class="sub-tab-btn" onclick="openFitnessSubTab(event, 'sub-gym')">🤸 ג׳ימנסטיקה & RIR</button>
+                <button type="button" class="sub-tab-btn" onclick="openFitnessSubTab(event, 'sub-metcon')">⏱️ בנצ'מארקים ומדדי אירובי</button>
             </div>
 
             <!-- SUB TAB: WEIGHTLIFTING -->
-            <div id="sub-wl" class="sub-tab-content fitness-tab-content active space-y-6">
+            <div id="sub-wl" class="sub-tab-content active space-y-6">
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
                     <h2 class="text-lg font-bold text-slate-900 text-center flex items-center justify-center gap-2">
                         <span>🏋️‍♂️</span> ניהול משקלי עבודה (ק"ג)
@@ -340,7 +339,7 @@
             </div>
 
             <!-- SUB TAB: GYMNASTICS -->
-            <div id="sub-gym" class="sub-tab-content fitness-tab-content space-y-6">
+            <div id="sub-gym" class="sub-tab-content space-y-6">
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
                     <h2 class="text-lg font-bold text-slate-900 text-center flex items-center justify-center gap-2">
                         <span>🤸‍♂️</span> תרגילי משקל גוף
@@ -373,7 +372,7 @@
             </div>
 
             <!-- SUB TAB: METCON -->
-            <div id="sub-metcon" class="sub-tab-content fitness-tab-content space-y-6">
+            <div id="sub-metcon" class="sub-tab-content space-y-6">
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
                     <h2 class="text-lg font-bold text-slate-900 text-center">⏱️ בנצ'מארקים ומדדי אירובי</h2>
                     <div id="metcon-inputs-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
@@ -385,21 +384,21 @@
             </div>
         </section>
 
-        <!-- TAB 3: STUDIES & CLINICAL -->
+        <!-- TAB 3: STUDIES & MEDICAL -->
         <section id="tab-studies" class="tab-content hidden space-y-8">
             <div class="text-center pb-2 border-b border-slate-200">
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">📚 לימודים, סבבים ופנינים רפואיות</h1>
-                <p class="text-slate-500 text-sm mt-1">ניהול סבבים, מועדי מבחנים, מחשבונים קליניים מהירים ופנינים לימודיות</p>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">📚 לימודים, סבבים וכלים רפואיים</h1>
+                <p class="text-slate-500 text-sm mt-1">ניהול סבבים קליניים, מבחנים, מחשבונים רפואיים ופנינים רפואיות</p>
             </div>
 
             <div class="sub-tabs-header">
-                <button type="button" class="sub-tab-btn studies-tab-btn active" onclick="openStudiesSubTab(event, 'sub-rotations-exams')">📅 סבבים ומבחנים</button>
-                <button type="button" class="sub-tab-btn studies-tab-btn" onclick="openStudiesSubTab(event, 'sub-med-calcs')">🧮 מחשבונים רפואיים</button>
-                <button type="button" class="sub-tab-btn studies-tab-btn" onclick="openStudiesSubTab(event, 'sub-med-pearls')">💡 פנינים רפואיות</button>
+                <button type="button" class="sub-tab-btn active" onclick="openStudiesSubTab(event, 'sub-rotations')">📅 סבבים ומבחנים</button>
+                <button type="button" class="sub-tab-btn" onclick="openStudiesSubTab(event, 'sub-med-calc')">🧮 מחשבונים רפואיים</button>
+                <button type="button" class="sub-tab-btn" onclick="openStudiesSubTab(event, 'sub-med-pearls')">💡 פנינים רפואיות</button>
             </div>
 
             <!-- SUB TAB 1: ROTATIONS & EXAMS -->
-            <div id="sub-rotations-exams" class="sub-tab-content studies-tab-content active space-y-6">
+            <div id="sub-rotations" class="sub-tab-content active space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <div class="space-y-6">
                         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
@@ -478,130 +477,918 @@
             </div>
 
             <!-- SUB TAB 2: MEDICAL CALCULATORS -->
-            <div id="sub-med-calcs" class="sub-tab-content studies-tab-content space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-                    
-                    <!-- BMI & BSA -->
+            <div id="sub-med-calc" class="sub-tab-content space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                    <!-- Calculator 1: BMI -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">⚖️ BMI & BSA (Mosteller)</h2>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">גובה (ס"מ)</label>
-                                <input type="number" id="calc-bmi-height" value="175" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                            </div>
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">⚖️</span>
+                            <h2 class="text-lg font-bold text-slate-900">BMI (אינדקס מסת גוף)</h2>
+                        </div>
+                        <div class="space-y-3">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">משקל (ק"ג)</label>
-                                <input type="number" id="calc-bmi-weight" value="70" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                <input type="number" id="calc-bmi-weight" placeholder="70" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
                             </div>
-                        </div>
-                        <div class="bg-blue-50 border border-blue-100 p-4 rounded-xl space-y-2 text-sm">
-                            <div class="flex justify-between"><span>BMI:</span><span id="res-bmi-val" class="font-bold text-brand-700">22.9 kg/m²</span></div>
-                            <div class="flex justify-between"><span>BSA (Mosteller):</span><span id="res-bsa-val" class="font-bold text-brand-700">1.84 m²</span></div>
-                            <div class="flex justify-between text-xs text-slate-600"><span>סטטוס:</span><span id="res-bmi-status" class="font-bold text-emerald-600">משקל תקין</span></div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">גובה (ס"מ)</label>
+                                <input type="number" id="calc-bmi-height" placeholder="175" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div class="bg-brand-50 p-4 rounded-xl text-center border border-brand-100">
+                                <p class="text-xs text-slate-500 font-medium">תוצאה</p>
+                                <p id="res-bmi-val" class="text-2xl font-black text-brand-600 mt-1">-</p>
+                                <p id="res-bmi-cat" class="text-xs font-bold text-slate-600 mt-1"></p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- MAP Calculator -->
+                    <!-- Calculator 2: MAP -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">🫀 MAP (Mean Arterial Pressure)</h2>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Systolic BP (mmHg)</label>
-                                <input type="number" id="calc-map-sbp" value="120" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">Diastolic BP (mmHg)</label>
-                                <input type="number" id="calc-map-dbp" value="80" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                            </div>
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">🫀</span>
+                            <h2 class="text-lg font-bold text-slate-900">MAP (לחץ עורקי ממוצע)</h2>
                         </div>
-                        <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-xl space-y-2 text-sm">
-                            <div class="flex justify-between"><span>MAP:</span><span id="res-map-val" class="font-bold text-indigo-700">93.3 mmHg</span></div>
-                            <p class="text-xs text-slate-500">נוסחה: DBP + 1/3 (SBP - DBP). תקין: 70-100 mmHg.</p>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">לחץ סיסטולי (SBP)</label>
+                                <input type="number" id="calc-map-sbp" placeholder="120" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">לחץ דיאסטולי (DBP)</label>
+                                <input type="number" id="calc-map-dbp" placeholder="80" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div class="bg-emerald-50 p-4 rounded-xl text-center border border-emerald-100">
+                                <p class="text-xs text-slate-500 font-medium">תוצאה (mmHg)</p>
+                                <p id="res-map-val" class="text-2xl font-black text-emerald-600 mt-1">-</p>
+                                <p id="res-map-cat" class="text-xs font-bold text-slate-600 mt-1"></p>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Anion Gap -->
+                    <!-- Calculator 3: Anion Gap -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">🧪 Anion Gap</h2>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Na⁺ (mEq/L)</label>
-                                <input type="number" id="calc-ag-na" value="140" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-sm text-slate-800">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">Cl⁻ (mEq/L)</label>
-                                <input type="number" id="calc-ag-cl" value="104" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-sm text-slate-800">
-                            </div>
-                            <div>
-                                <label class="block text-[11px] font-semibold text-slate-700 mb-1">HCO₃⁻ (mEq/L)</label>
-                                <input type="number" id="calc-ag-hco3" value="24" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-2 text-sm text-slate-800">
-                            </div>
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">🧪</span>
+                            <h2 class="text-lg font-bold text-slate-900">Anion Gap (פער אניונים)</h2>
                         </div>
-                        <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-xl space-y-2 text-sm">
-                            <div class="flex justify-between"><span>Anion Gap:</span><span id="res-ag-val" class="font-bold text-emerald-700">12 mEq/L</span></div>
-                            <p class="text-xs text-slate-500">נוסחה: Na⁺ - (Cl⁻ + HCO₃⁻). טווח נורמלי: 8-12 mEq/L.</p>
-                        </div>
-                    </div>
-
-                    <!-- Glasgow Coma Scale (GCS) -->
-                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                        <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">🧠 GCS (Glasgow Coma Scale)</h2>
-                        <div class="space-y-2.5 text-xs">
+                        <div class="space-y-3">
                             <div>
-                                <label class="block font-semibold text-slate-700 mb-1">עיניים (Eye):</label>
-                                <select id="calc-gcs-eye" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-slate-800">
-                                    <option value="4">4 - פתיחה ספונטנית</option>
-                                    <option value="3">3 - פתיחה לקול</option>
-                                    <option value="2">2 - פתיחה לכאב</option>
-                                    <option value="1">1 - ללא תגובה</option>
-                                </select>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Sodium (Na⁺)</label>
+                                <input type="number" id="calc-ag-na" placeholder="140" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
                             </div>
-                            <div>
-                                <label class="block font-semibold text-slate-700 mb-1">מילולי (Verbal):</label>
-                                <select id="calc-gcs-verbal" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-slate-800">
-                                    <option value="5">5 - ממוקד ותקשורתי</option>
-                                    <option value="4">4 - מבולבל</option>
-                                    <option value="3">3 - מילים לא מתאימות</option>
-                                    <option value="2">2 - קולות בלבד</option>
-                                    <option value="1">1 - ללא תגובה</option>
-                                </select>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Chloride (Cl⁻)</label>
+                                    <input type="number" id="calc-ag-cl" placeholder="104" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">HCO₃⁻</label>
+                                    <input type="number" id="calc-ag-hco3" placeholder="24" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                </div>
                             </div>
-                            <div>
-                                <label class="block font-semibold text-slate-700 mb-1">מוטורי (Motor):</label>
-                                <select id="calc-gcs-motor" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2 text-slate-800">
-                                    <option value="6">6 - מציית לפקודות</option>
-                                    <option value="5">5 - ממוקם לכאב</option>
-                                    <option value="4">4 - נרתע מכאב</option>
-                                    <option value="3">3 - כיפוף פתולוגי (Decorticate)</option>
-                                    <option value="2">2 - פשיטה פתולוגית (Decerebrate)</option>
-                                    <option value="1">1 - ללא תגובה</option>
-                                </select>
+                            <div class="bg-purple-50 p-4 rounded-xl text-center border border-purple-100">
+                                <p class="text-xs text-slate-500 font-medium">תוצאה (mEq/L)</p>
+                                <p id="res-ag-val" class="text-2xl font-black text-purple-600 mt-1">-</p>
+                                <p id="res-ag-cat" class="text-xs font-bold text-slate-600 mt-1"></p>
                             </div>
-                        </div>
-                        <div class="bg-amber-50 border border-amber-100 p-4 rounded-xl flex justify-between items-center text-sm">
-                            <span>ניקוד כולל:</span>
-                            <span id="res-gcs-val" class="font-black text-amber-800 text-lg">15 / 15</span>
                         </div>
                     </div>
-
                 </div>
             </div>
 
             <!-- SUB TAB 3: MEDICAL PEARLS -->
-            <div id="sub-med-pearls" class="sub-tab-content studies-tab-content space-y-6">
+            <div id="sub-med-pearls" class="sub-tab-content space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm space-y-4">
-                        <h2 class="text-lg font-bold text-slate-900">💡 הוספת פנינה רפואית</h2>
-                        <form id="pearl-form" class="space-y-3.5">
+                    <!-- Form -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-1">
+                        <h2 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <span>💡</span> הוספת פנינה רפואית
+                        </h2>
+                        <form id="pearl-form" class="space-y-4">
                             <div>
-                                <label class="block text-xs font-semibold text-slate-700 mb-1">תחום / קטגוריה</label>
-                                <select id="pearl-category" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                                    <option value="קרדיולוגיה">קרדיולוגיה</option>
-                                    <option value="נוירולוגיה">נוירולוגיה</option>
-                                    <option value="פנאומולוגיה">פנאומולוגיה</option>
-                                    <option value="פרמקולוגיה">פרמקולוגיה</option>
-                                    <option value="טיפול נמרץ">טיפול נמרץ</option>
-                                    <option value="כירורגיה">כירורגיה</option>
-                                    <option value="כללי">כללי</option>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">נושא / מחלקה</label>
+                                <select id="pearl-category" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="קרדיולוגיה">קרדיולוגיה 🫀</option>
+                                    <option value="פרמקולוגיה">פרמקולוגיה 💊</option>
+                                    <option value="כירורגיה">כירורגיה 🩺</option>
+                                    <option value="טיפול נמרץ / הרדמה">טיפול נמרץ / הרדמה 💉</option>
+                                    <option value="ילדים">ילדים 🧸</option>
+                                    <option value="פנימית">פנימית 🏥</option>
+                                    <option value="כללי">כללי 💡</option>
                                 </select>
                             </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">כותרת / מילת מפתח</label>
+                                <input type="text" id="pearl-title" placeholder="לדוגמה: התווית נגד ל-Beta Blockers" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תוכן הפנינה / הדגש הקליני</label>
+                                <textarea id="pearl-note" rows="4" placeholder="רשום כאן את הדגש הקליני או המינון החשוב..." required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition cursor-pointer shadow-md">שמור פנינה רפואית</button>
+                        </form>
+                    </div>
+
+                    <!-- List & Filter -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-2 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <h2 class="text-lg font-bold text-slate-900">מאגר פנינים רפואיות</h2>
+                            <input type="text" id="pearl-search" placeholder="🔍 חפש לפי מילת מפתח..." class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 w-full sm:w-60 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div id="pearls-list-container" class="space-y-3 max-h-[500px] overflow-y-auto pr-1"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- CLOUD SYNC APP ENGINE -->
+    <script>
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzs22msbKYT0Yrt3QQ_e2X4TUzpcZAwh0YatlbiLAwlUpwei3qWQBsInkXtstvZvGDvLw/exec"; 
+
+        const DEFAULT_WEIGHTLIFTING = {
+            "Back Squat": 120,
+            "Front Squat": 65,
+            "Overhead Squat": "",
+            "Deadlift": 110,
+            "Power Clean": 70,
+            "Squat Clean": "",
+            "Squat Snatch": "",
+            "Clean & Jerk": "",
+            "Push Jerk": 60,
+            "Split Jerk": "",
+            "Strict Press": 50,
+            "Push-Press": 55,
+            "Bench Press": 60,
+            "Power Snatch": 55
+        };
+
+        const DEFAULT_GYMNASTICS = {
+            "Strict Pull-Ups": "",
+            "Kipping Pull-Ups": "",
+            "Strict Handstand Push-Ups": "",
+            "Kipping Handstand Push-Ups": "",
+            "Strict Chest to Bar Pull-Ups": "",
+            "Kipping Chest to Bar Pull-Ups": "",
+            "Ring Muscle-Ups": "",
+            "Toes to Bar": "",
+            "Bar Muscle-Ups": ""
+        };
+
+        const DEFAULT_PEARLS = [
+            { id: 1, category: "קרדיולוגיה", title: "התוויות נגד ל-Beta Blockers", note: "אסטמה פעילה קשה, חסימת הולכה AV מדרגה שנייה/שלישית, אי ספיקת לב בלתי מפצה." },
+            { id: 2, category: "פרמקולוגיה", title: "מינון אדרנלין באנפילקסיס", note: "0.3-0.5 mg IM (ריכוז 1:1000) בירך החיצונית (Vastus Lateralis)." }
+        ];
+
+        let appData = {
+            shifts: [
+                { id: 1, date: '2026-10-01', dept: 'הדרכה', hours: 9, km: 50, kmRate: 2, rate: 70 },
+                { id: 2, date: '2026-10-05', dept: 'מבצעים', hours: 11, km: 20, kmRate: 2, rate: 70 }
+            ],
+            fitness: {
+                "Weightlifting": { ...DEFAULT_WEIGHTLIFTING },
+                "Gymnastics": { ...DEFAULT_GYMNASTICS },
+                "Metcon_Benchmarks": { 
+                    "500m Row (sec)": 95, "3000m Run (min)": 18.0, 
+                    "Fran (sec)": 240, "Grace (sec)": 180,
+                    "Helen (sec)": "", "Murph (min)": ""
+                }
+            },
+            rotations: [{ id: 1, name: 'הרדמה טיפול נמרץ', start: '2026-10-10', end: '2026-11-05' }],
+            exams: [
+                { id: 1, name: 'הרדמה טיפול נמרץ', date: '2026-11-12' },
+                { id: 2, name: 'פנימית', date: '2027-07-08' },
+                { id: 3, name: 'כירורגיה', date: '2027-08-08' },
+                { id: 4, name: 'ילדים', date: '2027-09-20' }
+            ],
+            pearls: [...DEFAULT_PEARLS]
+        };
+
+        function mergeDataDefaults() {
+            if (!appData.fitness) appData.fitness = {};
+            appData.fitness.Weightlifting = Object.assign({}, DEFAULT_WEIGHTLIFTING, appData.fitness.Weightlifting);
+            appData.fitness.Gymnastics = Object.assign({}, DEFAULT_GYMNASTICS, appData.fitness.Gymnastics);
+            if (!appData.pearls || appData.pearls.length === 0) appData.pearls = [...DEFAULT_PEARLS];
+        }
+
+        async function loadDataFromCloud() {
+            if (!CLOUD_URL) {
+                const local = localStorage.getItem('medcontrol_all_data_v1');
+                if (local) appData = JSON.parse(local);
+                mergeDataDefaults();
+                initApp();
+                return;
+            }
+
+            try {
+                const res = await fetch(CLOUD_URL);
+                const json = await res.json();
+                if (json && json.shifts) {
+                    appData = json;
+                }
+                document.getElementById('sync-status').innerHTML = '<span>🟢</span> מסונכרן לענן';
+            } catch (e) {
+                document.getElementById('sync-status').innerHTML = '<span>🔴</span> מצב אופליין (מקומי)';
+                const local = localStorage.getItem('medcontrol_all_data_v1');
+                if (local) appData = JSON.parse(local);
+            }
+            mergeDataDefaults();
+            initApp();
+        }
+
+        async function saveDataToCloud() {
+            localStorage.setItem('medcontrol_all_data_v1', JSON.stringify(appData));
+            
+            if (!CLOUD_URL) return;
+
+            try {
+                document.getElementById('sync-status').innerHTML = '<span>🔄</span> מעדכן ענן...';
+                await fetch(CLOUD_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(appData)
+                });
+                document.getElementById('sync-status').innerHTML = '<span>🟢</span> מסונכרן לענן';
+            } catch (e) {
+                document.getElementById('sync-status').innerHTML = '<span>⚠️</span> שמור מקומית';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDataFromCloud();
+
+            // Clock & Date
+            function updateDateTime() {
+                const now = new Date();
+                const dateEl = document.getElementById('live-date');
+                const timeEl = document.getElementById('live-time');
+                if (dateEl) dateEl.innerText = now.toLocaleDateString('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                if (timeEl) timeEl.innerText = now.toLocaleTimeString('he-IL');
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Tabs Navigation
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const targetTab = btn.getAttribute('data-tab');
+                    tabContents.forEach(content => content.classList.add('hidden'));
+                    tabButtons.forEach(b => {
+                        b.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+                        b.classList.add('text-slate-300');
+                    });
+                    document.getElementById('tab-' + targetTab).classList.remove('hidden');
+                    btn.classList.remove('text-slate-300');
+                    btn.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+                });
+            });
+
+            window.openFitnessSubTab = function(evt, subTabId) {
+                document.querySelectorAll('#tab-fitness .sub-tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('#tab-fitness .sub-tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(subTabId).classList.add('active');
+                evt.currentTarget.classList.add('active');
+            };
+
+            window.openStudiesSubTab = function(evt, subTabId) {
+                document.querySelectorAll('#tab-studies .sub-tab-content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('#tab-studies .sub-tab-btn').forEach(b => b.classList.remove('active'));
+                document.getElementById(subTabId).classList.add('active');
+                evt.currentTarget.classList.add('active');
+            };
+
+            // Export to Excel Functionality
+            document.getElementById('export-excel-btn')?.addEventListener('click', exportShiftsToExcel);
+
+            // Setup Calculators
+            setupMedicalCalculators();
+        });
+
+        function initApp() {
+            renderShifts();
+            renderFitnessSuite();
+            renderExams();
+            renderRotations();
+            renderPearls();
+        }
+
+        // --- PWA INSTALLATION SERVICE WORKER ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', e => self.skipWaiting());
+                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+            `;
+            const blob = new Blob([swCode], { type: 'application/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+        }
+
+        // --- SHIFTS ---
+        function calculateShiftPay(totalHours, hourlyRate) {
+            let regularHours = Math.min(totalHours, 8);
+            let overtime125 = Math.max(0, Math.min(totalHours - 8, 2));
+            let overtime150 = Math.max(0, totalHours - 10);
+            let totalHoursPay = (regularHours * hourlyRate) + (overtime125 * hourlyRate * 1.25) + (overtime150 * hourlyRate * 1.5);
+            return { regularHours, overtime125, overtime150, totalHoursPay };
+        }
+
+        const startDaySelect = document.getElementById('start-day-select');
+        if (startDaySelect) {
+            startDaySelect.addEventListener('change', renderShifts);
+        }
+
+        document.getElementById('shift-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('shift-id').value;
+            const date = document.getElementById('shift-date').value;
+            const dept = document.getElementById('shift-dept').value;
+            const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
+            const km = parseFloat(document.getElementById('shift-km').value) || 0;
+            const kmRate = parseFloat(document.getElementById('shift-km-rate').value) || 0;
+            const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
+            if (!date) return;
+
+            if (editId) {
+                const index = appData.shifts.findIndex(s => s.id == editId);
+                if (index !== -1) {
+                    appData.shifts[index] = { id: Number(editId), date, dept, hours, km, kmRate, rate };
+                }
+            } else {
+                appData.shifts.push({ id: Date.now(), date, dept, hours, km, kmRate, rate });
+            }
+
+            saveDataToCloud();
+            renderShifts();
+            cancelEditShift();
+        });
+
+        window.editShift = function(id) {
+            const shift = appData.shifts.find(s => s.id === id);
+            if (!shift) return;
+
+            document.getElementById('shift-id').value = shift.id;
+            document.getElementById('shift-date').value = shift.date;
+            document.getElementById('shift-dept').value = shift.dept;
+            document.getElementById('shift-hours').value = shift.hours;
+            document.getElementById('shift-km').value = shift.km;
+            document.getElementById('shift-km-rate').value = shift.kmRate;
+            document.getElementById('shift-rate').value = shift.rate;
+
+            document.getElementById('shift-form-title').innerText = 'עריכת משמרת';
+            document.getElementById('shift-submit-btn').innerText = 'עדכן משמרת';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+
+            document.getElementById('shift-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        window.cancelEditShift = function() {
+            document.getElementById('shift-id').value = '';
+            document.getElementById('shift-form').reset();
+            document.getElementById('shift-date').valueAsDate = new Date();
+            document.getElementById('shift-form-title').innerText = 'הוספת משמרת חדשה';
+            document.getElementById('shift-submit-btn').innerText = 'שמור משמרת';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        };
+
+        window.deleteShift = function(id) {
+            if (confirm('האם למחוק משמרת זו?')) {
+                appData.shifts = appData.shifts.filter(s => s.id !== id);
+                if (document.getElementById('shift-id').value == id) {
+                    cancelEditShift();
+                }
+                saveDataToCloud();
+                renderShifts();
+            }
+        };
+
+        document.getElementById('clear-shifts-btn')?.addEventListener('click', () => {
+            if (confirm('האם למחוק את כל המשמרות?')) {
+                appData.shifts = [];
+                cancelEditShift();
+                saveDataToCloud();
+                renderShifts();
+            }
+        });
+
+        function renderShifts() {
+            const tbody = document.getElementById('shifts-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const startDay = startDaySelect ? parseInt(startDaySelect.value) || 20 : 20;
+            let totalHours = 0, totalKm = 0, totalIncome = 0, count = 0;
+
+            if (appData.shifts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="10" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>`;
+            }
+
+            appData.shifts.forEach(s => {
+                const pay = calculateShiftPay(s.hours || 0, s.rate || 0);
+                const kmPay = (s.km || 0) * (s.kmRate || 0);
+                const totalPay = pay.totalHoursPay + kmPay;
+
+                const shiftDate = new Date(s.date);
+                const now = new Date();
+                let curStart = new Date(now.getFullYear(), now.getMonth(), startDay);
+                let nextStart = new Date(now.getFullYear(), now.getMonth() + 1, startDay);
+                if (now.getDate() < startDay) {
+                    curStart = new Date(now.getFullYear(), now.getMonth() - 1, startDay);
+                    nextStart = new Date(now.getFullYear(), now.getMonth(), startDay);
+                }
+                if (shiftDate >= curStart && shiftDate < nextStart) {
+                    totalHours += (s.hours || 0);
+                    totalKm += (s.km || 0);
+                    totalIncome += totalPay;
+                    count++;
+                }
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-2.5 text-slate-700 font-medium">${s.date}</td>
+                        <td class="p-2.5 font-semibold text-slate-900">${s.dept}</td>
+                        <td class="p-2.5 text-center text-slate-700">${pay.regularHours} ש'</td>
+                        <td class="p-2.5 text-center text-amber-600 font-medium">${pay.overtime125 > 0 ? pay.overtime125 + " ש'" : '-'}</td>
+                        <td class="p-2.5 text-center text-rose-600 font-medium">${pay.overtime150 > 0 ? pay.overtime150 + " ש'" : '-'}</td>
+                        <td class="p-2.5 text-center text-slate-700">${s.km} ק"מ</td>
+                        <td class="p-2.5 text-slate-600">₪${pay.totalHoursPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
+                        <td class="p-2.5 text-slate-600">₪${kmPay.toLocaleString()}</td>
+                        <td class="p-2.5 font-bold text-emerald-600">₪${totalPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
+                        <td class="p-2.5">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button type="button" onclick="editShift(${s.id})" class="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded-lg border border-blue-100 cursor-pointer font-medium">ערוך</button>
+                                <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('stat-total-hours').innerText = totalHours.toFixed(1) + " ש'";
+            document.getElementById('stat-total-km').innerText = totalKm + ' ק"מ';
+            document.getElementById('stat-total-income').innerText = "₪" + totalIncome.toLocaleString(undefined, {maximumFractionDigits: 1});
+            document.getElementById('stat-total-shifts').innerText = count;
+            document.getElementById('home-total-hours').innerText = totalHours.toFixed(1) + " ש'";
+        }
+
+        function exportShiftsToExcel() {
+            if (!appData.shifts || appData.shifts.length === 0) {
+                alert('אין משמרות לייצוא');
+                return;
+            }
+
+            try {
+                function createSheetData(shiftsArray) {
+                    if (!shiftsArray || shiftsArray.length === 0) {
+                        return [{
+                            "תאריך": "אין משמרות",
+                            "מחלקה": "-",
+                            "שעות רגילות": 0,
+                            "שעות 125%": 0,
+                            "שעות 150%": 0,
+                            "קילומטראז'": 0,
+                            "שכר שעות (₪)": 0,
+                            "שכר ק\"מ (₪)": 0,
+                            "סה\"כ לתשלום (₪)": 0
+                        }];
+                    }
+
+                    let totalReg = 0, total125 = 0, total150 = 0, totalKm = 0;
+                    let totalHoursPay = 0, totalKmPay = 0, totalPayAll = 0;
+
+                    const rows = shiftsArray.map(s => {
+                        const pay = calculateShiftPay(s.hours || 0, s.rate || 0);
+                        const kmPay = (s.km || 0) * (s.kmRate || 0);
+                        const totalPay = pay.totalHoursPay + kmPay;
+
+                        totalReg += pay.regularHours;
+                        total125 += pay.overtime125;
+                        total150 += pay.overtime150;
+                        totalKm += (s.km || 0);
+                        totalHoursPay += pay.totalHoursPay;
+                        totalKmPay += kmPay;
+                        totalPayAll += totalPay;
+
+                        return {
+                            "תאריך": s.date,
+                            "מחלקה": s.dept,
+                            "שעות רגילות": pay.regularHours,
+                            "שעות 125%": pay.overtime125,
+                            "שעות 150%": pay.overtime150,
+                            "קילומטראז'": s.km,
+                            "שכר שעות (₪)": Number(pay.totalHoursPay.toFixed(2)),
+                            "שכר ק\"מ (₪)": Number(kmPay.toFixed(2)),
+                            "סה\"כ לתשלום (₪)": Number(totalPay.toFixed(2))
+                        };
+                    });
+
+                    rows.push({
+                        "תאריך": "סה\"כ כולל",
+                        "מחלקה": `${shiftsArray.length} משמרות`,
+                        "שעות רגילות": Number(totalReg.toFixed(1)),
+                        "שעות 125%": Number(total125.toFixed(1)),
+                        "שעות 150%": Number(total150.toFixed(1)),
+                        "קילומטראז'": totalKm,
+                        "שכר שעות (₪)": Number(totalHoursPay.toFixed(2)),
+                        "שכר ק\"מ (₪)": Number(totalKmPay.toFixed(2)),
+                        "סה\"כ לתשלום (₪)": Number(totalPayAll.toFixed(2))
+                    });
+
+                    return rows;
+                }
+
+                const workbook = XLSX.utils.book_new();
+
+                const hidrachaShifts = appData.shifts.filter(s => s.dept === 'הדרכה');
+                const ws1 = XLSX.utils.json_to_sheet(createSheetData(hidrachaShifts));
+                ws1['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws1, "הדרכה");
+
+                const mivtsaimShifts = appData.shifts.filter(s => s.dept === 'מבצעים');
+                const ws2 = XLSX.utils.json_to_sheet(createSheetData(mivtsaimShifts));
+                ws2['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws2, "מבצעים");
+
+                const ws3 = XLSX.utils.json_to_sheet(createSheetData(appData.shifts));
+                ws3['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws3, "סה\"כ");
+
+                const fileName = `MedControl_Shifts_${new Date().toISOString().slice(0,10)}.xlsx`;
+                XLSX.writeFile(workbook, fileName);
+            } catch (err) {
+                console.error("שגיאה בייצוא לאקסל:", err);
+                alert("אירעה שגיאה בעת ביצוע הייצוא.");
+            }
+        }
+
+        // --- FITNESS ---
+        function renderFitnessSuite() {
+            const wlGrid = document.getElementById('wl-inputs-grid');
+            const calcSelect = document.getElementById('calc-exercise-select');
+            if (wlGrid && calcSelect) {
+                wlGrid.innerHTML = '';
+                calcSelect.innerHTML = '';
+                for (const [ex, val] of Object.entries(appData.fitness.Weightlifting)) {
+                    wlGrid.innerHTML += `
+                        <div class="flex flex-col items-center text-center">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
+                            <input type="number" step="2.5" id="wl_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>`;
+                    calcSelect.innerHTML += `<option value="${val || 100}">${ex}</option>`;
+                }
+            }
+
+            const gymGrid = document.getElementById('gym-inputs-grid');
+            const gymCalcSelect = document.getElementById('calc-gym-exercise-select');
+            if (gymGrid && gymCalcSelect) {
+                gymGrid.innerHTML = '';
+                gymCalcSelect.innerHTML = '';
+                for (const [ex, val] of Object.entries(appData.fitness.Gymnastics)) {
+                    gymGrid.innerHTML += `
+                        <div class="flex flex-col items-center text-center">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
+                            <input type="number" step="1" id="gym_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>`;
+                    gymCalcSelect.innerHTML += `<option value="${val || 30}">${ex}</option>`;
+                }
+            }
+
+            const metGrid = document.getElementById('metcon-inputs-grid');
+            if (metGrid) {
+                metGrid.innerHTML = '';
+                for (const [ex, val] of Object.entries(appData.fitness.Metcon_Benchmarks)) {
+                    metGrid.innerHTML += `
+                        <div class="flex flex-col items-center text-center">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
+                            <input type="number" step="0.1" id="met_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>`;
+                }
+            }
+
+            updateRIRTable();
+            updateGymRIRTable();
+        }
+
+        function updateRIRTable() {
+            const base = parseFloat(document.getElementById('calc-base-weight')?.value) || 120;
+            const tbody = document.getElementById('rir-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const levels = [
+                { desc: "כשל מוחלט (0 RIR)", mult: 1.0 },
+                { desc: "1 RIR", mult: 0.92 },
+                { desc: "2 RIR", mult: 0.86 },
+                { desc: "עצימות בינונית (3 RIR)", mult: 0.80 }
+            ];
+            levels.forEach(l => {
+                tbody.innerHTML += `<tr class="hover:bg-slate-50"><td class="p-3">${l.desc}</td><td class="p-3 text-left-nums">${Math.round(l.mult*100)}%</td><td class="p-3 text-left-nums font-bold">${Math.round(base*l.mult*10)/10} ק"ג</td></tr>`;
+            });
+        }
+
+        function updateGymRIRTable() {
+            const base = parseFloat(document.getElementById('calc-gym-base-reps')?.value) || 40;
+            const tbody = document.getElementById('gym-rir-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const levels = [
+                { desc: "מקסימום חזרות (0 RIR)", mult: 1.0 },
+                { desc: "1 RIR", mult: 0.90 },
+                { desc: "2 RIR", mult: 0.80 },
+                { desc: "עצימות בינונית (3+ RIR)", mult: 0.70 }
+            ];
+            levels.forEach(l => {
+                tbody.innerHTML += `<tr class="hover:bg-slate-50"><td class="p-3">${l.desc}</td><td class="p-3 text-left-nums">${Math.round(l.mult*100)}%</td><td class="p-3 text-left-nums font-bold">${Math.round(base*l.mult)} חזרות</td></tr>`;
+            });
+        }
+
+        document.getElementById('calc-exercise-select')?.addEventListener('change', (e) => {
+            const bw = document.getElementById('calc-base-weight');
+            if (bw && e.target.value) { bw.value = e.target.value; updateRIRTable(); }
+        });
+        document.getElementById('calc-base-weight')?.addEventListener('input', updateRIRTable);
+
+        document.getElementById('calc-gym-exercise-select')?.addEventListener('change', (e) => {
+            const br = document.getElementById('calc-gym-base-reps');
+            if (br && e.target.value) { br.value = e.target.value; updateGymRIRTable(); }
+        });
+        document.getElementById('calc-gym-base-reps')?.addEventListener('input', updateGymRIRTable);
+
+        document.getElementById('save-fitness-btn')?.addEventListener('click', () => {
+            for (const ex of Object.keys(appData.fitness.Weightlifting)) {
+                const el = document.getElementById(`wl_${ex}`);
+                if (el) appData.fitness.Weightlifting[ex] = el.value !== "" ? parseFloat(el.value) : "";
+            }
+            for (const ex of Object.keys(appData.fitness.Gymnastics)) {
+                const el = document.getElementById(`gym_${ex}`);
+                if (el) appData.fitness.Gymnastics[ex] = el.value !== "" ? parseInt(el.value) : "";
+            }
+            for (const ex of Object.keys(appData.fitness.Metcon_Benchmarks)) {
+                const el = document.getElementById(`met_${ex}`);
+                if (el) appData.fitness.Metcon_Benchmarks[ex] = el.value !== "" ? parseFloat(el.value) : "";
+            }
+            saveDataToCloud();
+            alert('השיאים נשמרו לענן בהצלחה! 🎉');
+            renderFitnessSuite();
+        });
+
+        // --- ROTATIONS & EXAMS ---
+        document.getElementById('rotation-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('rotation-name').value.trim();
+            const start = document.getElementById('rotation-start').value;
+            const end = document.getElementById('rotation-end').value;
+            if (!name || !start || !end) return;
+
+            appData.rotations.push({ id: Date.now(), name, start, end });
+            saveDataToCloud();
+            renderRotations();
+            e.target.reset();
+        });
+
+        window.deleteRotation = function(id) {
+            appData.rotations = appData.rotations.filter(r => r.id !== id);
+            saveDataToCloud();
+            renderRotations();
+        };
+
+        function renderRotations() {
+            const tbody = document.getElementById('rotations-table-body');
+            const curEl = document.getElementById('home-current-rotation');
+            const nextEl = document.getElementById('home-next-rotation');
+            if (!tbody || !curEl || !nextEl) return;
+
+            tbody.innerHTML = '';
+            appData.rotations.sort((a,b) => new Date(a.start) - new Date(b.start));
+
+            const today = new Date(); today.setHours(0,0,0,0);
+            let current = null, next = null;
+
+            if (appData.rotations.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="p-4 text-center text-slate-400">אין סבבים שמורים.</td></tr>`;
+                curEl.innerText = "אין סבב פעיל"; nextEl.innerText = "אין סבב עתידי";
+                return;
+            }
+
+            appData.rotations.forEach(r => {
+                const start = new Date(r.start); start.setHours(0,0,0,0);
+                const end = new Date(r.end); end.setHours(23,59,59,999);
+                if (today >= start && today <= end) current = r;
+                else if (start > today && !next) next = r;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-2.5 font-semibold text-slate-900">${r.name}</td>
+                        <td class="p-2.5 text-slate-700">${r.start}</td>
+                        <td class="p-2.5 text-slate-700">${r.end}</td>
+                        <td class="p-2.5"><button type="button" onclick="deleteRotation(${r.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td>
+                    </tr>
+                `;
+            });
+            curEl.innerText = current ? current.name : "אין סבב פעיל כרגע";
+            nextEl.innerText = next ? next.name : "אין סבב עתידי ברשימה";
+        }
+
+        document.getElementById('exam-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('exam-name').value.trim();
+            const date = document.getElementById('exam-date').value;
+            if (!name || !date) return;
+
+            appData.exams.push({ id: Date.now(), name, date });
+            saveDataToCloud();
+            renderExams();
+            e.target.reset();
+        });
+
+        window.deleteExam = function(id) {
+            appData.exams = appData.exams.filter(ex => ex.id !== id);
+            saveDataToCloud();
+            renderExams();
+        };
+
+        function getCuteExamIcon(name) {
+            const n = name.toLowerCase();
+            if (n.includes('ילדים') || n.includes('פדיאטריה')) return '🧸';
+            if (n.includes('כירורגיה') || n.includes('ניתוח')) return '🩺';
+            if (n.includes('פנימית') || n.includes('קרדיו')) return '🫀';
+            if (n.includes('הרדמה') || n.includes('טיפול נמרץ')) return '💉';
+            return '🎓';
+        }
+
+        function renderExams() {
+            const tbody = document.getElementById('exams-table-body');
+            const grid = document.getElementById('home-exams-countdown-grid');
+            if (!tbody || !grid) return;
+
+            tbody.innerHTML = ''; grid.innerHTML = '';
+            appData.exams.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            const today = new Date(); today.setHours(0,0,0,0);
+
+            appData.exams.forEach(ex => {
+                const target = new Date(ex.date); target.setHours(0,0,0,0);
+                const days = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+                const badge = days < 0 ? "bg-slate-100 text-slate-500" : (days === 0 ? "bg-red-50 text-red-600" : "bg-blue-50 text-blue-700");
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-2.5 font-semibold text-slate-900">${ex.name}</td>
+                        <td class="p-2.5 text-slate-700">${ex.date}</td>
+                        <td class="p-2.5"><span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${badge}">${days >= 0 ? days + ' ימים' : 'הסתיים'}</span></td>
+                        <td class="p-2.5"><button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td>
+                    </tr>
+                `;
+
+                grid.innerHTML += `
+                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4">
+                        <div class="overflow-hidden">
+                            <p class="text-xs text-slate-500 font-semibold truncate">${ex.name}</p>
+                            <p class="text-lg font-black text-slate-900 mt-0.5">${days >= 0 ? days + ' ימים' : 'הסתיים'}</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl shrink-0 shadow-inner">${getCuteExamIcon(ex.name)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- MEDICAL CALCULATORS ---
+        function setupMedicalCalculators() {
+            // BMI
+            const bmiW = document.getElementById('calc-bmi-weight');
+            const bmiH = document.getElementById('calc-bmi-height');
+            function calcBMI() {
+                const w = parseFloat(bmiW.value);
+                const h = parseFloat(bmiH.value) / 100;
+                if (w > 0 && h > 0) {
+                    const bmi = (w / (h * h)).toFixed(1);
+                    document.getElementById('res-bmi-val').innerText = bmi;
+                    let cat = "תקין";
+                    if (bmi < 18.5) cat = "תת-משקל";
+                    else if (bmi >= 25 && bmi < 30) cat = "עודף משקל";
+                    else if (bmi >= 30) cat = "השמנה";
+                    document.getElementById('res-bmi-cat').innerText = cat;
+                } else {
+                    document.getElementById('res-bmi-val').innerText = "-";
+                    document.getElementById('res-bmi-cat').innerText = "";
+                }
+            }
+            bmiW?.addEventListener('input', calcBMI);
+            bmiH?.addEventListener('input', calcBMI);
+
+            // MAP
+            const sbp = document.getElementById('calc-map-sbp');
+            const dbp = document.getElementById('calc-map-dbp');
+            function calcMAP() {
+                const s = parseFloat(sbp.value);
+                const d = parseFloat(dbp.value);
+                if (s > 0 && d > 0) {
+                    const map = Math.round((s + 2 * d) / 3);
+                    document.getElementById('res-map-val').innerText = map;
+                    let cat = (map >= 70 && map <= 100) ? "תקין (70-100 mmHg)" : "מחוץ לטווח התקין";
+                    document.getElementById('res-map-cat').innerText = cat;
+                } else {
+                    document.getElementById('res-map-val').innerText = "-";
+                    document.getElementById('res-map-cat').innerText = "";
+                }
+            }
+            sbp?.addEventListener('input', calcMAP);
+            dbp?.addEventListener('input', calcMAP);
+
+            // Anion Gap
+            const na = document.getElementById('calc-ag-na');
+            const cl = document.getElementById('calc-ag-cl');
+            const hco3 = document.getElementById('calc-ag-hco3');
+            function calcAG() {
+                const n = parseFloat(na.value);
+                const c = parseFloat(cl.value);
+                const h = parseFloat(hco3.value);
+                if (n > 0 && c > 0 && h > 0) {
+                    const ag = (n - (c + h)).toFixed(1);
+                    document.getElementById('res-ag-val').innerText = ag;
+                    let cat = (ag >= 8 && ag <= 12) ? "תקין (8-12 mEq/L)" : (ag > 12 ? "High Anion Gap" : "נמוך");
+                    document.getElementById('res-ag-cat').innerText = cat;
+                } else {
+                    document.getElementById('res-ag-val').innerText = "-";
+                    document.getElementById('res-ag-cat').innerText = "";
+                }
+            }
+            na?.addEventListener('input', calcAG);
+            cl?.addEventListener('input', calcAG);
+            hco3?.addEventListener('input', calcAG);
+        }
+
+        // --- MEDICAL PEARLS ---
+        document.getElementById('pearl-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const category = document.getElementById('pearl-category').value;
+            const title = document.getElementById('pearl-title').value.trim();
+            const note = document.getElementById('pearl-note').value.trim();
+            if (!title || !note) return;
+
+            appData.pearls.unshift({ id: Date.now(), category, title, note });
+            saveDataToCloud();
+            renderPearls();
+            e.target.reset();
+        });
+
+        window.deletePearl = function(id) {
+            if (confirm('האם למחוק פנינה רפואית זו?')) {
+                appData.pearls = appData.pearls.filter(p => p.id !== id);
+                saveDataToCloud();
+                renderPearls();
+            }
+        };
+
+        document.getElementById('pearl-search')?.addEventListener('input', renderPearls);
+
+        function renderPearls() {
+            const container = document.getElementById('pearls-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const query = document.getElementById('pearl-search')?.value.toLowerCase() || '';
+            const filtered = appData.pearls.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.note.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 py-6 text-sm">אין פנינים רפואיות להצגה.</p>`;
+                return;
+            }
+
+            filtered.forEach(p => {
+                container.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2 relative group hover:border-brand-300 transition">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-brand-100 text-brand-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full">${p.category}</span>
+                                <h3 class="font-black text-slate-900 text-sm">${p.title}</h3>
+                            </div>
+                            <button onclick="deletePearl(${p.id})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1 text-slate-400 hover:text-red-600 transition">מחק</button>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${p.note}</p>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>

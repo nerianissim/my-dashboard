@@ -778,7 +778,7 @@
             { id: 1, title: 'Google Drive', url: 'https://drive.google.com', icon: '📁' },
             { id: 2, title: 'Spotify', url: 'https://open.spotify.com', icon: '🎧' },
             { id: 3, title: 'PubMed', url: 'https://pubmed.ncbi.nlm.nih.gov', icon: '📖' },
-            { id: 4, title: 'Ynet News', url: 'https://www.ynet.co.il', icon: '📰' }
+            { id: 4, title: 'מידע אישי אריאל', url: 'https://meyda.ariel.ac.il/Portals/student', icon: '🎓' }
         ];
 
         const DEFAULT_TODOS = [
@@ -1053,7 +1053,7 @@
             });
         }
 
-        // --- SHIFTS CALCULATION LOGIC (WITH SHABBAT/HOLIDAY 150% SUPPORT) ---
+        // --- SHIFTS CALCULATION LOGIC ---
         function calculateShiftPay(totalHours, hourlyRate, shiftType) {
             shiftType = shiftType || 'regular';
             let regularHours = Math.min(totalHours, 8);

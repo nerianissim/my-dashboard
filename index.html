@@ -138,17 +138,6 @@
                 </div>
             </div>
 
-            <!-- GOOGLE CALENDAR EVENTS CARD -->
-            <div class="space-y-4 pt-2">
-                <div class="flex items-center justify-between max-w-5xl">
-                    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>📅</span> אירועי יומן גוגל (היום ומחר)</h2>
-                    <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg font-bold">🔒 סנכרון פרטי ומאובטח</span>
-                </div>
-                <div id="calendar-events-container" class="space-y-2.5 max-w-5xl">
-                    <div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm text-center text-xs text-slate-400">טוען אירועים מהיומן האישי...</div>
-                </div>
-            </div>
-
             <div class="space-y-4 pt-2">
                 <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>💼</span> עבודה</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl">
@@ -673,8 +662,7 @@
                 { id: 3, name: 'כירורגיה', date: '2027-08-08' },
                 { id: 4, name: 'ילדים', date: '2027-09-20' }
             ],
-            pearls: [...DEFAULT_PEARLS],
-            calendarEvents: []
+            pearls: [...DEFAULT_PEARLS]
         };
 
         // GLOBAL TAB SWITCHING FUNCTIONS
@@ -784,38 +772,6 @@
             renderExams();
             renderRotations();
             renderPearls();
-            renderCalendarEvents();
-        }
-
-        // --- CALENDAR EVENTS RENDERING ---
-        function renderCalendarEvents() {
-            const container = document.getElementById('calendar-events-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            const events = appData.calendarEvents || [];
-
-            if (events.length === 0) {
-                container.innerHTML = `<div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm text-center text-xs text-slate-400">אין אירועים מתוכננים ביומן להיום ולמחר.</div>`;
-                return;
-            }
-
-            events.forEach(evt => {
-                const startDate = new Date(evt.start);
-                const isToday = new Date().toDateString() === startDate.toDateString();
-                const badgeColor = isToday ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-purple-50 text-purple-700 border-purple-200';
-                const dayLabel = isToday ? 'היום' : 'מחר';
-                const timeStr = evt.isAllDay ? 'כל היום' : startDate.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
-
-                container.innerHTML += `
-                    <div class="flex items-center justify-between p-3.5 bg-white border border-slate-200/80 rounded-2xl shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg border ${badgeColor}">${dayLabel} | ${timeStr}</span>
-                            <p class="text-sm font-bold text-slate-800">${evt.title}</p>
-                        </div>
-                    </div>
-                `;
-            });
         }
 
         // --- PWA INSTALLATION PROMPT ---

@@ -84,16 +84,16 @@
             </div>
 
             <nav class="space-y-3">
-                <button type="button" data-tab="main" id="btn-main" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition bg-brand-600 text-white shadow-lg shadow-blue-600/30 cursor-pointer text-right">
+                <button type="button" id="btn-main" onclick="switchMainTab('main')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition bg-brand-600 text-white shadow-lg shadow-blue-600/30 cursor-pointer text-right">
                     <span class="text-xl">🏠</span> ראשי
                 </button>
-                <button type="button" data-tab="shifts" id="btn-shifts" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                <button type="button" id="btn-shifts" onclick="switchMainTab('shifts')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">💼</span> ניהול משמרות
                 </button>
-                <button type="button" data-tab="fitness" id="btn-fitness" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                <button type="button" id="btn-fitness" onclick="switchMainTab('fitness')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">🏃</span> אימונים וכושר
                 </button>
-                <button type="button" data-tab="studies" id="btn-studies" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
+                <button type="button" id="btn-studies" onclick="switchMainTab('studies')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">📚</span> לימודים ורפואה
                 </button>
             </nav>
@@ -135,6 +135,17 @@
                         <p class="text-xs text-slate-500 font-semibold">השעה הנוכחית</p>
                         <p id="live-time" class="text-2xl font-black text-slate-900 mt-1">טוען...</p>
                     </div>
+                </div>
+            </div>
+
+            <!-- GOOGLE CALENDAR EVENTS CARD -->
+            <div class="space-y-4 pt-2">
+                <div class="flex items-center justify-between max-w-5xl">
+                    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>📅</span> אירועי יומן גוגל (היום ומחר)</h2>
+                    <span class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg font-bold">🔒 סנכרון פרטי ומאובטח</span>
+                </div>
+                <div id="calendar-events-container" class="space-y-2.5 max-w-5xl">
+                    <div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm text-center text-xs text-slate-400">טוען אירועים מהיומן האישי...</div>
                 </div>
             </div>
 
@@ -300,9 +311,9 @@
             </div>
 
             <div class="sub-tabs-header">
-                <button type="button" class="sub-tab-btn active" onclick="openFitnessSubTab(event, 'sub-wl')">🏋️ משקלי עבודה & RIR</button>
-                <button type="button" class="sub-tab-btn" onclick="openFitnessSubTab(event, 'sub-gym')">🤸 ג׳ימנסטיקה & RIR</button>
-                <button type="button" class="sub-tab-btn" onclick="openFitnessSubTab(event, 'sub-metcon')">⏱️ בנצ'מארקים ומדדי אירובי</button>
+                <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-fitness', 'sub-wl', this)">🏋️ משקלי עבודה & RIR</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-fitness', 'sub-gym', this)">🤸 ג׳ימנסטיקה & RIR</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-fitness', 'sub-metcon', this)">⏱️ בנצ'מארקים ומדדי אירובי</button>
             </div>
 
             <!-- SUB TAB: WEIGHTLIFTING -->
@@ -392,9 +403,9 @@
             </div>
 
             <div class="sub-tabs-header">
-                <button type="button" class="sub-tab-btn active" onclick="openStudiesSubTab(event, 'sub-rotations')">📅 סבבים ומבחנים</button>
-                <button type="button" class="sub-tab-btn" onclick="openStudiesSubTab(event, 'sub-med-calc')">🧮 מחשבונים רפואיים</button>
-                <button type="button" class="sub-tab-btn" onclick="openStudiesSubTab(event, 'sub-med-pearls')">💡 פנינים רפואיות</button>
+                <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-studies', 'sub-rotations', this)">📅 סבבים ומבחנים</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-med-calc', this)">🧮 מחשבונים רפואיים</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-med-pearls', this)">💡 פנינים רפואיות</button>
             </div>
 
             <!-- SUB TAB 1: ROTATIONS & EXAMS -->
@@ -662,8 +673,39 @@
                 { id: 3, name: 'כירורגיה', date: '2027-08-08' },
                 { id: 4, name: 'ילדים', date: '2027-09-20' }
             ],
-            pearls: [...DEFAULT_PEARLS]
+            pearls: [...DEFAULT_PEARLS],
+            calendarEvents: []
         };
+
+        // GLOBAL TAB SWITCHING FUNCTIONS
+        function switchMainTab(targetTab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+                btn.classList.add('text-slate-300');
+            });
+
+            const targetEl = document.getElementById('tab-' + targetTab);
+            if (targetEl) targetEl.classList.remove('hidden');
+
+            const activeBtn = document.getElementById('btn-' + targetTab);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-300');
+                activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
+            }
+        }
+
+        function openSubTab(parentTabId, subTabId, btnEl) {
+            const parent = document.getElementById(parentTabId);
+            if (!parent) return;
+
+            parent.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
+            parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+
+            const targetSub = document.getElementById(subTabId);
+            if (targetSub) targetSub.classList.add('active');
+            if (btnEl) btnEl.classList.add('active');
+        }
 
         function mergeDataDefaults() {
             if (!appData.fitness) appData.fitness = {};
@@ -729,37 +771,6 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
 
-            // Tabs Navigation
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
-            tabButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const targetTab = btn.getAttribute('data-tab');
-                    tabContents.forEach(content => content.classList.add('hidden'));
-                    tabButtons.forEach(b => {
-                        b.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
-                        b.classList.add('text-slate-300');
-                    });
-                    document.getElementById('tab-' + targetTab).classList.remove('hidden');
-                    btn.classList.remove('text-slate-300');
-                    btn.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
-                });
-            });
-
-            window.openFitnessSubTab = function(evt, subTabId) {
-                document.querySelectorAll('#tab-fitness .sub-tab-content').forEach(c => c.classList.remove('active'));
-                document.querySelectorAll('#tab-fitness .sub-tab-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById(subTabId).classList.add('active');
-                evt.currentTarget.classList.add('active');
-            };
-
-            window.openStudiesSubTab = function(evt, subTabId) {
-                document.querySelectorAll('#tab-studies .sub-tab-content').forEach(c => c.classList.remove('active'));
-                document.querySelectorAll('#tab-studies .sub-tab-btn').forEach(b => b.classList.remove('active'));
-                document.getElementById(subTabId).classList.add('active');
-                evt.currentTarget.classList.add('active');
-            };
-
             // Export to Excel Functionality
             document.getElementById('export-excel-btn')?.addEventListener('click', exportShiftsToExcel);
 
@@ -773,9 +784,41 @@
             renderExams();
             renderRotations();
             renderPearls();
+            renderCalendarEvents();
         }
 
-        // --- PWA INSTALLATION SERVICE WORKER ---
+        // --- CALENDAR EVENTS RENDERING ---
+        function renderCalendarEvents() {
+            const container = document.getElementById('calendar-events-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const events = appData.calendarEvents || [];
+
+            if (events.length === 0) {
+                container.innerHTML = `<div class="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm text-center text-xs text-slate-400">אין אירועים מתוכננים ביומן להיום ולמחר.</div>`;
+                return;
+            }
+
+            events.forEach(evt => {
+                const startDate = new Date(evt.start);
+                const isToday = new Date().toDateString() === startDate.toDateString();
+                const badgeColor = isToday ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-purple-50 text-purple-700 border-purple-200';
+                const dayLabel = isToday ? 'היום' : 'מחר';
+                const timeStr = evt.isAllDay ? 'כל היום' : startDate.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+
+                container.innerHTML += `
+                    <div class="flex items-center justify-between p-3.5 bg-white border border-slate-200/80 rounded-2xl shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold px-2.5 py-1 rounded-lg border ${badgeColor}">${dayLabel} | ${timeStr}</span>
+                            <p class="text-sm font-bold text-slate-800">${evt.title}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- PWA INSTALLATION PROMPT ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
@@ -789,15 +832,6 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
             }
-        }
-
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                self.addEventListener('install', e => self.skipWaiting());
-                self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
-            `;
-            const blob = new Blob([swCode], { type: 'application/javascript' });
-            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
         }
 
         // --- SHIFTS ---
@@ -1382,7 +1416,7 @@
                                 <span class="bg-brand-100 text-brand-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full">${p.category}</span>
                                 <h3 class="font-black text-slate-900 text-sm">${p.title}</h3>
                             </div>
-                            <button onclick="deletePearl(${p.id})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1 text-slate-400 hover:text-red-600 transition">מחק</button>
+                            <button onclick="deletePearl(${p.id})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1 transition">מחק</button>
                         </div>
                         <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${p.note}</p>
                     </div>

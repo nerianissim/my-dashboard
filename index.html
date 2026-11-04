@@ -916,37 +916,43 @@
 
         function mergeDataDefaults() {
             if (!appData.fitness) appData.fitness = {};
-            appData.fitness.Weightlifting = Object.assign({}, DEFAULT_WEIGHTLIFTING, appData.fitness.Weightlifting);
-            appData.fitness.Gymnastics = Object.assign({}, DEFAULT_GYMNASTICS, appData.fitness.Gymnastics);
-            if (!appData.pearls || appData.pearls.length === 0) appData.pearls = [...DEFAULT_PEARLS];
-            if (!appData.todos) appData.todos = [...DEFAULT_TODOS];
-            if (!appData.quickLinks || appData.quickLinks.length === 0) appData.quickLinks = [...DEFAULT_QUICK_LINKS];
-            if (!appData.warranties || appData.warranties.length === 0) appData.warranties = [...DEFAULT_WARRANTIES];
+            appData.fitness.Weightlifting = Object.assign({}, DEFAULT_WEIGHTLIFTING, appData.fitness.Weightlifting || {});
+            appData.fitness.Gymnastics = Object.assign({}, DEFAULT_GYMNASTICS, appData.fitness.Gymnastics || {});
+            
+            // Only populate defaults if the property is completely missing/undefined (preserves user deletions)
+            if (!Array.isArray(appData.pearls)) appData.pearls = [...DEFAULT_PEARLS];
+            if (!Array.isArray(appData.todos)) appData.todos = [...DEFAULT_TODOS];
+            if (!Array.isArray(appData.quickLinks)) appData.quickLinks = [...DEFAULT_QUICK_LINKS];
+            if (!Array.isArray(appData.warranties)) appData.warranties = [...DEFAULT_WARRANTIES];
         }
 
         async function loadDataFromCloud() {
-            if (!CLOUD_URL) {
-                const local = localStorage.getItem('medcontrol_all_data_v1');
-                if (local) appData = JSON.parse(local);
-                mergeDataDefaults();
-                initApp();
-                return;
+            const local = localStorage.getItem('medcontrol_all_data_v1');
+            if (local) {
+                try {
+                    appData = JSON.parse(local);
+                } catch (e) {
+                    console.error("Error parsing local data", e);
+                }
             }
+            mergeDataDefaults();
+            initApp();
+
+            if (!CLOUD_URL) return;
 
             try {
                 const res = await fetch(CLOUD_URL);
                 const json = await res.json();
-                if (json && json.shifts) {
-                    appData = json;
+                if (json && typeof json === 'object') {
+                    appData = { ...appData, ...json };
+                    mergeDataDefaults();
+                    localStorage.setItem('medcontrol_all_data_v1', JSON.stringify(appData));
+                    initApp();
                 }
                 document.getElementById('sync-status').innerHTML = '<span>🟢</span> מסונכרן לענן';
             } catch (e) {
                 document.getElementById('sync-status').innerHTML = '<span>🔴</span> מצב אופליין (מקומי)';
-                const local = localStorage.getItem('medcontrol_all_data_v1');
-                if (local) appData = JSON.parse(local);
             }
-            mergeDataDefaults();
-            initApp();
         }
 
         async function saveDataToCloud() {

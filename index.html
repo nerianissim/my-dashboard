@@ -270,6 +270,14 @@
                                 <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             </div>
                             <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">שם העבודה</label>
+                                <input type="text" id="shift-job" placeholder="לדוגמה: הדרכה / חובש / אבטחה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מקום / סניף</label>
+                                <input type="text" id="shift-location" placeholder="לדוגמה: שיבא / תל אביב" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">מחלקה</label>
                                 <select id="shift-dept" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                                     <option value="הדרכה">הדרכה</option>
@@ -321,6 +329,8 @@
                             <thead>
                                 <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
                                     <th class="p-2.5 rounded-r-xl">תאריך</th>
+                                    <th class="p-2.5">שם העבודה</th>
+                                    <th class="p-2.5">מקום</th>
                                     <th class="p-2.5">מחלקה</th>
                                     <th class="p-2.5 text-center">סוג יום</th>
                                     <th class="p-2.5 text-center">רגילות</th>
@@ -788,8 +798,8 @@
 
         let appData = {
             shifts: [
-                { id: 1, date: '2026-10-01', dept: 'הדרכה', hours: 9, km: 50, kmRate: 2, rate: 70, shiftType: 'regular' },
-                { id: 2, date: '2026-10-05', dept: 'מבצעים', hours: 11, km: 20, kmRate: 2, rate: 70, shiftType: 'weekend' }
+                { id: 1, date: '2026-10-01', job: 'הדרכה', location: 'מרכז', dept: 'הדרכה', hours: 9, km: 50, kmRate: 2, rate: 70, shiftType: 'regular' },
+                { id: 2, date: '2026-10-05', job: 'חובש', location: 'תל אביב', dept: 'מבצעים', hours: 11, km: 20, kmRate: 2, rate: 70, shiftType: 'weekend' }
             ],
             fitness: {
                 "Weightlifting": { ...DEFAULT_WEIGHTLIFTING },
@@ -1079,6 +1089,8 @@
             e.preventDefault();
             const editId = document.getElementById('shift-id').value;
             const date = document.getElementById('shift-date').value;
+            const job = document.getElementById('shift-job').value.trim();
+            const location = document.getElementById('shift-location').value.trim();
             const dept = document.getElementById('shift-dept').value;
             const shiftType = document.getElementById('shift-type').value || 'regular';
             const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
@@ -1090,10 +1102,10 @@
             if (editId) {
                 const index = appData.shifts.findIndex(s => s.id == editId);
                 if (index !== -1) {
-                    appData.shifts[index] = { id: Number(editId), date, dept, shiftType, hours, km, kmRate, rate };
+                    appData.shifts[index] = { id: Number(editId), date, job, location, dept, shiftType, hours, km, kmRate, rate };
                 }
             } else {
-                appData.shifts.push({ id: Date.now(), date, dept, shiftType, hours, km, kmRate, rate });
+                appData.shifts.push({ id: Date.now(), date, job, location, dept, shiftType, hours, km, kmRate, rate });
             }
 
             saveDataToCloud();
@@ -1107,6 +1119,8 @@
 
             document.getElementById('shift-id').value = shift.id;
             document.getElementById('shift-date').value = shift.date;
+            document.getElementById('shift-job').value = shift.job || '';
+            document.getElementById('shift-location').value = shift.location || '';
             document.getElementById('shift-dept').value = shift.dept;
             document.getElementById('shift-type').value = shift.shiftType || 'regular';
             document.getElementById('shift-hours').value = shift.hours;
@@ -1124,6 +1138,8 @@
         window.cancelEditShift = function() {
             document.getElementById('shift-id').value = '';
             document.getElementById('shift-form').reset();
+            document.getElementById('shift-job').value = '';
+            document.getElementById('shift-location').value = '';
             document.getElementById('shift-date').valueAsDate = new Date();
             document.getElementById('shift-type').value = 'regular';
             document.getElementById('shift-form-title').innerText = 'הוספת משמרת חדשה';
@@ -1160,7 +1176,7 @@
             let totalHours = 0, totalKm = 0, totalIncome = 0, count = 0;
 
             if (appData.shifts.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="11" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="13" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>';
             }
 
             appData.shifts.forEach(s => {
@@ -1194,7 +1210,9 @@
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50 transition border-b border-slate-100">
                         <td class="p-2.5 text-slate-700 font-medium">${s.date}</td>
-                        <td class="p-2.5 font-semibold text-slate-900">${s.dept}</td>
+                        <td class="p-2.5 font-bold text-slate-900">${s.job || '-'}</td>
+                        <td class="p-2.5 text-slate-700">${s.location || '-'}</td>
+                        <td class="p-2.5 font-semibold text-slate-800">${s.dept}</td>
                         <td class="p-2.5 text-center">${typeBadge}</td>
                         <td class="p-2.5 text-center text-slate-700">${pay.regularHours} ש' (${Math.round(pay.regMult*100)}%)</td>
                         <td class="p-2.5 text-center text-amber-600 font-medium">${ot125Str}</td>
@@ -1231,6 +1249,8 @@
                     if (!shiftsArray || shiftsArray.length === 0) {
                         return [{
                             "תאריך": "אין משמרות",
+                            "שם העבודה": "-",
+                            "מקום": "-",
                             "מחלקה": "-",
                             "סוג יום": "-",
                             "שעות רגילות": 0,
@@ -1262,6 +1282,8 @@
 
                         return {
                             "תאריך": s.date,
+                            "שם העבודה": s.job || '-',
+                            "מקום": s.location || '-',
                             "מחלקה": s.dept,
                             "סוג יום": sType === 'weekend' ? 'שבת/חג (150%)' : 'יום חול',
                             "שעות רגילות": pay.regularHours,
@@ -1276,6 +1298,8 @@
 
                     rows.push({
                         "תאריך": "סה\"כ כולל",
+                        "שם העבודה": "-",
+                        "מקום": "-",
                         "מחלקה": `${shiftsArray.length} משמרות`,
                         "סוג יום": "-",
                         "שעות רגילות": Number(totalReg.toFixed(1)),

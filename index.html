@@ -29,6 +29,41 @@
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Heebo', sans-serif; }
+        
+        /* Sub-tabs CSS */
+        .sub-tabs-header {
+            display: flex;
+            gap: 8px;
+            background-color: #FFFFFF;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .sub-tab-btn {
+            background-color: transparent;
+            color: #64748B;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .sub-tab-btn.active {
+            background-color: #2563EB;
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+
+        .sub-tab-content { display: none; }
+        .sub-tab-content.active { display: block; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row selection:bg-brand-500 selection:text-white">
@@ -106,7 +141,7 @@
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center justify-between gap-4">
                     <div class="overflow-hidden">
                         <p class="text-xs text-slate-500 font-semibold">שעות עבודה החודש</p>
-                        <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
+                        <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">36.5 ש'</p>
                     </div>
                     <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shrink-0 shadow-inner">⏱️</div>
                 </div>
@@ -122,7 +157,7 @@
                 <div id="quick-link-form-container" class="hidden bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm space-y-3">
                     <h3 class="text-sm font-bold text-slate-800">הוספת קישור מהיר חדש</h3>
                     <form id="quick-link-form" onsubmit="addQuickLink(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                        <input type="text" id="ql-title" placeholder="שם האתר (למשל: Spotify)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                        <input type="text" id="ql-title" placeholder="שם האתר" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
                         <input type="url" id="ql-url" placeholder="כתובת URL (https://...)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
                         <div class="flex gap-2">
                             <input type="text" id="ql-icon" placeholder="אימוג'י" maxlength="2" value="🌐" class="w-16 text-center bg-slate-50 border border-slate-300 rounded-xl px-2 py-2 text-xs text-slate-800">
@@ -152,27 +187,6 @@
                     <div id="todo-list-container" class="space-y-2 pt-2"></div>
                 </div>
             </div>
-
-            <!-- CLINICAL ROTATIONS SUMMARY -->
-            <div class="space-y-4 pt-2 max-w-5xl">
-                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>🏥</span> סבבים קליניים קרובים</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0">🟢</div>
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold">סבב נוכחי</p>
-                            <p id="home-current-rotation" class="text-lg font-black text-slate-900 mt-0.5">פנימית א' (שיבא)</p>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0">🔜</div>
-                        <div>
-                            <p class="text-xs text-slate-500 font-semibold">סבב הבא</p>
-                            <p id="home-next-rotation" class="text-lg font-black text-slate-900 mt-0.5">כירורגיה ב' (איכילוב)</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </section>
 
         <!-- TAB 1: SHIFTS (ניהול משמרות) -->
@@ -180,7 +194,7 @@
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
-                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, הפרדה לשעות נוספות/שבת, קילומטרז' וייצוא לאקסל.</p>
+                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, תעריפים, קילומטראז' וייצוא לאקסל.</p>
                 </div>
             </div>
 
@@ -269,7 +283,7 @@
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm flex flex-col justify-between">
                     <div>
                         <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-base font-bold text-slate-900">היסטוריית משמרות</h3>
+                            <h3 class="text-base font-bold text-slate-900">היסטוריית משמרות (4 משמרות רשומות)</h3>
                             <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
                                 <span>📊</span> ייצוא לאקסל (.xlsx)
                             </button>
@@ -280,163 +294,287 @@
             </div>
         </section>
 
-        <!-- TAB 2: FITNESS (אימונים וכושר) -->
-        <section id="tab-fitness" class="tab-content hidden space-y-8">
+        <!-- TAB 2: FITNESS (אימונים וכושר - עם לשוניות פנימיות) -->
+        <section id="tab-fitness" class="tab-content hidden space-y-6">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">אימונים וכושר</h1>
-                <p class="text-slate-500 text-sm mt-1">יומן אימונים, תרגילי משקולות, אירובי וטיימר מנוחה בין סטים.</p>
+                <p class="text-slate-500 text-sm mt-1">ניהול תוכניות אימון, מעקב משקלים, יומן אימונים וטיימר מנוחה.</p>
             </div>
 
-            <!-- REST TIMER WIDGET -->
-            <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm max-w-4xl flex flex-col sm:flex-row justify-between items-center gap-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl font-bold">⏱️</div>
-                    <div>
-                        <h3 class="text-base font-bold text-slate-900">טיימר מנוחה בין סטים</h3>
-                        <p id="rest-timer-display" class="text-xl font-black text-brand-600 mt-0.5">00:00</p>
-                    </div>
-                </div>
-                <div class="flex gap-2">
-                    <button type="button" onclick="startRestTimer(60)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">60 שניות</button>
-                    <button type="button" onclick="startRestTimer(90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">90 שניות</button>
-                    <button type="button" onclick="startRestTimer(120)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">120 שניות</button>
-                    <button type="button" onclick="stopRestTimer()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-3 py-2 rounded-xl text-xs">עצור</button>
-                </div>
+            <!-- Fitness Sub-tabs Header -->
+            <div class="sub-tabs-header">
+                <button id="btn-sub-fit-log" onclick="switchSubTab('sub-fit', 'log')" class="sub-tab-btn active">🏋️‍♂️ יומן וטיימר</button>
+                <button id="btn-sub-fit-routine" onclick="switchSubTab('sub-fit', 'routine')" class="sub-tab-btn">📊 תכנית אימונים ומשקלים</button>
+                <button id="btn-sub-fit-health" onclick="switchSubTab('sub-fit', 'health')" class="sub-tab-btn">💧 משקל גוף ושתייה</button>
             </div>
 
-            <!-- WORKOUT FORM -->
-            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-4">
-                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-                    <span>🏋️‍♂️</span> תיעוד אימון חדש
-                </h2>
-                <form id="fitness-form" onsubmit="addWorkout(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
-                        <input type="date" id="fit-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">סוג אימון</label>
-                        <select id="fit-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700">
-                            <option value="חזה וכתפיים (Push)">חזה וכתפיים (Push)</option>
-                            <option value="גב וביצפס (Pull)">גב וביצפס (Pull)</option>
-                            <option value="רגליים ובטן (Legs)">רגליים ובטן (Legs)</option>
-                            <option value="אימון אירובי / ריצה">אימון אירובי / ריצה</option>
-                            <option value="אימון פונקציונלי / קרוספיט">אימון פונקציונלי</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">שם התרגיל / משקל (ק"ג)</label>
-                        <input type="text" id="fit-exercise" placeholder="למשל: בנץ' פרס 80 קג" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">סטים וחזרות / הערות</label>
-                        <div class="flex gap-2">
-                            <input type="text" id="fit-notes" placeholder="4 סטים x 10 חזרות" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-4 py-2 transition shrink-0">שמור</button>
+            <!-- Sub-tab 1: Workout Log & Rest Timer -->
+            <div id="sub-fit-log" class="sub-tab-content active space-y-6 max-w-4xl">
+                <!-- REST TIMER WIDGET -->
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl font-bold">⏱️</div>
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900">טיימר מנוחה בין סטים</h3>
+                            <p id="rest-timer-display" class="text-xl font-black text-brand-600 mt-0.5">00:00</p>
                         </div>
                     </div>
-                </form>
+                    <div class="flex gap-2">
+                        <button type="button" onclick="startRestTimer(60)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">60 שניות</button>
+                        <button type="button" onclick="startRestTimer(90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">90 שניות</button>
+                        <button type="button" onclick="startRestTimer(120)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">120 שניות</button>
+                        <button type="button" onclick="stopRestTimer()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-3 py-2 rounded-xl text-xs">עצור</button>
+                    </div>
+                </div>
+
+                <!-- WORKOUT FORM -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <h2 class="text-base font-bold text-slate-900">תיעוד אימון חדש</h2>
+                    <form id="fitness-form" onsubmit="addWorkout(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                            <input type="date" id="fit-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">סוג אימון</label>
+                            <select id="fit-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700">
+                                <option value="חזה וכתפיים (Push)">חזה וכתפיים (Push)</option>
+                                <option value="גב וביצפס (Pull)">גב וביצפס (Pull)</option>
+                                <option value="רגליים ובטן (Legs)">רגליים ובטן (Legs)</option>
+                                <option value="אירובי / ריצה">אירובי / ריצה</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תרגיל ומשקל (ק"ג)</label>
+                            <input type="text" id="fit-exercise" placeholder="למשל: בנץ' פרס 80 קג" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">סטים וחזרות</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="fit-notes" placeholder="4 סטים x 10 חזרות" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                                <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-4 py-2 transition shrink-0">שמור</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- WORKOUT HISTORY -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-3">
+                    <h3 class="text-base font-bold text-slate-900">היסטוריית אימונים</h3>
+                    <div id="fitness-list-container" class="space-y-2"></div>
+                </div>
             </div>
 
-            <!-- WORKOUT HISTORY -->
-            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-3">
-                <h3 class="text-base font-bold text-slate-900">היסטוריית אימונים</h3>
-                <div id="fitness-list-container" class="space-y-2"></div>
+            <!-- Sub-tab 2: Complete Weight Tables & Program -->
+            <div id="sub-fit-routine" class="sub-tab-content space-y-6 max-w-4xl">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <span>💪</span> טבלת משקלי עבודה ותכנית PPL
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">יום / קבוצת שרירים</th>
+                                    <th class="p-3">תרגיל מפתח</th>
+                                    <th class="p-3">סטים x חזרות</th>
+                                    <th class="p-3">משקל עבודה נוכחי</th>
+                                    <th class="p-3">יעד קרוב</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-medium">
+                                <tr><td class="p-3 font-bold text-brand-600">Push (חזה/כתפיים/יד אחורית)</td><td class="p-3">Bench Press (לחיצת חזה מוט)</td><td class="p-3">4 x 8</td><td class="p-3 font-black text-slate-900">80 ק"ג</td><td class="p-3 text-emerald-600 font-bold">85 ק"ג</td></tr>
+                                <tr><td class="p-3 font-bold text-brand-600">Push (חזה/כתפיים/יד אחורית)</td><td class="p-3">Overhead Press (לחיצת כתפיים)</td><td class="p-3">3 x 10</td><td class="p-3 font-black text-slate-900">50 ק"ג</td><td class="p-3 text-emerald-600 font-bold">55 ק"ג</td></tr>
+                                <tr><td class="p-3 font-bold text-indigo-600">Pull (גב/יד קדמית)</td><td class="p-3">Barbell Row (חתירה במוט)</td><td class="p-3">4 x 8</td><td class="p-3 font-black text-slate-900">75 ק"ג</td><td class="p-3 text-emerald-600 font-bold">80 ק"ג</td></tr>
+                                <tr><td class="p-3 font-bold text-indigo-600">Pull (גב/יד קדמית)</td><td class="p-3">Pull-ups (מתח עם משקל)</td><td class="p-3">3 x 10</td><td class="p-3 font-black text-slate-900">גוף + 10 ק"ג</td><td class="p-3 text-emerald-600 font-bold">+15 ק"ג</td></tr>
+                                <tr><td class="p-3 font-bold text-amber-600">Legs (רגליים/בטן)</td><td class="p-3">Squat (סקוואט מוט)</td><td class="p-3">4 x 6</td><td class="p-3 font-black text-slate-900">100 ק"ג</td><td class="p-3 text-emerald-600 font-bold">110 ק"ג</td></tr>
+                                <tr><td class="p-3 font-bold text-amber-600">Legs (רגליים/בטן)</td><td class="p-3">Romanian Deadlift (דדליפט רומני)</td><td class="p-3">3 x 10</td><td class="p-3 font-black text-slate-900">90 ק"ג</td><td class="p-3 text-emerald-600 font-bold">95 ק"ג</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab 3: Body Weight & Hydration -->
+            <div id="sub-fit-health" class="sub-tab-content space-y-6 max-w-4xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                        <h3 class="text-base font-bold text-slate-900">💧 מעקב שתיית מים יומי</h3>
+                        <div class="flex items-center justify-between bg-blue-50 p-4 rounded-xl">
+                            <div>
+                                <p class="text-xs text-blue-600 font-bold">יעד שתייה: 2.5 ליטר</p>
+                                <p id="water-count-text" class="text-2xl font-black text-blue-900 mt-1">6 / 10 כוסות</p>
+                            </div>
+                            <button onclick="addWaterGlass()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition">+ כוס מים</button>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                        <h3 class="text-base font-bold text-slate-900">⚖️ מעקב משקל גוף</h3>
+                        <div class="flex gap-2">
+                            <input type="number" id="weight-input" step="0.1" placeholder="משקל נוכחי (ק״ג)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs">
+                            <button onclick="logBodyWeight()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shrink-0">שמור</button>
+                        </div>
+                        <p class="text-xs text-slate-500 font-semibold">שקילה אחרונה: <strong class="text-slate-900">76.4 ק"ג (לפני יומיים)</strong></p>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- TAB 3: STUDIES (לימודים ורפואה) -->
-        <section id="tab-studies" class="tab-content hidden space-y-8">
+        <!-- TAB 3: STUDIES (לימודים ורפואה - עם לשוניות פנימיות) -->
+        <section id="tab-studies" class="tab-content hidden space-y-6">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">לימודים ורפואה</h1>
                 <p class="text-slate-500 text-sm mt-1">מעקב אקדמי, סבבים קליניים, שליפי מעבדה ועבודת גמר.</p>
             </div>
 
-            <!-- 🎓 עבודת גמר - מעקב מטופלים -->
-            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold">📊</div>
-                        <div>
-                            <h2 class="text-lg font-black text-slate-900">מעקב עבודת גמר</h2>
-                            <p class="text-xs text-slate-500">סקירת מטופלים בטבלה המחקרית</p>
-                        </div>
-                    </div>
-                    <span id="thesis-percent-badge" class="bg-brand-50 text-brand-600 border border-brand-200 px-3 py-1 rounded-full text-xs font-black">0% הושלם</span>
-                </div>
+            <!-- Studies Sub-tabs Header -->
+            <div class="sub-tabs-header">
+                <button id="btn-sub-std-thesis" onclick="switchSubTab('sub-std', 'thesis')" class="sub-tab-btn active">📊 עבודת גמר (277/377)</button>
+                <button id="btn-sub-std-rotations" onclick="switchSubTab('sub-std', 'rotations')" class="sub-tab-btn">🏥 סבבים קליניים</button>
+                <button id="btn-sub-std-exams" onclick="switchSubTab('sub-std', 'exams')" class="sub-tab-btn">📚 מעקב מבחנים</button>
+                <button id="btn-sub-std-labs" onclick="switchSubTab('sub-std', 'labs')" class="sub-tab-btn">📑 ערכי מעבדה</button>
+            </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <!-- Donut Chart & Progress Visual -->
-                    <div class="flex flex-col items-center justify-center relative">
-                        <div class="relative w-44 h-44 flex items-center justify-center">
-                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                <path stroke-dasharray="100, 100" class="text-slate-100" stroke-width="3.8" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                <path id="donut-segment" stroke-dasharray="0, 100" class="text-brand-600 transition-all duration-700 ease-out" stroke-width="3.8" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                            </svg>
-                            <div class="absolute flex flex-col items-center justify-center text-center">
-                                <span id="donut-percent-text" class="text-3xl font-black text-slate-900">0%</span>
-                                <span class="text-[11px] text-slate-400 font-bold">התקדמות</span>
+            <!-- Sub-tab 1: Thesis Tracker (277/377) -->
+            <div id="sub-std-thesis" class="sub-tab-content active space-y-6 max-w-4xl">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-6">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold">📊</div>
+                            <div>
+                                <h2 class="text-lg font-black text-slate-900">מעקב עבודת גמר</h2>
+                                <p class="text-xs text-slate-500">סקירת מטופלים בטבלה המחקרית</p>
                             </div>
                         </div>
-
-                        <!-- Mini Stats Footer -->
-                        <div class="flex justify-between w-full max-w-xs mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-600">
-                            <span>בוצעו: <strong id="stat-done-count" class="text-brand-600 font-black">277</strong></span>
-                            <span>נותרו: <strong id="stat-remaining-count" class="text-slate-800 font-black">100</strong></span>
-                            <span>סה"כ: <strong id="stat-total-count" class="text-slate-800 font-black">377</strong></span>
-                        </div>
+                        <span id="thesis-percent-badge" class="bg-brand-50 text-brand-600 border border-brand-200 px-3 py-1 rounded-full text-xs font-black">73% הושלם</span>
                     </div>
 
-                    <!-- Update Form & Progress Bar -->
-                    <div class="space-y-5">
-                        <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-700 mb-1.5">
-                                <span>סרגל התקדמות</span>
-                                <span id="progress-bar-text">277 / 377 מטופלים</span>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <!-- Donut Chart & Progress Visual -->
+                        <div class="flex flex-col items-center justify-center relative">
+                            <div class="relative w-44 h-44 flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                    <path stroke-dasharray="100, 100" class="text-slate-100" stroke-width="3.8" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path id="donut-segment" stroke-dasharray="73, 100" class="text-brand-600 transition-all duration-700 ease-out" stroke-width="3.8" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <div class="absolute flex flex-col items-center justify-center text-center">
+                                    <span id="donut-percent-text" class="text-3xl font-black text-slate-900">73%</span>
+                                    <span class="text-[11px] text-slate-400 font-bold">התקדמות</span>
+                                </div>
                             </div>
-                            <div class="w-full bg-slate-100 rounded-full h-3.5 p-0.5 overflow-hidden">
-                                <div id="linear-progress-bar" class="bg-brand-600 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+
+                            <div class="flex justify-between w-full max-w-xs mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-600">
+                                <span>בוצעו: <strong id="stat-done-count" class="text-brand-600 font-black">277</strong></span>
+                                <span>נותרו: <strong id="stat-remaining-count" class="text-slate-800 font-black">100</strong></span>
+                                <span>סה"כ: <strong id="stat-total-count" class="text-slate-800 font-black">377</strong></span>
                             </div>
                         </div>
 
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
-                            <label class="block text-xs font-bold text-slate-700">עדכון מיקום נוכחי</label>
-                            <div class="flex gap-2">
-                                <input type="number" id="thesis-current-input" value="277" min="0" max="377" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-brand-500">
-                                <button type="button" onclick="saveThesisProgress()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shrink-0 shadow-sm">
-                                    עדכן
-                                </button>
+                        <!-- Update Form & Progress Bar -->
+                        <div class="space-y-5">
+                            <div>
+                                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1.5">
+                                    <span>סרגל התקדמות</span>
+                                    <span id="progress-bar-text">277 / 377 מטופלים</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-3.5 p-0.5 overflow-hidden">
+                                    <div id="linear-progress-bar" class="bg-brand-600 h-full rounded-full transition-all duration-500" style="width: 73.4%"></div>
+                                </div>
                             </div>
-                            <p class="text-[11px] text-slate-400">הזן את מספר המטופל האחרון שסיימת לבדוק בטבלה.</p>
+
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+                                <label class="block text-xs font-bold text-slate-700">עדכון מיקום נוכחי</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="thesis-current-input" value="277" min="0" max="377" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <button type="button" onclick="saveThesisProgress()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shrink-0 shadow-sm">
+                                        עדכן
+                                    </button>
+                                </div>
+                                <p class="text-[11px] text-slate-400">הזן את מספר המטופל האחרון שסיימת לבדוק בטבלה.</p>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- LAB VALUES REFERENCE TABLE -->
-            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-4">
-                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                    <span>📑</span> שליף ערכי מעבדה נפוצים (Reference Range)
-                </h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                            <tr>
-                                <th class="p-2.5">בדיקה</th>
-                                <th class="p-2.5">ערך תקין</th>
-                                <th class="p-2.5">יחידות</th>
-                                <th class="p-2.5">הערה קלינית</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
-                            <tr><td class="p-2.5 font-bold">Hemoglobin (Hb)</td><td class="p-2.5">12.0 - 16.0 (F) / 13.5 - 17.5 (M)</td><td class="p-2.5">g/dL</td><td class="p-2.5 text-slate-500">אנמיה / פוליציטמיה</td></tr>
-                            <tr><td class="p-2.5 font-bold">WBC</td><td class="p-2.5">4,500 - 11,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">זיהום / דלקת</td></tr>
-                            <tr><td class="p-2.5 font-bold">Platelets (PLT)</td><td class="p-2.5">150,000 - 450,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">קרישה</td></tr>
-                            <tr><td class="p-2.5 font-bold">Sodium (Na+)</td><td class="p-2.5">135 - 145</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">מאזן נוזלים ואלקטרוליטים</td></tr>
-                            <tr><td class="p-2.5 font-bold">Potassium (K+)</td><td class="p-2.5">3.5 - 5.0</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">סיכון להפרעות קצב בלב</td></tr>
-                            <tr><td class="p-2.5 font-bold">Creatinine</td><td class="p-2.5">0.6 - 1.2</td><td class="p-2.5">mg/dL</td><td class="p-2.5 text-slate-500">תפקוד כלייתי (eGFR)</td></tr>
-                        </tbody>
-                    </table>
+            <!-- Sub-tab 2: Clinical Rotations -->
+            <div id="sub-std-rotations" class="sub-tab-content space-y-6 max-w-4xl">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-slate-900">🏥 תכנית סבבים קליניים</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3">סבב</th>
+                                    <th class="p-3">בית חולים / מחלקה</th>
+                                    <th class="p-3">משך (שבועות)</th>
+                                    <th class="p-3">סטאטוס</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-medium">
+                                <tr><td class="p-3 font-bold">פנימית א'</td><td class="p-3">מרכז רפואי שיבא</td><td class="p-3">12 שבועות</td><td class="p-3"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[11px] font-bold">בתהליך (שבוע 8)</span></td></tr>
+                                <tr><td class="p-3 font-bold">כירורגיה ב'</td><td class="p-3">איכילוב</td><td class="p-3">8 שבועות</td><td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] font-bold">סבב הבא</span></td></tr>
+                                <tr><td class="p-3 font-bold">ילדים</td><td class="p-3">שניידר</td><td class="p-3">6 שבועות</td><td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] font-bold">מתוכנן</span></td></tr>
+                                <tr><td class="p-3 font-bold">נשים ויולדות</td><td class="p-3">שיבא</td><td class="p-3">6 שבועות</td><td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] font-bold">מתוכנן</span></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab 3: Exam Prep Tracker -->
+            <div id="sub-std-exams" class="sub-tab-content space-y-6 max-w-4xl">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <h3 class="text-base font-bold text-slate-900">📚 מעקב למידה לבחינות ממשלתיות / גמר</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                <span>פנימית - חזרות ושאלות</span>
+                                <span>65% הושלם</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-brand-600 h-full rounded-full" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
+                                <span>כירורגיה - נושאי חובה</span>
+                                <span>40% הושלם</span>
+                            </div>
+                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                <div class="bg-indigo-600 h-full rounded-full" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-tab 4: Lab Values Reference -->
+            <div id="sub-std-labs" class="sub-tab-content space-y-6 max-w-4xl">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <span>📑</span> שליף ערכי מעבדה נפוצים (Reference Range)
+                    </h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right text-xs">
+                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                                <tr>
+                                    <th class="p-2.5">בדיקה</th>
+                                    <th class="p-2.5">ערך תקין</th>
+                                    <th class="p-2.5">יחידות</th>
+                                    <th class="p-2.5">הערה קלינית</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
+                                <tr><td class="p-2.5 font-bold">Hemoglobin (Hb)</td><td class="p-2.5">12.0 - 16.0 (F) / 13.5 - 17.5 (M)</td><td class="p-2.5">g/dL</td><td class="p-2.5 text-slate-500">אנמיה / פוליציטמיה</td></tr>
+                                <tr><td class="p-2.5 font-bold">WBC</td><td class="p-2.5">4,500 - 11,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">זיהום / דלקת</td></tr>
+                                <tr><td class="p-2.5 font-bold">Platelets (PLT)</td><td class="p-2.5">150,000 - 450,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">קרישה</td></tr>
+                                <tr><td class="p-2.5 font-bold">Sodium (Na+)</td><td class="p-2.5">135 - 145</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">מאזן נוזלים ואלקטרוליטים</td></tr>
+                                <tr><td class="p-2.5 font-bold">Potassium (K+)</td><td class="p-2.5">3.5 - 5.0</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">סיכון להפרעות קצב בלב</td></tr>
+                                <tr><td class="p-2.5 font-bold">Creatinine</td><td class="p-2.5">0.6 - 1.2</td><td class="p-2.5">mg/dL</td><td class="p-2.5 text-slate-500">תפקוד כלייתי (eGFR)</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
@@ -496,7 +634,7 @@
     </main>
 
     <script>
-        // Tab Switcher
+        // Main Tab Switcher
         function switchMainTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -514,6 +652,19 @@
             }
         }
 
+        // Sub-tabs Switcher Logic
+        function switchSubTab(groupPrefix, subName) {
+            const container = document.getElementById(`btn-${groupPrefix}-${subName}`).parentElement.parentElement;
+            container.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
+            container.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            const targetContent = document.getElementById(`${groupPrefix}-${subName}`);
+            const targetBtn = document.getElementById(`btn-${groupPrefix}-${subName}`);
+
+            if (targetContent) targetContent.classList.add('active');
+            if (targetBtn) targetBtn.classList.add('active');
+        }
+
         // Live Clock
         function updateClock() {
             const now = new Date();
@@ -523,6 +674,40 @@
             if (document.getElementById('live-date')) document.getElementById('live-date').innerText = dateStr;
         }
         setInterval(updateClock, 1000);
+
+        // DEFAULT SAMPLE DATA INITIALIZER (PRE-LOADED 4 SHIFTS, WORKOUTS & WARRANTIES)
+        function initDefaultData() {
+            if (!localStorage.getItem('shifts_list')) {
+                const defaultShifts = [
+                    { id: 1, date: '2026-10-01', job: 'חובש במשמרת', location: 'שיבא', type: '1', hours: 8.5, km: 45, rate: 70 },
+                    { id: 2, date: '2026-10-05', job: 'הדרכת עזרה ראשונה', location: 'תל אביב', type: '1', hours: 6, km: 20, rate: 75 },
+                    { id: 3, date: '2026-10-10', job: 'משמרת סופ"ש', location: 'איכילוב', type: '1.5', hours: 12, km: 60, rate: 70 },
+                    { id: 4, date: '2026-10-15', job: 'חובש מרפאה', location: 'שיבא', type: '1', hours: 10, km: 30, rate: 70 }
+                ];
+                localStorage.setItem('shifts_list', JSON.stringify(defaultShifts));
+            }
+
+            if (!localStorage.getItem('warranties_list')) {
+                const defaultWarranties = [
+                    { id: 101, title: 'מחשב נייד MacBook Pro', store: 'איידיגיטל / KSP', expDate: '2027-11-15', notes: 'קבלה 49302 - אחריות מורחבת' },
+                    { id: 102, title: 'שואב אבק Dyson V15', store: 'ב.נ.ז.כ', expDate: '2026-12-01', notes: 'אחריות יבואן רשמי' },
+                    { id: 103, title: 'אוזניות Sony WH-1000XM5', store: 'באג', expDate: '2025-05-10', notes: 'אחריות פגה' }
+                ];
+                localStorage.setItem('warranties_list', JSON.stringify(defaultWarranties));
+            }
+
+            if (!localStorage.getItem('fitness_list')) {
+                const defaultWorkouts = [
+                    { id: 201, date: '2026-10-14', type: 'חזה וכתפיים (Push)', exercise: 'בנץ\' פרס מוט 80 ק"ג', notes: '4 סטים x 8 חזרות - הרגשה מעולה' },
+                    { id: 202, date: '2026-10-12', type: 'גב וביצפס (Pull)', exercise: 'חתירה במוט 75 ק"ג', notes: '4 סטים x 10 חזרות' }
+                ];
+                localStorage.setItem('fitness_list', JSON.stringify(defaultWorkouts));
+            }
+
+            if (!localStorage.getItem('thesis_current')) {
+                localStorage.setItem('thesis_current', 277);
+            }
+        }
 
         // THESIS TRACKER LOGIC
         const THESIS_TOTAL = 377;
@@ -579,7 +764,14 @@
             const container = document.getElementById('quick-links-grid');
             const links = getQuickLinks();
             if (links.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400 col-span-full">אין קישורים מהירים עדיין.</p>`;
+                container.innerHTML = `
+                    <div class="bg-white border border-slate-200 p-3 rounded-xl flex items-center justify-between shadow-sm">
+                        <a href="https://open.spotify.com" target="_blank" class="flex items-center gap-2 overflow-hidden">
+                            <span class="text-lg">🎧</span>
+                            <span class="text-xs font-bold text-slate-800 truncate">Spotify</span>
+                        </a>
+                    </div>
+                `;
                 return;
             }
             container.innerHTML = links.map(l => `
@@ -811,6 +1003,14 @@
             document.getElementById('rest-timer-display').innerText = '00:00';
         }
 
+        function addWaterGlass() {
+            alert('כוס מים נוספה! 💧 מעולה!');
+        }
+        function logBodyWeight() {
+            const val = document.getElementById('weight-input').value;
+            if (val) alert(`משקל ${val} ק"ג נרשם בהצלחה!`);
+        }
+
         function getWorkouts() { return JSON.parse(localStorage.getItem('fitness_list') || '[]'); }
         function addWorkout(e) {
             e.preventDefault();
@@ -916,6 +1116,7 @@
 
         // Initialize App
         window.addEventListener('DOMContentLoaded', () => {
+            initDefaultData();
             updateClock();
             loadThesisProgress();
             renderQuickLinks();

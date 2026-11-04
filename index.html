@@ -284,21 +284,63 @@
         <section id="tab-fitness" class="tab-content hidden space-y-8">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">אימונים וכושר</h1>
-                <p class="text-slate-500 text-sm mt-1">יומן אימונים, תרגילים ומעקב כושר אישי.</p>
+                <p class="text-slate-500 text-sm mt-1">יומן אימונים, תרגילי משקולות, אירובי וטיימר מנוחה בין סטים.</p>
             </div>
 
+            <!-- REST TIMER WIDGET -->
+            <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm max-w-4xl flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl font-bold">⏱️</div>
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900">טיימר מנוחה בין סטים</h3>
+                        <p id="rest-timer-display" class="text-xl font-black text-brand-600 mt-0.5">00:00</p>
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <button type="button" onclick="startRestTimer(60)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">60 שניות</button>
+                    <button type="button" onclick="startRestTimer(90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">90 שניות</button>
+                    <button type="button" onclick="startRestTimer(120)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">120 שניות</button>
+                    <button type="button" onclick="stopRestTimer()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-3 py-2 rounded-xl text-xs">עצור</button>
+                </div>
+            </div>
+
+            <!-- WORKOUT FORM -->
             <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-4">
-                <h2 class="text-lg font-bold text-slate-900">תיעוד אימון חדש</h2>
-                <form id="fitness-form" onsubmit="addWorkout(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <input type="date" id="fit-date" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                    <input type="text" id="fit-type" placeholder="סוג אימון (חזה וכתפיים / רגליים / ריצה)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
-                    <input type="text" id="fit-notes" placeholder="פירוט תרגילים, משקלים והערות..." class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
-                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs py-2 transition">שמור אימון</button>
+                <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <span>🏋️‍♂️</span> תיעוד אימון חדש
+                </h2>
+                <form id="fitness-form" onsubmit="addWorkout(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                        <input type="date" id="fit-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">סוג אימון</label>
+                        <select id="fit-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700">
+                            <option value="חזה וכתפיים (Push)">חזה וכתפיים (Push)</option>
+                            <option value="גב וביצפס (Pull)">גב וביצפס (Pull)</option>
+                            <option value="רגליים ובטן (Legs)">רגליים ובטן (Legs)</option>
+                            <option value="אימון אירובי / ריצה">אימון אירובי / ריצה</option>
+                            <option value="אימון פונקציונלי / קרוספיט">אימון פונקציונלי</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">שם התרגיל / משקל (ק"ג)</label>
+                        <input type="text" id="fit-exercise" placeholder="למשל: בנץ' פרס 80 קג" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">סטים וחזרות / הערות</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="fit-notes" placeholder="4 סטים x 10 חזרות" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-4 py-2 transition shrink-0">שמור</button>
+                        </div>
+                    </div>
                 </form>
             </div>
 
-            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl">
-                <h3 class="text-base font-bold text-slate-900 mb-4">היסטוריית אימונים</h3>
+            <!-- WORKOUT HISTORY -->
+            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-3">
+                <h3 class="text-base font-bold text-slate-900">היסטוריית אימונים</h3>
                 <div id="fitness-list-container" class="space-y-2"></div>
             </div>
         </section>
@@ -307,7 +349,7 @@
         <section id="tab-studies" class="tab-content hidden space-y-8">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">לימודים ורפואה</h1>
-                <p class="text-slate-500 text-sm mt-1">מעקב אקדמי, סבבים קליניים ועבודת גמר.</p>
+                <p class="text-slate-500 text-sm mt-1">מעקב אקדמי, סבבים קליניים, שליפי מעבדה ועבודת גמר.</p>
             </div>
 
             <!-- 🎓 עבודת גמר - מעקב מטופלים -->
@@ -368,6 +410,33 @@
                             <p class="text-[11px] text-slate-400">הזן את מספר המטופל האחרון שסיימת לבדוק בטבלה.</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- LAB VALUES REFERENCE TABLE -->
+            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-4">
+                <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <span>📑</span> שליף ערכי מעבדה נפוצים (Reference Range)
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+                            <tr>
+                                <th class="p-2.5">בדיקה</th>
+                                <th class="p-2.5">ערך תקין</th>
+                                <th class="p-2.5">יחידות</th>
+                                <th class="p-2.5">הערה קלינית</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
+                            <tr><td class="p-2.5 font-bold">Hemoglobin (Hb)</td><td class="p-2.5">12.0 - 16.0 (F) / 13.5 - 17.5 (M)</td><td class="p-2.5">g/dL</td><td class="p-2.5 text-slate-500">אנמיה / פוליציטמיה</td></tr>
+                            <tr><td class="p-2.5 font-bold">WBC</td><td class="p-2.5">4,500 - 11,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">זיהום / דלקת</td></tr>
+                            <tr><td class="p-2.5 font-bold">Platelets (PLT)</td><td class="p-2.5">150,000 - 450,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">קרישה</td></tr>
+                            <tr><td class="p-2.5 font-bold">Sodium (Na+)</td><td class="p-2.5">135 - 145</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">מאזן נוזלים ואלקטרוליטים</td></tr>
+                            <tr><td class="p-2.5 font-bold">Potassium (K+)</td><td class="p-2.5">3.5 - 5.0</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">סיכון להפרעות קצב בלב</td></tr>
+                            <tr><td class="p-2.5 font-bold">Creatinine</td><td class="p-2.5">0.6 - 1.2</td><td class="p-2.5">mg/dL</td><td class="p-2.5 text-slate-500">תפקוד כלייתי (eGFR)</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -718,14 +787,40 @@
         }
 
         // FITNESS LOGIC
+        let restInterval = null;
+        function startRestTimer(seconds) {
+            if (restInterval) clearInterval(restInterval);
+            let rem = seconds;
+            const display = document.getElementById('rest-timer-display');
+            
+            function tick() {
+                const m = Math.floor(rem / 60);
+                const s = rem % 60;
+                display.innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+                if (rem <= 0) {
+                    clearInterval(restInterval);
+                    display.innerText = 'זמן המנוחה הסתיים! 🔥';
+                }
+                rem--;
+            }
+            tick();
+            restInterval = setInterval(tick, 1000);
+        }
+        function stopRestTimer() {
+            if (restInterval) clearInterval(restInterval);
+            document.getElementById('rest-timer-display').innerText = '00:00';
+        }
+
         function getWorkouts() { return JSON.parse(localStorage.getItem('fitness_list') || '[]'); }
         function addWorkout(e) {
             e.preventDefault();
             const date = document.getElementById('fit-date').value;
             const type = document.getElementById('fit-type').value;
+            const exercise = document.getElementById('fit-exercise').value;
             const notes = document.getElementById('fit-notes').value;
+
             const workouts = getWorkouts();
-            workouts.push({ id: Date.now(), date, type, notes });
+            workouts.push({ id: Date.now(), date, type, exercise, notes });
             localStorage.setItem('fitness_list', JSON.stringify(workouts));
             document.getElementById('fitness-form').reset();
             renderWorkouts();
@@ -745,7 +840,7 @@
             container.innerHTML = workouts.map(w => `
                 <div class="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs">
                     <div>
-                        <strong class="text-slate-800">${w.type}</strong> - <span>${w.date}</span>
+                        <strong class="text-slate-800">${w.type}</strong> - <span class="text-brand-600 font-bold">${w.exercise}</span> (${w.date})
                         ${w.notes ? `<p class="text-[11px] text-slate-500 mt-1">${w.notes}</p>` : ''}
                     </div>
                     <button onclick="deleteWorkout(${w.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>

@@ -10,9 +10,10 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="MedControl">
-    <link rel="manifest" href='data:application/manifest+json,{"name":"MedControl - לוח בקרה אישי","short_name":"MedControl","start_url":"./","display":"standalone","background_color":"#0f172a","theme_color":"#2563eb"}'>
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3063/3063822.png">
+    <link rel="manifest" href='data:application/manifest+json,{"name":"MedControl - לוח בקרה אישי","short_name":"MedControl","start_url":"./","display":"standalone","background_color":"#0f172a","theme_color":"#2563eb","icons":[{"src":"https://cdn-icons-png.flaticon.com/512/3063/3063822.png","sizes":"512x512","type":"image/png"}]}'>
 
-    <!-- Tailwind CSS & SheetJS -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,6 +26,7 @@
             }
         }
     </script>
+    <!-- SheetJS Library for Native Excel (.xlsx) Export -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
@@ -32,37 +34,38 @@
         
         .sub-tabs-header {
             display: flex;
-            gap: 8px;
+            justify-content: center;
+            gap: 10px;
             background-color: #FFFFFF;
-            padding: 6px;
+            padding: 8px;
             border-radius: 12px;
             border: 1px solid #E2E8F0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
             margin-bottom: 20px;
-            overflow-x: auto;
         }
 
         .sub-tab-btn {
             background-color: transparent;
             color: #64748B;
             border-radius: 8px;
-            padding: 8px 16px;
-            font-weight: 700;
-            font-size: 0.85rem;
+            padding: 10px 18px;
+            font-weight: 600;
+            font-family: 'Heebo', sans-serif;
+            font-size: 0.9rem;
             border: none;
             cursor: pointer;
-            transition: all 0.2s ease;
-            white-space: nowrap;
+            transition: all 0.3s ease;
         }
 
         .sub-tab-btn.active {
             background-color: #2563EB;
             color: #FFFFFF;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         .sub-tab-content { display: none; }
         .sub-tab-content.active { display: block; }
+        .text-left-nums { text-align: left; direction: ltr; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row selection:bg-brand-500 selection:text-white">
@@ -93,28 +96,26 @@
                 <button type="button" id="btn-studies" onclick="switchMainTab('studies')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
                     <span class="text-xl">📚</span> לימודים ורפואה
                 </button>
-                <button type="button" id="btn-personal" onclick="switchMainTab('personal')" class="tab-btn w-full flex items-center gap-3.5 px-4 py-3.5 rounded-xl font-bold text-base transition text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer text-right">
-                    <span class="text-xl">👤</span> אישי
-                </button>
             </nav>
         </div>
 
         <div class="pt-6 border-t border-slate-800 text-xs text-slate-400 font-medium text-center space-y-2">
             <p>מערכת אישית מאובטחת 🔒</p>
+            <button onclick="installPWA()" id="install-pwa-btn" class="hidden text-brand-500 hover:underline text-[11px] font-bold">📲 התקן אפליקציה במסך הבית</button>
         </div>
     </aside>
 
     <!-- MAIN CONTENT AREA -->
     <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-slate-50">
 
-        <!-- TAB 0: MAIN (ראשי) -->
+        <!-- TAB 0: MAIN -->
         <section id="tab-main" class="tab-content space-y-8">
             <div class="flex justify-between items-center">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900">לוח בקרה ראשי</h1>
                     <p class="text-slate-500 text-sm mt-1">ברוך הבא למערכת הניהול האישית שלך.</p>
                 </div>
-                <div class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 shadow-sm">
+                <div id="sync-status" class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 shadow-sm">
                     <span>🟢</span> מסונכרן לענן
                 </div>
             </div>
@@ -140,40 +141,41 @@
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm flex items-center justify-between gap-4">
                     <div class="overflow-hidden">
                         <p class="text-xs text-slate-500 font-semibold">שעות עבודה החודש</p>
-                        <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">36.5 ש'</p>
+                        <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
                     </div>
                     <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shrink-0 shadow-inner">⏱️</div>
                 </div>
             </div>
 
-            <!-- QUICK LINKS DASHBOARD -->
-            <div class="space-y-4 pt-2 max-w-5xl">
-                <div class="flex justify-between items-center">
+            <!-- FEATURE 1: QUICK LINKS DASHBOARD -->
+            <div class="space-y-4 pt-2">
+                <div class="flex justify-between items-center max-w-5xl">
                     <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>🔗</span> קישורים מהירים</h2>
                     <button type="button" onclick="toggleQuickLinkModal()" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-600 border border-brand-200 px-3 py-1.5 rounded-xl font-bold transition">➕ הוסף קישור</button>
                 </div>
 
-                <div id="quick-link-form-container" class="hidden bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm space-y-3">
+                <!-- Add Quick Link Inline Form (Hidden by default) -->
+                <div id="quick-link-form-container" class="hidden bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm max-w-5xl space-y-3">
                     <h3 class="text-sm font-bold text-slate-800">הוספת קישור מהיר חדש</h3>
-                    <form id="quick-link-form" onsubmit="addQuickLink(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                        <input type="text" id="ql-title" placeholder="שם האתר" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                        <input type="url" id="ql-url" placeholder="כתובת URL (https://...)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
+                    <form id="quick-link-form" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                        <input type="text" id="ql-title" placeholder="שם האתר (למשל: Spotify)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                        <input type="url" id="ql-url" placeholder="כתובת URL מלאה (https://...)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
                         <div class="flex gap-2">
-                            <input type="text" id="ql-icon" placeholder="אימוג'י" maxlength="2" value="🌐" class="w-16 text-center bg-slate-50 border border-slate-300 rounded-xl px-2 py-2 text-xs text-slate-800">
+                            <input type="text" id="ql-icon" placeholder="אימוג'י (למשל: 🎧)" maxlength="2" value="🌐" class="w-16 text-center bg-slate-50 border border-slate-300 rounded-xl px-2 py-2 text-xs text-slate-800">
                             <button type="submit" class="flex-grow bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs py-2 transition">שמור</button>
                         </div>
                     </form>
                 </div>
 
-                <div id="quick-links-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"></div>
+                <div id="quick-links-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 max-w-5xl"></div>
             </div>
 
-            <!-- DAILY TO-DO LIST -->
-            <div class="space-y-4 pt-2 max-w-5xl">
+            <!-- FEATURE 2: DAILY TO-DO LIST -->
+            <div class="space-y-4 pt-2">
                 <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>✅</span> משימות וסידורים להיום</h2>
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <form id="todo-form" onsubmit="addTodo(event)" class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="todo-input" placeholder="מה המשימה להיום?" required class="flex-grow bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-5xl space-y-4">
+                    <form id="todo-form" class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="todo-input" placeholder="מה המשימה להיום? (לדוגמה: לקנות חלב, לקבוע תור...)" required class="flex-grow bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         <select id="todo-category" class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="סידורים">סידורים 🏃</option>
                             <option value="קניות">קניות 🛒</option>
@@ -187,968 +189,1562 @@
                 </div>
             </div>
 
-            <!-- CLINICAL ROTATIONS SUMMARY -->
-            <div class="space-y-4 pt-2 max-w-5xl">
-                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>🏥</span> סבבים קליניים קרובים</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Clinical Rotations Summary -->
+            <div class="space-y-4 pt-2">
+                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>🏥</span> סבבים קליניים</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
                     <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0">🟢</div>
                         <div>
                             <p class="text-xs text-slate-500 font-semibold">סבב נוכחי</p>
-                            <p id="home-current-rotation" class="text-lg font-black text-slate-900 mt-0.5">פנימית א' (שיבא)</p>
+                            <p id="home-current-rotation" class="text-lg font-black text-slate-900 mt-0.5">אין סבב פעיל</p>
                         </div>
                     </div>
                     <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0">🔜</div>
                         <div>
                             <p class="text-xs text-slate-500 font-semibold">סבב הבא</p>
-                            <p id="home-next-rotation" class="text-lg font-black text-slate-900 mt-0.5">כירורגיה ב' (איכילוב)</p>
+                            <p id="home-next-rotation" class="text-lg font-black text-slate-900 mt-0.5">אין סבב עתידי</p>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Exams Summary -->
+            <div class="space-y-4 pt-2">
+                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>⏳</span> מבחנים</h2>
+                <div id="home-exams-countdown-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+            </div>
         </section>
 
-        <!-- TAB 1: SHIFTS (ניהול משמרות) -->
+        <!-- TAB 1: SHIFTS -->
         <section id="tab-shifts" class="tab-content hidden space-y-8">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
-                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, הפרדה לשעות נוספות/שבת, קילומטרז' וייצוא לאקסל.</p>
+                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, הפרדה לשעות נוספות/שבת וחגים, קילומטרז' וייצוא לאקסל.</p>
+                </div>
+                <div class="bg-white border border-slate-200 p-3 rounded-xl shadow-sm flex items-center gap-3">
+                    <label for="start-day-select" class="text-xs font-bold text-slate-700">תחילת חודש ביום:</label>
+                    <select id="start-day-select" class="bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1 text-sm font-bold text-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        <option value="1">1 בחודש</option>
+                        <option value="10">10 בחודש</option>
+                        <option value="15">15 בחודש</option>
+                        <option value="20" selected>20 בחודש</option>
+                        <option value="25">25 בחודש</option>
+                    </select>
                 </div>
             </div>
 
-            <!-- LIVE SHIFT WIDGET -->
-            <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm max-w-5xl">
-                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div>
-                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                            <span>⏱️</span> שעון נוכחות בזמן אמת
-                        </h3>
-                        <p id="live-shift-status" class="text-xs text-slate-500 mt-1">אין משמרת פעילה כרגע</p>
-                    </div>
-                    <div class="flex gap-3 w-full sm:w-auto">
-                        <button type="button" id="btn-start-live-shift" onclick="startLiveShift()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
-                            <span>▶️</span> התחל משמרת
-                        </button>
-                        <button type="button" id="btn-end-live-shift" onclick="endLiveShift()" class="flex-1 sm:flex-none bg-rose-600 hover:bg-rose-700 text-white font-bold px-5 py-2.5 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5 opacity-50 cursor-not-allowed" disabled>
-                            <span>⏹️</span> סיים משמרת
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STATS CARDS -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">צפי הכנסה חודשי</p>
                     <p id="stat-total-income" class="text-3xl font-black text-emerald-600 mt-2">₪0</p>
+                    <p class="text-[11px] text-slate-400 mt-1">כולל שעות נוספות, שבתות ונסיעות</p>
                 </div>
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">סה"כ שעות החודש</p>
                     <p id="stat-total-hours" class="text-3xl font-black text-slate-900 mt-2">0 ש'</p>
+                    <p class="text-[11px] text-slate-400 mt-1">מחזור החודש הנוכחי</p>
                 </div>
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">סה"כ קילומטרים</p>
                     <p id="stat-total-km" class="text-3xl font-black text-blue-600 mt-2">0 ק"מ</p>
+                    <p class="text-[11px] text-slate-400 mt-1">נסיעות מצטברות החודש</p>
                 </div>
                 <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
                     <p class="text-xs text-slate-500 font-semibold">סה"כ משמרות</p>
                     <p id="stat-total-shifts" class="text-3xl font-black text-indigo-600 mt-2">0</p>
+                    <p class="text-[11px] text-slate-400 mt-1">החודש הנוכחי</p>
                 </div>
             </div>
 
-            <!-- SHIFT FORM & TABLE -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl">
-                <!-- Shift Form -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm">
-                    <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת משמרת</h2>
-                    <form id="shift-form" onsubmit="addShift(event)" class="space-y-3.5">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
-                            <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם העבודה / תפקיד</label>
-                            <input type="text" id="shift-job" placeholder="לדוגמה: חובש / הדרכה / אבטחה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">מקום / סניף</label>
-                            <input type="text" id="shift-location" placeholder="לדוגמה: שיבא / תל אביב / סניף מרכז" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">סוג יום / תעריף</label>
-                            <select id="shift-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-700">
-                                <option value="1">רגיל (100%)</option>
-                                <option value="1.5">שבת / חג (150%)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">מס' שעות</label>
-                            <input type="number" id="shift-hours" step="0.1" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">קילומטרים (ק"מ)</label>
-                            <input type="number" id="shift-km" min="0" value="0" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף שעה בסיס (₪)</label>
-                            <input type="number" id="shift-rate" min="0" value="70" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                        </div>
-                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-md">שמור משמרת</button>
-                    </form>
-                </div>
-
-                <!-- Shift Table & Export -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm flex flex-col justify-between">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm flex flex-col justify-between">
                     <div>
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-base font-bold text-slate-900">היסטוריית משמרות</h3>
-                            <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
-                                <span>📊</span> ייצוא לאקסל (.xlsx)
-                            </button>
-                        </div>
-                        <div id="shifts-list-container" class="space-y-2 max-h-96 overflow-y-auto"></div>
+                        <h2 id="shift-form-title" class="text-lg font-bold text-slate-900 mb-4">הוספת משמרת חדשה</h2>
+                        <form id="shift-form" class="space-y-3.5">
+                            <input type="hidden" id="shift-id" value="">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                                <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">שם העבודה</label>
+                                <input type="text" id="shift-job" placeholder="לדוגמה: הדרכה / חובש / אבטחה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מקום / סניף</label>
+                                <input type="text" id="shift-location" placeholder="לדוגמה: שיבא / תל אביב" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מחלקה</label>
+                                <select id="shift-dept" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="הדרכה">הדרכה</option>
+                                    <option value="מבצעים">מבצעים</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">סוג יום / תעריף</label>
+                                <select id="shift-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 font-bold text-slate-700">
+                                    <option value="regular">יום חול (רגיל)</option>
+                                    <option value="weekend">🕯️ שבת / חג (תעריף 150%)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מס' שעות במשמרת</label>
+                                <input type="number" id="shift-hours" step="0.5" min="0" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מס' קילומטרים</label>
+                                <input type="number" id="shift-km" min="0" value="0" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף קילומטר (₪)</label>
+                                <input type="number" id="shift-km-rate" step="0.1" min="0" value="2" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף שעה בסיס (₪)</label>
+                                <input type="number" id="shift-rate" min="0" value="70" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            </div>
+                            <button type="submit" id="shift-submit-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-lg shadow-blue-500/20 cursor-pointer mt-2">שמור משמרת</button>
+                            <button type="button" id="cancel-edit-btn" onclick="cancelEditShift()" class="hidden w-full bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-2 rounded-xl transition cursor-pointer text-xs mt-1">ביטול עריכה</button>
+                        </form>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-200">
+                        <button type="button" id="export-excel-btn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl transition shadow-md flex items-center justify-center gap-2 cursor-pointer text-sm">
+                            <span>📊</span> ייצוא לאקסל (.xlsx)
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-lg font-bold text-slate-900">היסטוריית משמרות ושכר</h2>
+                        <button type="button" id="clear-shifts-btn" class="text-xs text-red-500 hover:text-red-700 font-semibold cursor-pointer">איפוס נתונים</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                                    <th class="p-2.5 rounded-r-xl">תאריך</th>
+                                    <th class="p-2.5">שם העבודה</th>
+                                    <th class="p-2.5">מקום</th>
+                                    <th class="p-2.5">מחלקה</th>
+                                    <th class="p-2.5 text-center">סוג יום</th>
+                                    <th class="p-2.5 text-center">רגילות</th>
+                                    <th class="p-2.5 text-center">נוספות 125%/175%</th>
+                                    <th class="p-2.5 text-center">נוספות 150%/200%</th>
+                                    <th class="p-2.5 text-center">ק"מ</th>
+                                    <th class="p-2.5">שכר שעות</th>
+                                    <th class="p-2.5">שכר ק"מ</th>
+                                    <th class="p-2.5">סה"כ</th>
+                                    <th class="p-2.5 rounded-l-xl text-center">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="shifts-table-body" class="text-sm divide-y divide-slate-100"></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- TAB 2: FITNESS (אימונים וכושר) -->
-        <section id="tab-fitness" class="tab-content hidden space-y-6">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">אימונים וכושר</h1>
-                <p class="text-slate-500 text-sm mt-1">ניהול תוכניות אימון, מעקב משקלים, יומן אימונים וטיימר מנוחה.</p>
+        <!-- TAB 2: FITNESS -->
+        <section id="tab-fitness" class="tab-content hidden space-y-8">
+            <div class="text-center pb-2 border-b border-slate-200">
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">⚡ CROSSFIT PRO SUITE</h1>
+                <p class="text-slate-500 text-sm mt-1">מערכת ניהול שיאים אישיים, RIR ומדדי ביצוע</p>
             </div>
 
-            <!-- Fitness Sub-tabs Header -->
             <div class="sub-tabs-header">
-                <button id="btn-sub-fit-log" onclick="switchSubTab('sub-fit', 'log')" class="sub-tab-btn active">🏋️‍♂️ יומן וטיימר</button>
-                <button id="btn-sub-fit-routine" onclick="switchSubTab('sub-fit', 'routine')" class="sub-tab-btn">📊 תכנית אימונים ומשקלים</button>
-                <button id="btn-sub-fit-health" onclick="switchSubTab('sub-fit', 'health')" class="sub-tab-btn">💧 משקל גוף ושתייה</button>
+                <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-fitness', 'sub-wl', this)">🏋️ משקלי עבודה & RIR</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-fitness', 'sub-gym', this)">🤸 ג׳ימנסטיקה & RIR</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-fitness', 'sub-metcon', this)">⏱️ בנצ'מארקים ומדדי אירובי</button>
             </div>
 
-            <!-- Sub-tab 1: Workout Log & Rest Timer -->
-            <div id="sub-fit-log" class="sub-tab-content active space-y-6 max-w-4xl">
-                <!-- REST TIMER WIDGET -->
-                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center text-2xl font-bold">⏱️</div>
+            <!-- SUB TAB: WEIGHTLIFTING -->
+            <div id="sub-wl" class="sub-tab-content active space-y-6">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
+                    <h2 class="text-lg font-bold text-slate-900 text-center flex items-center justify-center gap-2">
+                        <span>🏋️‍♂️</span> ניהול משקלי עבודה (ק"ג)
+                    </h2>
+                    <div id="wl-inputs-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
+                    <h2 class="text-lg font-bold text-slate-900">🧮 מחשבון אחוזים ו-RIR</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
-                            <h3 class="text-base font-bold text-slate-900">טיימר מנוחה בין סטים</h3>
-                            <p id="rest-timer-display" class="text-xl font-black text-brand-600 mt-0.5">00:00</p>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">בחר תרגיל:</label>
+                            <select id="calc-exercise-select" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">משקל בסיס (1RM בק"ג):</label>
+                            <input type="number" id="calc-base-weight" step="2.5" value="120" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                     </div>
-                    <div class="flex gap-2">
-                        <button type="button" onclick="startRestTimer(60)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">60 שניות</button>
-                        <button type="button" onclick="startRestTimer(90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">90 שניות</button>
-                        <button type="button" onclick="startRestTimer(120)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl text-xs">120 שניות</button>
-                        <button type="button" onclick="stopRestTimer()" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-3 py-2 rounded-xl text-xs">עצור</button>
-                    </div>
-                </div>
-
-                <!-- WORKOUT FORM -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <h2 class="text-base font-bold text-slate-900">תיעוד אימון חדש</h2>
-                    <form id="fitness-form" onsubmit="addWorkout(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
-                            <input type="date" id="fit-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">סוג אימון</label>
-                            <select id="fit-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-700">
-                                <option value="חזה וכתפיים (Push)">חזה וכתפיים (Push)</option>
-                                <option value="גב וביצפס (Pull)">גב וביצפס (Pull)</option>
-                                <option value="רגליים ובטן (Legs)">רגליים ובטן (Legs)</option>
-                                <option value="אירובי / ריצה">אירובי / ריצה</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">תרגיל ומשקל (ק"ג)</label>
-                            <input type="text" id="fit-exercise" placeholder="למשל: בנץ' פרס 80 קג" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">סטים וחזרות</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="fit-notes" placeholder="4 סטים x 10 חזרות" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                                <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-4 py-2 transition shrink-0">שמור</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- WORKOUT HISTORY -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-3">
-                    <h3 class="text-base font-bold text-slate-900">היסטוריית אימונים</h3>
-                    <div id="fitness-list-container" class="space-y-2"></div>
+                    <table class="w-full border-collapse border border-slate-200 rounded-xl overflow-hidden mt-2">
+                        <thead>
+                            <tr class="bg-slate-100 text-xs text-slate-600">
+                                <th class="p-3 text-right">תיאור עצימות</th>
+                                <th class="p-3 text-left-nums">אחוז מ-1RM</th>
+                                <th class="p-3 text-left-nums">משקל עבודה (ק"ג)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rir-table-body" class="text-sm divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Sub-tab 2: Weight Tables & Program -->
-            <div id="sub-fit-routine" class="sub-tab-content space-y-6 max-w-4xl">
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span>💪</span> טבלת משקלי עבודה ותכנית PPL
-                    </h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-xs">
-                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">יום / קבוצת שרירים</th>
-                                    <th class="p-3">תרגיל מפתח</th>
-                                    <th class="p-3">סטים x חזרות</th>
-                                    <th class="p-3">משקל עבודה נוכחי</th>
-                                    <th class="p-3">יעד קרוב</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 font-medium">
-                                <tr><td class="p-3 font-bold text-brand-600">Push (חזה/כתפיים/יד אחורית)</td><td class="p-3">Bench Press (לחיצת חזה מוט)</td><td class="p-3">4 x 8</td><td class="p-3 font-black text-slate-900">80 ק"ג</td><td class="p-3 text-emerald-600 font-bold">85 ק"ג</td></tr>
-                                <tr><td class="p-3 font-bold text-brand-600">Push (חזה/כתפיים/יד אחורית)</td><td class="p-3">Overhead Press (לחיצת כתפיים)</td><td class="p-3">3 x 10</td><td class="p-3 font-black text-slate-900">50 ק"ג</td><td class="p-3 text-emerald-600 font-bold">55 ק"ג</td></tr>
-                                <tr><td class="p-3 font-bold text-indigo-600">Pull (גב/יד קדמית)</td><td class="p-3">Barbell Row (חתירה במוט)</td><td class="p-3">4 x 8</td><td class="p-3 font-black text-slate-900">75 ק"ג</td><td class="p-3 text-emerald-600 font-bold">80 ק"ג</td></tr>
-                                <tr><td class="p-3 font-bold text-indigo-600">Pull (גב/יד קדמית)</td><td class="p-3">Pull-ups (מתח עם משקל)</td><td class="p-3">3 x 10</td><td class="p-3 font-black text-slate-900">גוף + 10 ק"ג</td><td class="p-3 text-emerald-600 font-bold">+15 ק"ג</td></tr>
-                                <tr><td class="p-3 font-bold text-amber-600">Legs (רגליים/בטן)</td><td class="p-3">Squat (סקוואט מוט)</td><td class="p-3">4 x 6</td><td class="p-3 font-black text-slate-900">100 ק"ג</td><td class="p-3 text-emerald-600 font-bold">110 ק"ג</td></tr>
-                                <tr><td class="p-3 font-bold text-amber-600">Legs (רגליים/בטן)</td><td class="p-3">Romanian Deadlift (דדליפט רומני)</td><td class="p-3">3 x 10</td><td class="p-3 font-black text-slate-900">90 ק"ג</td><td class="p-3 text-emerald-600 font-bold">95 ק"ג</td></tr>
-                            </tbody>
-                        </table>
+            <!-- SUB TAB: GYMNASTICS -->
+            <div id="sub-gym" class="sub-tab-content space-y-6">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
+                    <h2 class="text-lg font-bold text-slate-900 text-center flex items-center justify-center gap-2">
+                        <span>🤸‍♂️</span> תרגילי משקל גוף
+                    </h2>
+                    <div id="gym-inputs-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
+                    <h2 class="text-lg font-bold text-slate-900">🧮 מחשבון אחוזים ו-RIR (ג'ימנסטיקה)</h2>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">בחר תרגיל:</label>
+                            <select id="calc-gym-exercise-select" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מקסימום חזרות בסיס (100%):</label>
+                            <input type="number" id="calc-gym-base-reps" step="1" value="40" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
                     </div>
+                    <table class="w-full border-collapse border border-slate-200 rounded-xl overflow-hidden mt-2">
+                        <thead>
+                            <tr class="bg-slate-100 text-xs text-slate-600">
+                                <th class="p-3 text-right">תיאור עצימות</th>
+                                <th class="p-3 text-left-nums">אחוז מהמקסימום</th>
+                                <th class="p-3 text-left-nums">יעד חזרות</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gym-rir-table-body" class="text-sm divide-y divide-slate-100"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- Sub-tab 3: Body Weight & Hydration -->
-            <div id="sub-fit-health" class="sub-tab-content space-y-6 max-w-4xl">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                        <h3 class="text-base font-bold text-slate-900">💧 מעקב שתיית מים יומי</h3>
-                        <div class="flex items-center justify-between bg-blue-50 p-4 rounded-xl">
-                            <div>
-                                <p class="text-xs text-blue-600 font-bold">יעד שתייה: 2.5 ליטר</p>
-                                <p id="water-count-text" class="text-2xl font-black text-blue-900 mt-1">6 / 10 כוסות</p>
-                            </div>
-                            <button onclick="addWaterGlass()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition">+ כוס מים</button>
-                        </div>
-                    </div>
-                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                        <h3 class="text-base font-bold text-slate-900">⚖️ מעקב משקל גוף</h3>
-                        <div class="flex gap-2">
-                            <input type="number" id="weight-input" step="0.1" placeholder="משקל נוכחי (ק״ג)" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs">
-                            <button onclick="logBodyWeight()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shrink-0">שמור</button>
-                        </div>
-                        <p class="text-xs text-slate-500 font-semibold">שקילה אחרונה: <strong class="text-slate-900">76.4 ק"ג (לפני יומיים)</strong></p>
-                    </div>
+            <!-- SUB TAB: METCON -->
+            <div id="sub-metcon" class="sub-tab-content space-y-6">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4 max-w-3xl mx-auto">
+                    <h2 class="text-lg font-bold text-slate-900 text-center">⏱️ בנצ'מארקים ומדדי אירובי</h2>
+                    <div id="metcon-inputs-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
+            </div>
+
+            <div class="pt-2 max-w-3xl mx-auto">
+                <button type="button" id="save-fitness-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg cursor-pointer text-base uppercase tracking-wider">💾 שמור שיאים חדשים</button>
             </div>
         </section>
 
-        <!-- TAB 3: STUDIES (לימודים ורפואה) -->
-        <section id="tab-studies" class="tab-content hidden space-y-6">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">לימודים ורפואה</h1>
-                <p class="text-slate-500 text-sm mt-1">מעקב אקדמי, סבבים קליניים, שליפי מעבדה ועבודת גמר.</p>
+        <!-- TAB 3: STUDIES & MEDICAL -->
+        <section id="tab-studies" class="tab-content hidden space-y-8">
+            <div class="text-center pb-2 border-b border-slate-200">
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">📚 לימודים, סבבים וכלים רפואיים</h1>
+                <p class="text-slate-500 text-sm mt-1">ניהול סבבים קליניים, מבחנים, מחשבונים רפואיים ופנינים רפואיות</p>
             </div>
 
-            <!-- Studies Sub-tabs Header -->
             <div class="sub-tabs-header">
-                <button id="btn-sub-std-thesis" onclick="switchSubTab('sub-std', 'thesis')" class="sub-tab-btn active">📊 עבודת גמר (277/377)</button>
-                <button id="btn-sub-std-rotations" onclick="switchSubTab('sub-std', 'rotations')" class="sub-tab-btn">🏥 סבבים קליניים</button>
-                <button id="btn-sub-std-exams" onclick="switchSubTab('sub-std', 'exams')" class="sub-tab-btn">📚 מעקב מבחנים</button>
-                <button id="btn-sub-std-labs" onclick="switchSubTab('sub-std', 'labs')" class="sub-tab-btn">📑 ערכי מעבדה</button>
+                <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-studies', 'sub-rotations', this)">📅 סבבים ומבחנים</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-med-calc', this)">🧮 מחשבונים רפואיים</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-med-pearls', this)">💡 פנינים רפואיות</button>
             </div>
 
-            <!-- Sub-tab 1: Thesis Tracker (277/377) -->
-            <div id="sub-std-thesis" class="sub-tab-content active space-y-6 max-w-4xl">
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-6">
-                    <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold">📊</div>
+            <!-- SUB TAB 1: ROTATIONS & EXAMS -->
+            <div id="sub-rotations" class="sub-tab-content active space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="space-y-6">
+                        <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+                            <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת סבב קליני חדש</h2>
+                            <form id="rotation-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">שם הסבב</label>
+                                    <input type="text" id="rotation-name" placeholder="לדוגמה: כירורגיה / פנימית" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך התחלה</label>
+                                        <input type="date" id="rotation-start" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך סיום</label>
+                                        <input type="date" id="rotation-end" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition cursor-pointer mt-2">הוסף סבב</button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+                            <h2 class="text-lg font-bold text-slate-900 mb-4">רשימת הסבבים</h2>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-right border-collapse text-sm">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+                                            <th class="p-2.5 rounded-r-xl">סבב</th>
+                                            <th class="p-2.5">התחלה</th>
+                                            <th class="p-2.5">סיום</th>
+                                            <th class="p-2.5 rounded-l-xl">פעולות</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="rotations-table-body" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+                            <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת מבחן חדש</h2>
+                            <form id="exam-form" class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">שם המבחן</label>
+                                    <input type="text" id="exam-name" placeholder="לדוגמה: מבחן בקרדיולוגיה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך המבחן</label>
+                                    <input type="date" id="exam-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                </div>
+                                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition cursor-pointer mt-2">הוסף מבחן</button>
+                            </form>
+                        </div>
+
+                        <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+                            <h2 class="text-lg font-bold text-slate-900 mb-4">רשימת המבחנים</h2>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-right border-collapse text-sm">
+                                    <thead>
+                                        <tr class="border-b border-slate-200 text-xs text-slate-500 bg-slate-50">
+                                            <th class="p-2.5 rounded-r-xl">שם המבחן</th>
+                                            <th class="p-2.5">תאריך</th>
+                                            <th class="p-2.5">ימים שנותרו</th>
+                                            <th class="p-2.5 rounded-l-xl">פעולות</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="exams-table-body" class="divide-y divide-slate-100"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB TAB 2: MEDICAL CALCULATORS -->
+            <div id="sub-med-calc" class="sub-tab-content space-y-6">
+                <!-- Row 1: BMI, MAP, Anion Gap -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                    <!-- Calculator 1: BMI -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">⚖️</span>
+                            <h2 class="text-lg font-bold text-slate-900">BMI (אינדקס מסת גוף)</h2>
+                        </div>
+                        <div class="space-y-3">
                             <div>
-                                <h2 class="text-lg font-black text-slate-900">מעקב עבודת גמר</h2>
-                                <p class="text-xs text-slate-500">סקירת מטופלים בטבלה המחקרית</p>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">משקל (ק"ג)</label>
+                                <input type="number" id="calc-bmi-weight" placeholder="70" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
                             </div>
-                        </div>
-                        <span id="thesis-percent-badge" class="bg-brand-50 text-brand-600 border border-brand-200 px-3 py-1 rounded-full text-xs font-black">73% הושלם</span>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                        <!-- Donut Chart & Progress Visual -->
-                        <div class="flex flex-col items-center justify-center relative">
-                            <div class="relative w-44 h-44 flex items-center justify-center">
-                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                    <path stroke-dasharray="100, 100" class="text-slate-100" stroke-width="3.8" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                    <path id="donut-segment" stroke-dasharray="73, 100" class="text-brand-600 transition-all duration-700 ease-out" stroke-width="3.8" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                </svg>
-                                <div class="absolute flex flex-col items-center justify-center text-center">
-                                    <span id="donut-percent-text" class="text-3xl font-black text-slate-900">73%</span>
-                                    <span class="text-[11px] text-slate-400 font-bold">התקדמות</span>
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between w-full max-w-xs mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-600">
-                                <span>בוצעו: <strong id="stat-done-count" class="text-brand-600 font-black">277</strong></span>
-                                <span>נותרו: <strong id="stat-remaining-count" class="text-slate-800 font-black">100</strong></span>
-                                <span>סה"כ: <strong id="stat-total-count" class="text-slate-800 font-black">377</strong></span>
-                            </div>
-                        </div>
-
-                        <!-- Update Form & Progress Bar -->
-                        <div class="space-y-5">
                             <div>
-                                <div class="flex justify-between text-xs font-bold text-slate-700 mb-1.5">
-                                    <span>סרגל התקדמות</span>
-                                    <span id="progress-bar-text">277 / 377 מטופלים</span>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">גובה (ס"מ)</label>
+                                <input type="number" id="calc-bmi-height" placeholder="175" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div class="bg-brand-50 p-4 rounded-xl text-center border border-brand-100">
+                                <p class="text-xs text-slate-500 font-medium">תוצאה</p>
+                                <p id="res-bmi-val" class="text-2xl font-black text-brand-600 mt-1">-</p>
+                                <p id="res-bmi-cat" class="text-xs font-bold text-slate-600 mt-1"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculator 2: MAP -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">🫀</span>
+                            <h2 class="text-lg font-bold text-slate-900">MAP (לחץ עורקי ממוצע)</h2>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">לחץ סיסטולי (SBP)</label>
+                                <input type="number" id="calc-map-sbp" placeholder="120" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">לחץ דיאסטולי (DBP)</label>
+                                <input type="number" id="calc-map-dbp" placeholder="80" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div class="bg-emerald-50 p-4 rounded-xl text-center border border-emerald-100">
+                                <p class="text-xs text-slate-500 font-medium">תוצאה (mmHg)</p>
+                                <p id="res-map-val" class="text-2xl font-black text-emerald-600 mt-1">-</p>
+                                <p id="res-map-cat" class="text-xs font-bold text-slate-600 mt-1"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Calculator 3: Anion Gap -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">🧪</span>
+                            <h2 class="text-lg font-bold text-slate-900">Anion Gap (פער אניונים)</h2>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">Sodium (Na⁺)</label>
+                                <input type="number" id="calc-ag-na" placeholder="140" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">Chloride (Cl⁻)</label>
+                                    <input type="number" id="calc-ag-cl" placeholder="104" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
                                 </div>
-                                <div class="w-full bg-slate-100 rounded-full h-3.5 p-0.5 overflow-hidden">
-                                    <div id="linear-progress-bar" class="bg-brand-600 h-full rounded-full transition-all duration-500" style="width: 73.4%"></div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-slate-700 mb-1">HCO₃⁻</label>
+                                    <input type="number" id="calc-ag-hco3" placeholder="24" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
                                 </div>
                             </div>
-
-                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
-                                <label class="block text-xs font-bold text-slate-700">עדכון מיקום נוכחי</label>
-                                <div class="flex gap-2">
-                                    <input type="number" id="thesis-current-input" value="277" min="0" max="377" class="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 font-bold focus:outline-none focus:ring-2 focus:ring-brand-500">
-                                    <button type="button" onclick="saveThesisProgress()" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shrink-0 shadow-sm">
-                                        עדכן
-                                    </button>
-                                </div>
-                                <p class="text-[11px] text-slate-400">הזן את מספר המטופל האחרון שסיימת לבדוק בטבלה.</p>
+                            <div class="bg-purple-50 p-4 rounded-xl text-center border border-purple-100">
+                                <p class="text-xs text-slate-500 font-medium">תוצאה (mEq/L)</p>
+                                <p id="res-ag-val" class="text-2xl font-black text-purple-600 mt-1">-</p>
+                                <p id="res-ag-cat" class="text-xs font-bold text-slate-600 mt-1"></p>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: eGFR / CrCl & CHA2DS2-VASc -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto pt-2">
+                    <!-- Calculator 4: eGFR / CrCl -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">🩸</span>
+                            <h2 class="text-lg font-bold text-slate-900">eGFR / CrCl (פינוי קריאטינין)</h2>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">גיל (שנים)</label>
+                                <input type="number" id="calc-egfr-age" placeholder="65" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">משקל (ק"ג)</label>
+                                <input type="number" id="calc-egfr-weight" placeholder="70" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">קריאטינין בסרום (mg/dL)</label>
+                                <input type="number" step="0.1" id="calc-egfr-cr" placeholder="1.0" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">מין</label>
+                                <select id="calc-egfr-sex" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                                    <option value="male">זכר</option>
+                                    <option value="female">נקבה</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
+                            <p class="text-xs text-slate-500 font-medium">CrCl מחושב (mL/min)</p>
+                            <p id="res-egfr-val" class="text-2xl font-black text-blue-600 mt-1">-</p>
+                            <p id="res-egfr-cat" class="text-xs font-bold text-slate-600 mt-1"></p>
+                        </div>
+                    </div>
+
+                    <!-- Calculator 5: CHA2DS2-VASc -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <span class="text-2xl">⚡</span>
+                            <h2 class="text-lg font-bold text-slate-900">CHA₂DS₂-VASc (סיכון לשבץ ב-AF)</h2>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="1">
+                                <span>C - אי ספיקת לב (CHF) / ירידה במקטע פליטה (+1)</span>
+                            </label>
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="1">
+                                <span>H - יתר לחץ דם (Hypertension) (+1)</span>
+                            </label>
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="2">
+                                <span>A₂ - גיל 75 ומעלה (+2)</span>
+                            </label>
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="1">
+                                <span>D - סוכרת (Diabetes) (+1)</span>
+                            </label>
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="2">
+                                <span>S₂ - אירוע מוחי בעבר (Stroke/TIA) (+2)</span>
+                            </label>
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="1">
+                                <span>V - מחלת כלי דם (MI, PAD, Aortic plaque) (+1)</span>
+                            </label>
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="1">
+                                <span>A - גיל 65-74 (+1)</span>
+                            </label>
+                            <label class="flex items-center gap-2 font-medium cursor-pointer">
+                                <input type="checkbox" class="chads-check text-brand-600 rounded" data-score="1">
+                                <span>Sc - מין נקבה (+1)</span>
+                            </label>
+                        </div>
+                        <div class="bg-indigo-50 p-4 rounded-xl text-center border border-indigo-100">
+                            <p class="text-xs text-slate-500 font-medium">ניקוד מצטבר</p>
+                            <p id="res-chads-val" class="text-2xl font-black text-indigo-600 mt-1">0 נקודות</p>
+                            <p id="res-chads-cat" class="text-xs font-bold text-slate-600 mt-1">סיכון נמוך מאוד - אין צורך בנוגדי קרישה</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Sub-tab 2: Clinical Rotations -->
-            <div id="sub-std-rotations" class="sub-tab-content space-y-6 max-w-4xl">
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">🏥 תכנית סבבים קליניים</h3>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-xs">
-                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-3">סבב</th>
-                                    <th class="p-3">בית חולים / מחלקה</th>
-                                    <th class="p-3">משך (שבועות)</th>
-                                    <th class="p-3">סטאטוס</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 font-medium">
-                                <tr><td class="p-3 font-bold">פנימית א'</td><td class="p-3">מרכז רפואי שיבא</td><td class="p-3">12 שבועות</td><td class="p-3"><span class="bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full text-[11px] font-bold">בתהליך (שבוע 8)</span></td></tr>
-                                <tr><td class="p-3 font-bold">כירורגיה ב'</td><td class="p-3">איכילוב</td><td class="p-3">8 שבועות</td><td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] font-bold">סבב הבא</span></td></tr>
-                                <tr><td class="p-3 font-bold">ילדים</td><td class="p-3">שניידר</td><td class="p-3">6 שבועות</td><td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] font-bold">מתוכנן</span></td></tr>
-                                <tr><td class="p-3 font-bold">נשים ויולדות</td><td class="p-3">שיבא</td><td class="p-3">6 שבועות</td><td class="p-3"><span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full text-[11px] font-bold">מתוכנן</span></td></tr>
-                            </tbody>
-                        </table>
+            <!-- SUB TAB 3: MEDICAL PEARLS -->
+            <div id="sub-med-pearls" class="sub-tab-content space-y-6">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Form -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-1">
+                        <h2 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                            <span>💡</span> הוספת פנינה רפואית
+                        </h2>
+                        <form id="pearl-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">נושא / מחלקה</label>
+                                <select id="pearl-category" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                    <option value="קרדיולוגיה">קרדיולוגיה 🫀</option>
+                                    <option value="פרמקולוגיה">פרמקולוגיה 💊</option>
+                                    <option value="כירורגיה">כירורגיה 🩺</option>
+                                    <option value="טיפול נמרץ / הרדמה">טיפול נמרץ / הרדמה 💉</option>
+                                    <option value="ילדים">ילדים 🧸</option>
+                                    <option value="פנימית">פנימית 🏥</option>
+                                    <option value="כללי">כללי 💡</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">כותרת / מילת מפתח</label>
+                                <input type="text" id="pearl-title" placeholder="לדוגמה: התווית נגד ל-Beta Blockers" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-700 mb-1">תוכן הפנינה / הדגש הקליני</label>
+                                <textarea id="pearl-note" rows="4" placeholder="רשום כאן את הדגש הקליני או המינון החשוב..." required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition cursor-pointer shadow-md">שמור פנינה רפואית</button>
+                        </form>
                     </div>
-                </div>
-            </div>
 
-            <!-- Sub-tab 3: Exam Prep Tracker -->
-            <div id="sub-std-exams" class="sub-tab-content space-y-6 max-w-4xl">
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900">📚 מעקב למידה לבחינות ממשלתיות / גמר</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
-                                <span>פנימית - חזרות ושאלות</span>
-                                <span>65% הושלם</span>
-                            </div>
-                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                <div class="bg-brand-600 h-full rounded-full" style="width: 65%"></div>
-                            </div>
+                    <!-- List & Filter -->
+                    <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-2 space-y-4">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                            <h2 class="text-lg font-bold text-slate-900">מאגר פנינים רפואיות</h2>
+                            <input type="text" id="pearl-search" placeholder="🔍 חפש לפי מילת מפתח..." class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 w-full sm:w-60 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
-                        <div>
-                            <div class="flex justify-between text-xs font-bold text-slate-700 mb-1">
-                                <span>כירורגיה - נושאי חובה</span>
-                                <span>40% הושלם</span>
-                            </div>
-                            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
-                                <div class="bg-indigo-600 h-full rounded-full" style="width: 40%"></div>
-                            </div>
-                        </div>
+                        <div id="pearls-list-container" class="space-y-3 max-h-[500px] overflow-y-auto pr-1"></div>
                     </div>
-                </div>
-            </div>
-
-            <!-- Sub-tab 4: Lab Values Reference -->
-            <div id="sub-std-labs" class="sub-tab-content space-y-6 max-w-4xl">
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span>📑</span> שליף ערכי מעבדה נפוצים (Reference Range)
-                    </h2>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right text-xs">
-                            <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
-                                <tr>
-                                    <th class="p-2.5">בדיקה</th>
-                                    <th class="p-2.5">ערך תקין</th>
-                                    <th class="p-2.5">יחידות</th>
-                                    <th class="p-2.5">הערה קלינית</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 font-medium text-slate-800">
-                                <tr><td class="p-2.5 font-bold">Hemoglobin (Hb)</td><td class="p-2.5">12.0 - 16.0 (F) / 13.5 - 17.5 (M)</td><td class="p-2.5">g/dL</td><td class="p-2.5 text-slate-500">אנמיה / פוליציטמיה</td></tr>
-                                <tr><td class="p-2.5 font-bold">WBC</td><td class="p-2.5">4,500 - 11,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">זיהום / דלקת</td></tr>
-                                <tr><td class="p-2.5 font-bold">Platelets (PLT)</td><td class="p-2.5">150,000 - 450,000</td><td class="p-2.5">/mcL</td><td class="p-2.5 text-slate-500">קרישה</td></tr>
-                                <tr><td class="p-2.5 font-bold">Sodium (Na+)</td><td class="p-2.5">135 - 145</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">מאזן נוזלים ואלקטרוליטים</td></tr>
-                                <tr><td class="p-2.5 font-bold">Potassium (K+)</td><td class="p-2.5">3.5 - 5.0</td><td class="p-2.5">mEq/L</td><td class="p-2.5 text-slate-500">סיכון להפרעות קצב בלב</td></tr>
-                                <tr><td class="p-2.5 font-bold">Creatinine</td><td class="p-2.5">0.6 - 1.2</td><td class="p-2.5">mg/dL</td><td class="p-2.5 text-slate-500">תפקוד כלייתי (eGFR)</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 4: PERSONAL (אישי) -->
-        <section id="tab-personal" class="tab-content hidden space-y-8">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">אזור אישי</h1>
-                <p class="text-slate-500 text-sm mt-1">ניהול מידע, מעקב אחריויות וכלים אישיים.</p>
-            </div>
-
-            <!-- 🛡️ חלק אחריויות -->
-            <div class="space-y-6 max-w-4xl">
-                <div class="border-b border-slate-200 pb-3">
-                    <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                        <span>🛡️</span> מעקב אחריויות
-                    </h2>
-                    <p class="text-slate-500 text-xs mt-0.5">ניהול תוקפי אחריות של מוצרי חשמל, ציוד ומכשירים.</p>
-                </div>
-
-                <!-- Add Warranty Form -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span>➕</span> הוספת מוצר/אחריות חדשה
-                    </h3>
-                    <form id="warranty-form" onsubmit="addWarranty(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם המוצר</label>
-                            <input type="text" id="war-title" placeholder="למשל: מחשב נייד" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">חנות / מותג</label>
-                            <input type="text" id="war-store" placeholder="למשל: באג / KSP" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך תפוגת אחריות</label>
-                            <input type="date" id="war-exp-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">הערות</label>
-                            <div class="flex gap-2">
-                                <input type="text" id="war-notes" placeholder="מס' קבלה..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
-                                <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-4 py-2 transition shrink-0">שמור</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- Warranties Grid Container -->
-                <div class="space-y-3">
-                    <h3 class="text-base font-bold text-slate-900">מוצרים במעקב</h3>
-                    <div id="warranties-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </div>
         </section>
 
     </main>
 
+    <!-- CLOUD SYNC APP ENGINE -->
     <script>
-        // Main Tab Switcher
-        function switchMainTab(tabName) {
+        const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzs22msbKYT0Yrt3QQ_e2X4TUzpcZAwh0YatlbiLAwlUpwei3qWQBsInkXtstvZvGDvLw/exec"; 
+
+        const DEFAULT_WEIGHTLIFTING = {
+            "Back Squat": 120,
+            "Front Squat": 65,
+            "Overhead Squat": "",
+            "Deadlift": 110,
+            "Power Clean": 70,
+            "Squat Clean": "",
+            "Squat Snatch": "",
+            "Clean & Jerk": "",
+            "Push Jerk": 60,
+            "Split Jerk": "",
+            "Strict Press": 50,
+            "Push-Press": 55,
+            "Bench Press": 60,
+            "Power Snatch": 55
+        };
+
+        const DEFAULT_GYMNASTICS = {
+            "Strict Pull-Ups": "",
+            "Kipping Pull-Ups": "",
+            "Strict Handstand Push-Ups": "",
+            "Kipping Handstand Push-Ups": "",
+            "Strict Chest to Bar Pull-Ups": "",
+            "Kipping Chest to Bar Pull-Ups": "",
+            "Ring Muscle-Ups": "",
+            "Toes to Bar": "",
+            "Bar Muscle-Ups": ""
+        };
+
+        const DEFAULT_PEARLS = [
+            { id: 1, category: "קרדיולוגיה", title: "התוויות נגד ל-Beta Blockers", note: "אסטמה פעילה קשה, חסימת הולכה AV מדרגה שנייה/שלישית, אי ספיקת לב בלתי מפצה." },
+            { id: 2, category: "פרמקולוגיה", title: "מינון אדרנלין באנפילקסיס", note: "0.3-0.5 mg IM (ריכוז 1:1000) בירך החיצונית (Vastus Lateralis)." }
+        ];
+
+        const DEFAULT_QUICK_LINKS = [
+            { id: 1, title: 'Google Drive', url: 'https://drive.google.com', icon: '📁' },
+            { id: 2, title: 'Spotify', url: 'https://open.spotify.com', icon: '🎧' },
+            { id: 3, title: 'PubMed', url: 'https://pubmed.ncbi.nlm.nih.gov', icon: '📖' },
+            { id: 4, title: 'מידע אישי אריאל', url: 'https://meyda.ariel.ac.il/Portals/student', icon: '🎓' }
+        ];
+
+        const DEFAULT_TODOS = [
+            { id: 1, text: 'לקנות מוצרי יסוד לבית', completed: false, category: 'קניות' },
+            { id: 2, text: 'לסדר ציוד למשמרת', completed: true, category: 'סידורים' }
+        ];
+
+        let appData = {
+            shifts: [
+                { id: 1, date: '2026-10-01', job: 'הדרכה', location: 'מרכז', dept: 'הדרכה', hours: 9, km: 50, kmRate: 2, rate: 70, shiftType: 'regular' },
+                { id: 2, date: '2026-10-05', job: 'חובש', location: 'תל אביב', dept: 'מבצעים', hours: 11, km: 20, kmRate: 2, rate: 70, shiftType: 'weekend' }
+            ],
+            fitness: {
+                "Weightlifting": { ...DEFAULT_WEIGHTLIFTING },
+                "Gymnastics": { ...DEFAULT_GYMNASTICS },
+                "Metcon_Benchmarks": { 
+                    "500m Row (sec)": 95, "3000m Run (min)": 18.0, 
+                    "Fran (sec)": 240, "Grace (sec)": 180,
+                    "Helen (sec)": "", "Murph (min)": ""
+                }
+            },
+            rotations: [{ id: 1, name: 'הרדמה טיפול נמרץ', start: '2026-10-10', end: '2026-11-05' }],
+            exams: [
+                { id: 1, name: 'הרדמה טיפול נמרץ', date: '2026-11-12' },
+                { id: 2, name: 'פנימית', date: '2027-07-08' },
+                { id: 3, name: 'כירורגיה', date: '2027-08-08' },
+                { id: 4, name: 'ילדים', date: '2027-09-20' }
+            ],
+            pearls: [...DEFAULT_PEARLS],
+            todos: [...DEFAULT_TODOS],
+            quickLinks: [...DEFAULT_QUICK_LINKS]
+        };
+
+        // GLOBAL TAB SWITCHING FUNCTIONS ATTACHED TO WINDOW
+        window.switchMainTab = function(targetTab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
-                btn.classList.add('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
+                btn.classList.add('text-slate-300');
             });
 
-            const activeTab = document.getElementById(`tab-${tabName}`);
-            const activeBtn = document.getElementById(`btn-${tabName}`);
+            const targetEl = document.getElementById('tab-' + targetTab);
+            if (targetEl) targetEl.classList.remove('hidden');
 
-            if (activeTab) activeTab.classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + targetTab);
             if (activeBtn) {
+                activeBtn.classList.remove('text-slate-300');
                 activeBtn.classList.add('bg-brand-600', 'text-white', 'shadow-lg', 'shadow-blue-600/30');
-                activeBtn.classList.remove('text-slate-300', 'hover:bg-slate-800', 'hover:text-white');
             }
+        };
+
+        window.openSubTab = function(parentTabId, subTabId, btnEl) {
+            const parent = document.getElementById(parentTabId);
+            if (!parent) return;
+
+            parent.querySelectorAll('.sub-tab-content').forEach(c => c.classList.remove('active'));
+            parent.querySelectorAll('.sub-tab-btn').forEach(b => b.classList.remove('active'));
+
+            const targetSub = document.getElementById(subTabId);
+            if (targetSub) targetSub.classList.add('active');
+            if (btnEl) btnEl.classList.add('active');
+        };
+
+        function mergeDataDefaults() {
+            if (!appData.fitness) appData.fitness = {};
+            appData.fitness.Weightlifting = Object.assign({}, DEFAULT_WEIGHTLIFTING, appData.fitness.Weightlifting);
+            appData.fitness.Gymnastics = Object.assign({}, DEFAULT_GYMNASTICS, appData.fitness.Gymnastics);
+            if (!appData.pearls || appData.pearls.length === 0) appData.pearls = [...DEFAULT_PEARLS];
+            if (!appData.todos) appData.todos = [...DEFAULT_TODOS];
+            if (!appData.quickLinks || appData.quickLinks.length === 0) appData.quickLinks = [...DEFAULT_QUICK_LINKS];
         }
 
-        // Sub-tabs Switcher Logic
-        function switchSubTab(groupPrefix, subName) {
-            const container = document.getElementById(`btn-${groupPrefix}-${subName}`).parentElement.parentElement;
-            container.querySelectorAll('.sub-tab-content').forEach(el => el.classList.remove('active'));
-            container.querySelectorAll('.sub-tab-btn').forEach(btn => btn.classList.remove('active'));
-
-            const targetContent = document.getElementById(`${groupPrefix}-${subName}`);
-            const targetBtn = document.getElementById(`btn-${groupPrefix}-${subName}`);
-
-            if (targetContent) targetContent.classList.add('active');
-            if (targetBtn) targetBtn.classList.add('active');
-        }
-
-        // Live Clock
-        function updateClock() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const dateStr = now.toLocaleDateString('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-            if (document.getElementById('live-time')) document.getElementById('live-time').innerText = timeStr;
-            if (document.getElementById('live-date')) document.getElementById('live-date').innerText = dateStr;
-        }
-        setInterval(updateClock, 1000);
-
-        // DEFAULT SAMPLE DATA INITIALIZER (4 SHIFTS WITH JOB NAME & LOCATION, WORKOUTS & WARRANTIES)
-        function initDefaultData() {
-            if (!localStorage.getItem('shifts_list')) {
-                const defaultShifts = [
-                    { id: 1, date: '2026-10-01', job: 'חובש במשמרת', location: 'שיבא', type: '1', hours: 8.5, km: 45, rate: 70 },
-                    { id: 2, date: '2026-10-05', job: 'הדרכת עזרה ראשונה', location: 'תל אביב', type: '1', hours: 6, km: 20, rate: 75 },
-                    { id: 3, date: '2026-10-10', job: 'משמרת סופ"ש', location: 'איכילוב', type: '1.5', hours: 12, km: 60, rate: 70 },
-                    { id: 4, date: '2026-10-15', job: 'אבטחה ורפואה', location: 'סניף מרכז', type: '1', hours: 10, km: 30, rate: 70 }
-                ];
-                localStorage.setItem('shifts_list', JSON.stringify(defaultShifts));
-            }
-
-            if (!localStorage.getItem('warranties_list')) {
-                const defaultWarranties = [
-                    { id: 101, title: 'מחשב נייד MacBook Pro', store: 'איידיגיטל / KSP', expDate: '2027-11-15', notes: 'קבלה 49302 - אחריות מורחבת' },
-                    { id: 102, title: 'שואב אבק Dyson V15', store: 'ב.נ.ז.כ', expDate: '2026-12-01', notes: 'אחריות יבואן רשמי' },
-                    { id: 103, title: 'אוזניות Sony WH-1000XM5', store: 'באג', expDate: '2025-05-10', notes: 'אחריות פגה' }
-                ];
-                localStorage.setItem('warranties_list', JSON.stringify(defaultWarranties));
-            }
-
-            if (!localStorage.getItem('fitness_list')) {
-                const defaultWorkouts = [
-                    { id: 201, date: '2026-10-14', type: 'חזה וכתפיים (Push)', exercise: 'בנץ\' פרס מוט 80 ק"ג', notes: '4 סטים x 8 חזרות' },
-                    { id: 202, date: '2026-10-12', type: 'גב וביצפס (Pull)', exercise: 'חתירה במוט 75 ק"ג', notes: '4 סטים x 10 חזרות' }
-                ];
-                localStorage.setItem('fitness_list', JSON.stringify(defaultWorkouts));
-            }
-
-            if (!localStorage.getItem('thesis_current')) {
-                localStorage.setItem('thesis_current', 277);
-            }
-        }
-
-        // THESIS TRACKER LOGIC
-        const THESIS_TOTAL = 377;
-        function loadThesisProgress() {
-            const savedCurrent = localStorage.getItem('thesis_current') || 277;
-            document.getElementById('thesis-current-input').value = savedCurrent;
-            updateThesisUI(parseInt(savedCurrent));
-        }
-
-        function saveThesisProgress() {
-            const val = parseInt(document.getElementById('thesis-current-input').value) || 0;
-            const clamped = Math.min(Math.max(val, 0), THESIS_TOTAL);
-            localStorage.setItem('thesis_current', clamped);
-            updateThesisUI(clamped);
-        }
-
-        function updateThesisUI(current) {
-            const percent = Math.round((current / THESIS_TOTAL) * 100);
-            const remaining = THESIS_TOTAL - current;
-
-            const donutSegment = document.getElementById('donut-segment');
-            if (donutSegment) donutSegment.setAttribute('stroke-dasharray', `${percent}, 100`);
-
-            document.getElementById('donut-percent-text').innerText = `${percent}%`;
-            document.getElementById('thesis-percent-badge').innerText = `${percent}% הושלם`;
-            document.getElementById('stat-done-count').innerText = current;
-            document.getElementById('stat-remaining-count').innerText = remaining;
-            document.getElementById('stat-total-count').innerText = THESIS_TOTAL;
-            document.getElementById('progress-bar-text').innerText = `${current} / ${THESIS_TOTAL} מטופלים`;
-            document.getElementById('linear-progress-bar').style.width = `${percent}%`;
-        }
-
-        // QUICK LINKS LOGIC
-        function getQuickLinks() { return JSON.parse(localStorage.getItem('quick_links') || '[]'); }
-        function toggleQuickLinkModal() { document.getElementById('quick-link-form-container').classList.toggle('hidden'); }
-        function addQuickLink(e) {
-            e.preventDefault();
-            const title = document.getElementById('ql-title').value;
-            const url = document.getElementById('ql-url').value;
-            const icon = document.getElementById('ql-icon').value || '🌐';
-            const links = getQuickLinks();
-            links.push({ id: Date.now(), title, url, icon });
-            localStorage.setItem('quick_links', JSON.stringify(links));
-            document.getElementById('quick-link-form').reset();
-            toggleQuickLinkModal();
-            renderQuickLinks();
-        }
-        function deleteQuickLink(id) {
-            let links = getQuickLinks().filter(l => l.id !== id);
-            localStorage.setItem('quick_links', JSON.stringify(links));
-            renderQuickLinks();
-        }
-        function renderQuickLinks() {
-            const container = document.getElementById('quick-links-grid');
-            const links = getQuickLinks();
-            if (links.length === 0) {
-                container.innerHTML = `
-                    <div class="bg-white border border-slate-200 p-3 rounded-xl flex items-center justify-between shadow-sm">
-                        <a href="https://open.spotify.com" target="_blank" class="flex items-center gap-2 overflow-hidden">
-                            <span class="text-lg">🎧</span>
-                            <span class="text-xs font-bold text-slate-800 truncate">Spotify</span>
-                        </a>
-                    </div>
-                `;
+        async function loadDataFromCloud() {
+            if (!CLOUD_URL) {
+                const local = localStorage.getItem('medcontrol_all_data_v1');
+                if (local) appData = JSON.parse(local);
+                mergeDataDefaults();
+                initApp();
                 return;
             }
-            container.innerHTML = links.map(l => `
-                <div class="bg-white border border-slate-200 p-3 rounded-xl flex items-center justify-between shadow-sm">
-                    <a href="${l.url}" target="_blank" class="flex items-center gap-2 overflow-hidden">
-                        <span class="text-lg">${l.icon}</span>
-                        <span class="text-xs font-bold text-slate-800 truncate">${l.title}</span>
-                    </a>
-                    <button onclick="deleteQuickLink(${l.id})" class="text-slate-300 hover:text-rose-500 text-xs transition font-bold px-1">✕</button>
-                </div>
-            `).join('');
+
+            try {
+                const res = await fetch(CLOUD_URL);
+                const json = await res.json();
+                if (json && json.shifts) {
+                    appData = json;
+                }
+                document.getElementById('sync-status').innerHTML = '<span>🟢</span> מסונכרן לענן';
+            } catch (e) {
+                document.getElementById('sync-status').innerHTML = '<span>🔴</span> מצב אופליין (מקומי)';
+                const local = localStorage.getItem('medcontrol_all_data_v1');
+                if (local) appData = JSON.parse(local);
+            }
+            mergeDataDefaults();
+            initApp();
         }
 
-        // TO-DO LIST LOGIC
-        function getTodos() { return JSON.parse(localStorage.getItem('todo_list') || '[]'); }
-        function addTodo(e) {
+        async function saveDataToCloud() {
+            localStorage.setItem('medcontrol_all_data_v1', JSON.stringify(appData));
+            
+            if (!CLOUD_URL) return;
+
+            try {
+                document.getElementById('sync-status').innerHTML = '<span>🔄</span> מעדכן ענן...';
+                await fetch(CLOUD_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(appData)
+                });
+                document.getElementById('sync-status').innerHTML = '<span>🟢</span> מסונכרן לענן';
+            } catch (e) {
+                document.getElementById('sync-status').innerHTML = '<span>⚠️</span> שמור מקומית';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDataFromCloud();
+
+            // Clock & Date
+            function updateDateTime() {
+                const now = new Date();
+                const dateEl = document.getElementById('live-date');
+                const timeEl = document.getElementById('live-time');
+                if (dateEl) dateEl.innerText = now.toLocaleDateString('he-IL', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                if (timeEl) timeEl.innerText = now.toLocaleTimeString('he-IL');
+            }
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+
+            // Export to Excel Functionality
+            document.getElementById('export-excel-btn')?.addEventListener('click', exportShiftsToExcel);
+
+            // Setup Calculators
+            setupMedicalCalculators();
+        });
+
+        function initApp() {
+            renderShifts();
+            renderFitnessSuite();
+            renderExams();
+            renderRotations();
+            renderPearls();
+            renderTodos();
+            renderQuickLinks();
+        }
+
+        // --- PWA INSTALLATION PROMPT ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            const btn = document.getElementById('install-pwa-btn');
+            if (btn) btn.classList.remove('hidden');
+        });
+
+        window.installPWA = function() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+            }
+        };
+
+        // --- QUICK LINKS DASHBOARD ---
+        window.toggleQuickLinkModal = function() {
+            const container = document.getElementById('quick-link-form-container');
+            if (container) container.classList.toggle('hidden');
+        };
+
+        document.getElementById('quick-link-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const title = document.getElementById('ql-title').value.trim();
+            const url = document.getElementById('ql-url').value.trim();
+            const icon = document.getElementById('ql-icon').value.trim() || '🌐';
+
+            if (!title || !url) return;
+
+            appData.quickLinks.push({ id: Date.now(), title, url, icon });
+            saveDataToCloud();
+            renderQuickLinks();
+            e.target.reset();
+            toggleQuickLinkModal();
+        });
+
+        window.deleteQuickLink = function(id, e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (confirm('להסיר קישור זה?')) {
+                appData.quickLinks = appData.quickLinks.filter(ql => ql.id !== id);
+                saveDataToCloud();
+                renderQuickLinks();
+            }
+        };
+
+        function renderQuickLinks() {
+            const grid = document.getElementById('quick-links-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            if (appData.quickLinks.length === 0) {
+                grid.innerHTML = '<p class="text-xs text-slate-400 col-span-full">אין קישורים שמורים.</p>';
+                return;
+            }
+
+            appData.quickLinks.forEach(ql => {
+                grid.innerHTML += `
+                    <div class="relative group">
+                        <a href="${ql.url}" target="_blank" rel="noopener noreferrer" class="bg-white border border-slate-200/80 hover:border-brand-500 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 text-center transition transform hover:-translate-y-1 block">
+                            <span class="text-3xl">${ql.icon}</span>
+                            <span class="text-xs font-bold text-slate-800 truncate w-full">${ql.title}</span>
+                        </a>
+                        <button onclick="deleteQuickLink(${ql.id}, event)" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">✕</button>
+                    </div>
+                `;
+            });
+        }
+
+        // --- DAILY TO-DO LIST ---
+        document.getElementById('todo-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const input = document.getElementById('todo-input');
             const category = document.getElementById('todo-category').value;
-            if (!input.value.trim()) return;
-            const todos = getTodos();
-            todos.push({ id: Date.now(), text: input.value.trim(), category, completed: false });
-            localStorage.setItem('todo_list', JSON.stringify(todos));
+            const text = input.value.trim();
+            if (!text) return;
+
+            appData.todos.unshift({ id: Date.now(), text, completed: false, category });
+            saveDataToCloud();
+            renderTodos();
             input.value = '';
+        });
+
+        window.toggleTodo = function(id) {
+            const todo = appData.todos.find(t => t.id === id);
+            if (todo) {
+                todo.completed = !todo.completed;
+                saveDataToCloud();
+                renderTodos();
+            }
+        };
+
+        window.deleteTodo = function(id) {
+            appData.todos = appData.todos.filter(t => t.id !== id);
+            saveDataToCloud();
             renderTodos();
-        }
-        function toggleTodo(id) {
-            const todos = getTodos();
-            const item = todos.find(t => t.id === id);
-            if (item) item.completed = !item.completed;
-            localStorage.setItem('todo_list', JSON.stringify(todos));
-            renderTodos();
-        }
-        function deleteTodo(id) {
-            let todos = getTodos().filter(t => t.id !== id);
-            localStorage.setItem('todo_list', JSON.stringify(todos));
-            renderTodos();
-        }
+        };
+
         function renderTodos() {
             const container = document.getElementById('todo-list-container');
-            const todos = getTodos();
-            if (todos.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400">אין משימות להיום.</p>`;
+            if (!container) return;
+            container.innerHTML = '';
+
+            if (appData.todos.length === 0) {
+                container.innerHTML = '<p class="text-center text-xs text-slate-400 py-3">אין משימות פתוחות. פנאי מוחלט! 🎉</p>';
                 return;
             }
-            container.innerHTML = todos.map(t => `
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 p-3 rounded-xl">
-                    <div class="flex items-center gap-3">
-                        <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 text-brand-600 rounded">
-                        <span class="text-xs font-bold ${t.completed ? 'line-through text-slate-400' : 'text-slate-800'}">${t.text}</span>
-                        <span class="text-[10px] bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full font-semibold">${t.category}</span>
+
+            appData.todos.forEach(t => {
+                const isDone = t.completed;
+                const textStyle = isDone ? 'line-through text-slate-400' : 'text-slate-800 font-medium';
+                const bgStyle = isDone ? 'bg-slate-50 border-slate-200 opacity-75' : 'bg-slate-50 border-slate-200 hover:border-brand-300';
+                const catIcon = t.category === 'סידורים' ? '🏃' : (t.category === 'קניות' ? '🛒' : (t.category === 'בית' ? '🏠' : '📌'));
+
+                container.innerHTML += `
+                    <div class="${bgStyle} border p-3 rounded-xl flex items-center justify-between gap-3 transition">
+                        <div class="flex items-center gap-3 overflow-hidden cursor-pointer flex-grow" onclick="toggleTodo(${t.id})">
+                            <input type="checkbox" ${isDone ? 'checked' : ''} onclick="event.stopPropagation(); toggleTodo(${t.id})" class="w-4 h-4 text-brand-600 rounded border-slate-300 cursor-pointer">
+                            <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-semibold shrink-0">${catIcon} ${t.category}</span>
+                            <span class="text-sm ${textStyle} truncate">${t.text}</span>
+                        </div>
+                        <button onclick="deleteTodo(${t.id})" class="text-red-400 hover:text-red-600 text-xs px-2 py-1 rounded-lg hover:bg-red-50 font-bold transition shrink-0">מחק</button>
                     </div>
-                    <button onclick="deleteTodo(${t.id})" class="text-slate-400 hover:text-rose-600 text-xs font-bold">מחק</button>
-                </div>
-            `).join('');
+                `;
+            });
         }
 
-        // LIVE SHIFT TIMER LOGIC
-        let shiftTimerInterval = null;
-        function updateLiveShiftUI() {
-            const isActive = localStorage.getItem('live_shift_active') === 'true';
-            const startTime = parseInt(localStorage.getItem('live_shift_start') || '0');
-            const statusEl = document.getElementById('live-shift-status');
-            const startBtn = document.getElementById('btn-start-live-shift');
-            const endBtn = document.getElementById('btn-end-live-shift');
+        // --- SHIFTS CALCULATION LOGIC ---
+        function calculateShiftPay(totalHours, hourlyRate, shiftType) {
+            shiftType = shiftType || 'regular';
+            let regularHours = Math.min(totalHours, 8);
+            let overtime125 = Math.max(0, Math.min(totalHours - 8, 2));
+            let overtime150 = Math.max(0, totalHours - 10);
+            
+            let regMult = shiftType === 'weekend' ? 1.5 : 1.0;
+            let ot125Mult = shiftType === 'weekend' ? 1.75 : 1.25;
+            let ot150Mult = shiftType === 'weekend' ? 2.0 : 1.5;
 
-            if (isActive && startTime) {
-                const diffMs = Date.now() - startTime;
-                const hours = Math.floor(diffMs / (1000 * 60 * 60));
-                const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
-                const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
-                statusEl.innerHTML = `<span class="text-emerald-600 font-bold">משמרת פעילה: ${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}</span>`;
-                
-                startBtn.disabled = true;
-                startBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                endBtn.disabled = false;
-                endBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-            } else {
-                statusEl.innerText = 'אין משמרת פעילה כרגע';
-                startBtn.disabled = false;
-                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                endBtn.disabled = true;
-                endBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-        }
-        function startLiveShift() {
-            localStorage.setItem('live_shift_active', 'true');
-            localStorage.setItem('live_shift_start', Date.now().toString());
-            updateLiveShiftUI();
-            if (shiftTimerInterval) clearInterval(shiftTimerInterval);
-            shiftTimerInterval = setInterval(updateLiveShiftUI, 1000);
-        }
-        function endLiveShift() {
-            const startTime = parseInt(localStorage.getItem('live_shift_start') || '0');
-            if (startTime) {
-                const durationHours = ((Date.now() - startTime) / (1000 * 60 * 60)).toFixed(1);
-                const todayStr = new Date().toISOString().split('T')[0];
-                const shifts = getShifts();
-                shifts.push({
-                    id: Date.now(),
-                    date: todayStr,
-                    job: 'משמרת בזמן אמת',
-                    location: 'מרכז',
-                    type: '1',
-                    hours: parseFloat(durationHours),
-                    km: 0,
-                    rate: 70
-                });
-                localStorage.setItem('shifts_list', JSON.stringify(shifts));
-            }
-            localStorage.removeItem('live_shift_active');
-            localStorage.removeItem('live_shift_start');
-            if (shiftTimerInterval) clearInterval(shiftTimerInterval);
-            updateLiveShiftUI();
-            renderShifts();
+            let totalHoursPay = (regularHours * hourlyRate * regMult) + 
+                                (overtime125 * hourlyRate * ot125Mult) + 
+                                (overtime150 * hourlyRate * ot150Mult);
+            return { regularHours, overtime125, overtime150, totalHoursPay, regMult, ot125Mult, ot150Mult };
         }
 
-        // SHIFTS LOGIC (INCLUDING JOB NAME & LOCATION / BRANCH)
-        function getShifts() { return JSON.parse(localStorage.getItem('shifts_list') || '[]'); }
-        function addShift(e) {
+        const startDaySelect = document.getElementById('start-day-select');
+        if (startDaySelect) {
+            startDaySelect.addEventListener('change', renderShifts);
+        }
+
+        document.getElementById('shift-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
+            const editId = document.getElementById('shift-id').value;
             const date = document.getElementById('shift-date').value;
-            const job = document.getElementById('shift-job').value;
-            const location = document.getElementById('shift-location').value;
-            const type = document.getElementById('shift-type').value;
+            const job = document.getElementById('shift-job').value.trim();
+            const location = document.getElementById('shift-location').value.trim();
+            const dept = document.getElementById('shift-dept').value;
+            const shiftType = document.getElementById('shift-type').value || 'regular';
             const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
             const km = parseFloat(document.getElementById('shift-km').value) || 0;
+            const kmRate = parseFloat(document.getElementById('shift-km-rate').value) || 0;
             const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
+            if (!date) return;
 
-            const shifts = getShifts();
-            shifts.push({ id: Date.now(), date, job, location, type, hours, km, rate });
-            localStorage.setItem('shifts_list', JSON.stringify(shifts));
+            if (editId) {
+                const index = appData.shifts.findIndex(s => s.id == editId);
+                if (index !== -1) {
+                    appData.shifts[index] = { id: Number(editId), date, job, location, dept, shiftType, hours, km, kmRate, rate };
+                }
+            } else {
+                appData.shifts.push({ id: Date.now(), date, job, location, dept, shiftType, hours, km, kmRate, rate });
+            }
+
+            saveDataToCloud();
+            renderShifts();
+            cancelEditShift();
+        });
+
+        window.editShift = function(id) {
+            const shift = appData.shifts.find(s => s.id === id);
+            if (!shift) return;
+
+            document.getElementById('shift-id').value = shift.id;
+            document.getElementById('shift-date').value = shift.date;
+            document.getElementById('shift-job').value = shift.job || '';
+            document.getElementById('shift-location').value = shift.location || '';
+            document.getElementById('shift-dept').value = shift.dept;
+            document.getElementById('shift-type').value = shift.shiftType || 'regular';
+            document.getElementById('shift-hours').value = shift.hours;
+            document.getElementById('shift-km').value = shift.km;
+            document.getElementById('shift-km-rate').value = shift.kmRate;
+            document.getElementById('shift-rate').value = shift.rate;
+
+            document.getElementById('shift-form-title').innerText = 'עריכת משמרת';
+            document.getElementById('shift-submit-btn').innerText = 'עדכן משמרת';
+            document.getElementById('cancel-edit-btn').classList.remove('hidden');
+
+            document.getElementById('shift-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        window.cancelEditShift = function() {
+            document.getElementById('shift-id').value = '';
             document.getElementById('shift-form').reset();
-            renderShifts();
-        }
-        function deleteShift(id) {
-            let shifts = getShifts().filter(s => s.id !== id);
-            localStorage.setItem('shifts_list', JSON.stringify(shifts));
-            renderShifts();
-        }
-        function renderShifts() {
-            const container = document.getElementById('shifts-list-container');
-            const shifts = getShifts();
-            let totalHours = 0;
-            let totalIncome = 0;
-            let totalKm = 0;
+            document.getElementById('shift-job').value = '';
+            document.getElementById('shift-location').value = '';
+            document.getElementById('shift-date').valueAsDate = new Date();
+            document.getElementById('shift-type').value = 'regular';
+            document.getElementById('shift-form-title').innerText = 'הוספת משמרת חדשה';
+            document.getElementById('shift-submit-btn').innerText = 'שמור משמרת';
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+        };
 
-            if (shifts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400">אין משמרות רשומות עדיין.</p>`;
-                document.getElementById('stat-total-income').innerText = '₪0';
-                document.getElementById('stat-total-hours').innerText = '0 ש\'';
-                document.getElementById('stat-total-km').innerText = '0 ק"מ';
-                document.getElementById('stat-total-shifts').innerText = '0';
-                document.getElementById('home-total-hours').innerText = '0 ש\'';
-                return;
-            }
-
-            container.innerHTML = shifts.map(s => {
-                totalHours += s.hours;
-                totalKm += (s.km || 0);
-                const shiftIncome = s.hours * s.rate * parseFloat(s.type || 1);
-                totalIncome += shiftIncome;
-
-                return `
-                    <div class="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs">
-                        <div>
-                            <strong class="text-slate-800">${s.job}</strong> <span class="text-slate-500">(${s.location || 'מרכז'})</span> - <span>${s.date}</span>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span>${s.hours} ש' ${s.type === '1.5' ? '(150%)' : ''}</span>
-                            <strong class="text-emerald-600">₪${shiftIncome.toFixed(0)}</strong>
-                            <button onclick="deleteShift(${s.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            document.getElementById('stat-total-income').innerText = `₪${totalIncome.toFixed(0)}`;
-            document.getElementById('stat-total-hours').innerText = `${totalHours.toFixed(1)} ש'`;
-            document.getElementById('stat-total-km').innerText = `${totalKm} ק"מ`;
-            document.getElementById('stat-total-shifts').innerText = shifts.length;
-            document.getElementById('home-total-hours').innerText = `${totalHours.toFixed(1)} ש'`;
-        }
-
-        function exportToExcel() {
-            const shifts = getShifts();
-            if (shifts.length === 0) {
-                alert('אין משמרות לייצוא!');
-                return;
-            }
-            const data = shifts.map(s => ({
-                'תאריך': s.date,
-                'שם העבודה': s.job,
-                'מקום / סניף': s.location || '',
-                'שעות': s.hours,
-                'תעריף': s.type === '1.5' ? '150%' : '100%',
-                'שכר לשעה': s.rate,
-                'קילומטראז': s.km || 0,
-                'סה"כ לתשלום': s.hours * s.rate * parseFloat(s.type || 1)
-            }));
-            const ws = XLSX.utils.json_to_sheet(data);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "משמרות");
-            XLSX.writeFile(wb, "MedControl_Shifts.xlsx");
-        }
-
-        // FITNESS LOGIC
-        let restInterval = null;
-        function startRestTimer(seconds) {
-            if (restInterval) clearInterval(restInterval);
-            let rem = seconds;
-            const display = document.getElementById('rest-timer-display');
-            
-            function tick() {
-                const m = Math.floor(rem / 60);
-                const s = rem % 60;
-                display.innerText = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
-                if (rem <= 0) {
-                    clearInterval(restInterval);
-                    display.innerText = 'זמן המנוחה הסתיים! 🔥';
+        window.deleteShift = function(id) {
+            if (confirm('האם למחוק משמרת זו?')) {
+                appData.shifts = appData.shifts.filter(s => s.id !== id);
+                if (document.getElementById('shift-id').value == id) {
+                    cancelEditShift();
                 }
-                rem--;
+                saveDataToCloud();
+                renderShifts();
             }
-            tick();
-            restInterval = setInterval(tick, 1000);
-        }
-        function stopRestTimer() {
-            if (restInterval) clearInterval(restInterval);
-            document.getElementById('rest-timer-display').innerText = '00:00';
-        }
+        };
 
-        function addWaterGlass() {
-            alert('כוס מים נוספה! 💧');
-        }
-        function logBodyWeight() {
-            const val = document.getElementById('weight-input').value;
-            if (val) alert(`משקל ${val} ק"ג נרשם בהצלחה!`);
-        }
-
-        function getWorkouts() { return JSON.parse(localStorage.getItem('fitness_list') || '[]'); }
-        function addWorkout(e) {
-            e.preventDefault();
-            const date = document.getElementById('fit-date').value;
-            const type = document.getElementById('fit-type').value;
-            const exercise = document.getElementById('fit-exercise').value;
-            const notes = document.getElementById('fit-notes').value;
-
-            const workouts = getWorkouts();
-            workouts.push({ id: Date.now(), date, type, exercise, notes });
-            localStorage.setItem('fitness_list', JSON.stringify(workouts));
-            document.getElementById('fitness-form').reset();
-            renderWorkouts();
-        }
-        function deleteWorkout(id) {
-            let workouts = getWorkouts().filter(w => w.id !== id);
-            localStorage.setItem('fitness_list', JSON.stringify(workouts));
-            renderWorkouts();
-        }
-        function renderWorkouts() {
-            const container = document.getElementById('fitness-list-container');
-            const workouts = getWorkouts();
-            if (workouts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400">אין אימונים רשומים עדיין.</p>`;
-                return;
-            }
-            container.innerHTML = workouts.map(w => `
-                <div class="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs">
-                    <div>
-                        <strong class="text-slate-800">${w.type}</strong> - <span class="text-brand-600 font-bold">${w.exercise}</span> (${w.date})
-                        ${w.notes ? `<p class="text-[11px] text-slate-500 mt-1">${w.notes}</p>` : ''}
-                    </div>
-                    <button onclick="deleteWorkout(${w.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
-                </div>
-            `).join('');
-        }
-
-        // WARRANTY TRACKER LOGIC
-        function getWarranties() { return JSON.parse(localStorage.getItem('warranties_list') || '[]'); }
-        function addWarranty(e) {
-            e.preventDefault();
-            const title = document.getElementById('war-title').value.trim();
-            const store = document.getElementById('war-store').value.trim();
-            const expDate = document.getElementById('war-exp-date').value;
-            const notes = document.getElementById('war-notes').value.trim();
-            if (!title || !expDate) return;
-
-            const list = getWarranties();
-            list.push({ id: Date.now(), title, store, expDate, notes });
-            localStorage.setItem('warranties_list', JSON.stringify(list));
-            document.getElementById('warranty-form').reset();
-            renderWarranties();
-        }
-        function deleteWarranty(id) {
-            let list = getWarranties().filter(item => item.id !== id);
-            localStorage.setItem('warranties_list', JSON.stringify(list));
-            renderWarranties();
-        }
-        function renderWarranties() {
-            const container = document.getElementById('warranties-container');
-            const list = getWarranties();
-            if (list.length === 0) {
-                container.innerHTML = `<div class="col-span-full bg-white border border-slate-200 p-8 rounded-2xl text-center text-slate-400 text-xs">אין מוצרים במעקב אחריות כרגע.</div>`;
-                return;
-            }
-            const today = new Date();
-            today.setHours(0,0,0,0);
-            container.innerHTML = list.map(item => {
-                const exp = new Date(item.expDate);
-                const diffTime = exp - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                let statusBadge = '';
-                let borderStyle = '';
-                if (diffDays < 0) {
-                    statusBadge = `<span class="bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">פג תוקף</span>`;
-                    borderStyle = 'border-rose-200 bg-rose-50/20';
-                } else if (diffDays <= 30) {
-                    statusBadge = `<span class="bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">מסתיים עוד ${diffDays} ימים</span>`;
-                    borderStyle = 'border-amber-200 bg-amber-50/20';
-                } else {
-                    statusBadge = `<span class="bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">בתוקף (${diffDays} ימים)</span>`;
-                    borderStyle = 'border-slate-200 bg-white';
-                }
-                const formattedExpDate = new Date(item.expDate).toLocaleDateString('he-IL');
-                return `
-                    <div class="border ${borderStyle} p-4 rounded-2xl shadow-sm flex flex-col justify-between space-y-3">
-                        <div>
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-slate-900 text-sm">${item.title}</h3>
-                                ${statusBadge}
-                            </div>
-                            <p class="text-xs text-slate-500 mt-1">חנות: <strong>${item.store || '-'}</strong></p>
-                            <p class="text-xs text-slate-500 mt-0.5">תפוגה: <strong>${formattedExpDate}</strong></p>
-                            ${item.notes ? `<p class="text-xs bg-slate-100/70 text-slate-600 p-2 rounded-lg mt-2 text-[11px]">${item.notes}</p>` : ''}
-                        </div>
-                        <div class="pt-2 border-t border-slate-100 flex justify-end">
-                            <button onclick="deleteWarranty(${item.id})" class="text-xs text-rose-600 hover:text-rose-800 font-bold transition">מחק</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        // Initialize App
-        window.addEventListener('DOMContentLoaded', () => {
-            initDefaultData();
-            updateClock();
-            loadThesisProgress();
-            renderQuickLinks();
-            renderTodos();
-            renderShifts();
-            renderWorkouts();
-            renderWarranties();
-            updateLiveShiftUI();
-            if (localStorage.getItem('live_shift_active') === 'true') {
-                shiftTimerInterval = setInterval(updateLiveShiftUI, 1000);
+        document.getElementById('clear-shifts-btn')?.addEventListener('click', () => {
+            if (confirm('האם למחוק את כל המשמרות?')) {
+                appData.shifts = [];
+                cancelEditShift();
+                saveDataToCloud();
+                renderShifts();
             }
         });
+
+        function renderShifts() {
+            const tbody = document.getElementById('shifts-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const startDay = startDaySelect ? parseInt(startDaySelect.value) || 20 : 20;
+            let totalHours = 0, totalKm = 0, totalIncome = 0, count = 0;
+
+            if (appData.shifts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="13" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>';
+            }
+
+            appData.shifts.forEach(s => {
+                const sType = s.shiftType || 'regular';
+                const pay = calculateShiftPay(s.hours || 0, s.rate || 0, sType);
+                const kmPay = (s.km || 0) * (s.kmRate || 0);
+                const totalPay = pay.totalHoursPay + kmPay;
+
+                const shiftDate = new Date(s.date);
+                const now = new Date();
+                let curStart = new Date(now.getFullYear(), now.getMonth(), startDay);
+                let nextStart = new Date(now.getFullYear(), now.getMonth() + 1, startDay);
+                if (now.getDate() < startDay) {
+                    curStart = new Date(now.getFullYear(), now.getMonth() - 1, startDay);
+                    nextStart = new Date(now.getFullYear(), now.getMonth(), startDay);
+                }
+                if (shiftDate >= curStart && shiftDate < nextStart) {
+                    totalHours += (s.hours || 0);
+                    totalKm += (s.km || 0);
+                    totalIncome += totalPay;
+                    count++;
+                }
+
+                const typeBadge = sType === 'weekend' 
+                    ? '<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-200">שבת/חג</span>' 
+                    : '<span class="text-slate-500 text-xs">חול</span>';
+
+                const ot125Str = pay.overtime125 > 0 ? (pay.overtime125 + ' ש\' (' + Math.round(pay.ot125Mult * 100) + '%)') : '-';
+                const ot150Str = pay.overtime150 > 0 ? (pay.overtime150 + ' ש\' (' + Math.round(pay.ot150Mult * 100) + '%)') : '-';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-2.5 text-slate-700 font-medium">${s.date}</td>
+                        <td class="p-2.5 font-bold text-slate-900">${s.job || '-'}</td>
+                        <td class="p-2.5 text-slate-700">${s.location || '-'}</td>
+                        <td class="p-2.5 font-semibold text-slate-800">${s.dept}</td>
+                        <td class="p-2.5 text-center">${typeBadge}</td>
+                        <td class="p-2.5 text-center text-slate-700">${pay.regularHours} ש' (${Math.round(pay.regMult*100)}%)</td>
+                        <td class="p-2.5 text-center text-amber-600 font-medium">${ot125Str}</td>
+                        <td class="p-2.5 text-center text-rose-600 font-medium">${ot150Str}</td>
+                        <td class="p-2.5 text-center text-slate-700">${s.km} ק"מ</td>
+                        <td class="p-2.5 text-slate-600">₪${pay.totalHoursPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
+                        <td class="p-2.5 text-slate-600">₪${kmPay.toLocaleString()}</td>
+                        <td class="p-2.5 font-bold text-emerald-600">₪${totalPay.toLocaleString(undefined, {maximumFractionDigits: 1})}</td>
+                        <td class="p-2.5">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button type="button" onclick="editShift(${s.id})" class="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded-lg border border-blue-100 cursor-pointer font-medium">ערוך</button>
+                                <button type="button" onclick="deleteShift(${s.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('stat-total-hours').innerText = totalHours.toFixed(1) + " ש'";
+            document.getElementById('stat-total-km').innerText = totalKm + ' ק"מ';
+            document.getElementById('stat-total-income').innerText = "₪" + totalIncome.toLocaleString(undefined, {maximumFractionDigits: 1});
+            document.getElementById('stat-total-shifts').innerText = count;
+            document.getElementById('home-total-hours').innerText = totalHours.toFixed(1) + " ש'";
+        }
+
+        function exportShiftsToExcel() {
+            if (!appData.shifts || appData.shifts.length === 0) {
+                alert('אין משמרות לייצוא');
+                return;
+            }
+
+            try {
+                function createSheetData(shiftsArray) {
+                    if (!shiftsArray || shiftsArray.length === 0) {
+                        return [{
+                            "תאריך": "אין משמרות",
+                            "שם העבודה": "-",
+                            "מקום": "-",
+                            "מחלקה": "-",
+                            "סוג יום": "-",
+                            "שעות רגילות": 0,
+                            "שעות נוספות ראשונות": 0,
+                            "שעות נוספות מרובות": 0,
+                            "קילומטראז'": 0,
+                            "שכר שעות (₪)": 0,
+                            "שכר ק\"מ (₪)": 0,
+                            "סה\"כ לתשלום (₪)": 0
+                        }];
+                    }
+
+                    let totalReg = 0, total125 = 0, total150 = 0, totalKm = 0;
+                    let totalHoursPay = 0, totalKmPay = 0, totalPayAll = 0;
+
+                    const rows = shiftsArray.map(s => {
+                        const sType = s.shiftType || 'regular';
+                        const pay = calculateShiftPay(s.hours || 0, s.rate || 0, sType);
+                        const kmPay = (s.km || 0) * (s.kmRate || 0);
+                        const totalPay = pay.totalHoursPay + kmPay;
+
+                        totalReg += pay.regularHours;
+                        total125 += pay.overtime125;
+                        total150 += pay.overtime150;
+                        totalKm += (s.km || 0);
+                        totalHoursPay += pay.totalHoursPay;
+                        totalKmPay += kmPay;
+                        totalPayAll += totalPay;
+
+                        return {
+                            "תאריך": s.date,
+                            "שם העבודה": s.job || '-',
+                            "מקום": s.location || '-',
+                            "מחלקה": s.dept,
+                            "סוג יום": sType === 'weekend' ? 'שבת/חג (150%)' : 'יום חול',
+                            "שעות רגילות": pay.regularHours,
+                            "שעות נוספות ראשונות": pay.overtime125,
+                            "שעות נוספות מרובות": pay.overtime150,
+                            "קילומטראז'": s.km,
+                            "שכר שעות (₪)": Number(pay.totalHoursPay.toFixed(2)),
+                            "שכר ק\"מ (₪)": Number(kmPay.toFixed(2)),
+                            "סה\"כ לתשלום (₪)": Number(totalPay.toFixed(2))
+                        };
+                    });
+
+                    rows.push({
+                        "תאריך": "סה\"כ כולל",
+                        "שם העבודה": "-",
+                        "מקום": "-",
+                        "מחלקה": `${shiftsArray.length} משמרות`,
+                        "סוג יום": "-",
+                        "שעות רגילות": Number(totalReg.toFixed(1)),
+                        "שעות נוספות ראשונות": Number(total125.toFixed(1)),
+                        "שעות נוספות מרובות": Number(total150.toFixed(1)),
+                        "קילומטראז'": totalKm,
+                        "שכר שעות (₪)": Number(totalHoursPay.toFixed(2)),
+                        "שכר ק\"מ (₪)": Number(totalKmPay.toFixed(2)),
+                        "סה\"כ לתשלום (₪)": Number(totalPayAll.toFixed(2))
+                    });
+
+                    return rows;
+                }
+
+                const workbook = XLSX.utils.book_new();
+
+                const hidrachaShifts = appData.shifts.filter(s => s.dept === 'הדרכה');
+                const ws1 = XLSX.utils.json_to_sheet(createSheetData(hidrachaShifts));
+                ws1['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws1, "הדרכה");
+
+                const mivtsaimShifts = appData.shifts.filter(s => s.dept === 'מבצעים');
+                const ws2 = XLSX.utils.json_to_sheet(createSheetData(mivtsaimShifts));
+                ws2['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws2, "מבצעים");
+
+                const ws3 = XLSX.utils.json_to_sheet(createSheetData(appData.shifts));
+                ws3['!views'] = [{ RTL: true }];
+                XLSX.utils.book_append_sheet(workbook, ws3, "סה\"כ");
+
+                const fileName = `MedControl_Shifts_${new Date().toISOString().slice(0,10)}.xlsx`;
+                XLSX.writeFile(workbook, fileName);
+            } catch (err) {
+                console.error("שגיאה בייצוא לאקסל:", err);
+                alert("אירעה שגיאה בעת ביצוע הייצוא.");
+            }
+        }
+
+        // --- FITNESS ---
+        function renderFitnessSuite() {
+            const wlGrid = document.getElementById('wl-inputs-grid');
+            const calcSelect = document.getElementById('calc-exercise-select');
+            if (wlGrid && calcSelect) {
+                wlGrid.innerHTML = '';
+                calcSelect.innerHTML = '';
+                for (const [ex, val] of Object.entries(appData.fitness.Weightlifting)) {
+                    wlGrid.innerHTML += `
+                        <div class="flex flex-col items-center text-center">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
+                            <input type="number" step="2.5" id="wl_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>`;
+                    calcSelect.innerHTML += `<option value="${val || 100}">${ex}</option>`;
+                }
+            }
+
+            const gymGrid = document.getElementById('gym-inputs-grid');
+            const gymCalcSelect = document.getElementById('calc-gym-exercise-select');
+            if (gymGrid && gymCalcSelect) {
+                gymGrid.innerHTML = '';
+                gymCalcSelect.innerHTML = '';
+                for (const [ex, val] of Object.entries(appData.fitness.Gymnastics)) {
+                    gymGrid.innerHTML += `
+                        <div class="flex flex-col items-center text-center">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
+                            <input type="number" step="1" id="gym_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>`;
+                    gymCalcSelect.innerHTML += `<option value="${val || 30}">${ex}</option>`;
+                }
+            }
+
+            const metGrid = document.getElementById('metcon-inputs-grid');
+            if (metGrid) {
+                metGrid.innerHTML = '';
+                for (const [ex, val] of Object.entries(appData.fitness.Metcon_Benchmarks)) {
+                    metGrid.innerHTML += `
+                        <div class="flex flex-col items-center text-center">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
+                            <input type="number" step="0.1" id="met_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>`;
+                }
+            }
+
+            updateRIRTable();
+            updateGymRIRTable();
+        }
+
+        function updateRIRTable() {
+            const base = parseFloat(document.getElementById('calc-base-weight')?.value) || 120;
+            const tbody = document.getElementById('rir-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const levels = [
+                { desc: "כשל מוחלט (0 RIR)", mult: 1.0 },
+                { desc: "1 RIR", mult: 0.92 },
+                { desc: "2 RIR", mult: 0.86 },
+                { desc: "עצימות בינונית (3 RIR)", mult: 0.80 }
+            ];
+            levels.forEach(l => {
+                tbody.innerHTML += `<tr class="hover:bg-slate-50"><td class="p-3">${l.desc}</td><td class="p-3 text-left-nums">${Math.round(l.mult*100)}%</td><td class="p-3 text-left-nums font-bold">${Math.round(base*l.mult*10)/10} ק"ג</td></tr>`;
+            });
+        }
+
+        function updateGymRIRTable() {
+            const base = parseFloat(document.getElementById('calc-gym-base-reps')?.value) || 40;
+            const tbody = document.getElementById('gym-rir-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const levels = [
+                { desc: "מקסימום חזרות (0 RIR)", mult: 1.0 },
+                { desc: "1 RIR", mult: 0.90 },
+                { desc: "2 RIR", mult: 0.80 },
+                { desc: "עצימות בינונית (3+ RIR)", mult: 0.70 }
+            ];
+            levels.forEach(l => {
+                tbody.innerHTML += `<tr class="hover:bg-slate-50"><td class="p-3">${l.desc}</td><td class="p-3 text-left-nums">${Math.round(l.mult*100)}%</td><td class="p-3 text-left-nums font-bold">${Math.round(base*l.mult)} חזרות</td></tr>`;
+            });
+        }
+
+        document.getElementById('calc-exercise-select')?.addEventListener('change', (e) => {
+            const bw = document.getElementById('calc-base-weight');
+            if (bw && e.target.value) { bw.value = e.target.value; updateRIRTable(); }
+        });
+        document.getElementById('calc-base-weight')?.addEventListener('input', updateRIRTable);
+
+        document.getElementById('calc-gym-exercise-select')?.addEventListener('change', (e) => {
+            const br = document.getElementById('calc-gym-base-reps');
+            if (br && e.target.value) { br.value = e.target.value; updateGymRIRTable(); }
+        });
+        document.getElementById('calc-gym-base-reps')?.addEventListener('input', updateGymRIRTable);
+
+        document.getElementById('save-fitness-btn')?.addEventListener('click', () => {
+            for (const ex of Object.keys(appData.fitness.Weightlifting)) {
+                const el = document.getElementById(`wl_${ex}`);
+                if (el) appData.fitness.Weightlifting[ex] = el.value !== "" ? parseFloat(el.value) : "";
+            }
+            for (const ex of Object.keys(appData.fitness.Gymnastics)) {
+                const el = document.getElementById(`gym_${ex}`);
+                if (el) appData.fitness.Gymnastics[ex] = el.value !== "" ? parseInt(el.value) : "";
+            }
+            for (const ex of Object.keys(appData.fitness.Metcon_Benchmarks)) {
+                const el = document.getElementById(`met_${ex}`);
+                if (el) appData.fitness.Metcon_Benchmarks[ex] = el.value !== "" ? parseFloat(el.value) : "";
+            }
+            saveDataToCloud();
+            alert('השיאים נשמרו לענן בהצלחה! 🎉');
+            renderFitnessSuite();
+        });
+
+        // --- ROTATIONS & EXAMS ---
+        document.getElementById('rotation-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('rotation-name').value.trim();
+            const start = document.getElementById('rotation-start').value;
+            const end = document.getElementById('rotation-end').value;
+            if (!name || !start || !end) return;
+
+            appData.rotations.push({ id: Date.now(), name, start, end });
+            saveDataToCloud();
+            renderRotations();
+            e.target.reset();
+        });
+
+        window.deleteRotation = function(id) {
+            appData.rotations = appData.rotations.filter(r => r.id !== id);
+            saveDataToCloud();
+            renderRotations();
+        };
+
+        function renderRotations() {
+            const tbody = document.getElementById('rotations-table-body');
+            const curEl = document.getElementById('home-current-rotation');
+            const nextEl = document.getElementById('home-next-rotation');
+            if (!tbody || !curEl || !nextEl) return;
+
+            tbody.innerHTML = '';
+            appData.rotations.sort((a,b) => new Date(a.start) - new Date(b.start));
+
+            const today = new Date(); today.setHours(0,0,0,0);
+            let current = null, next = null;
+
+            if (appData.rotations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">אין סבבים שמורים.</td></tr>';
+                curEl.innerText = "אין סבב פעיל"; nextEl.innerText = "אין סבב עתידי";
+                return;
+            }
+
+            appData.rotations.forEach(r => {
+                const start = new Date(r.start); start.setHours(0,0,0,0);
+                const end = new Date(r.end); end.setHours(23,59,59,999);
+                if (today >= start && today <= end) current = r;
+                else if (start > today && !next) next = r;
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-2.5 font-semibold text-slate-900">${r.name}</td>
+                        <td class="p-2.5 text-slate-700">${r.start}</td>
+                        <td class="p-2.5 text-slate-700">${r.end}</td>
+                        <td class="p-2.5"><button type="button" onclick="deleteRotation(${r.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td>
+                    </tr>
+                `;
+            });
+            curEl.innerText = current ? current.name : "אין סבב פעיל כרגע";
+            nextEl.innerText = next ? next.name : "אין סבב עתידי ברשימה";
+        }
+
+        document.getElementById('exam-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('exam-name').value.trim();
+            const date = document.getElementById('exam-date').value;
+            if (!name || !date) return;
+
+            appData.exams.push({ id: Date.now(), name, date });
+            saveDataToCloud();
+            renderExams();
+            e.target.reset();
+        });
+
+        window.deleteExam = function(id) {
+            appData.exams = appData.exams.filter(ex => ex.id !== id);
+            saveDataToCloud();
+            renderExams();
+        };
+
+        function getCuteExamIcon(name) {
+            const n = name.toLowerCase();
+            if (n.includes('ילדים') || n.includes('פדיאטריה')) return '🧸';
+            if (n.includes('כירורגיה') || n.includes('ניתוח')) return '🩺';
+            if (n.includes('פנימית') || n.includes('קרדיו')) return '🫀';
+            if (n.includes('הרדמה') || n.includes('טיפול נמרץ')) return '💉';
+            return '🎓';
+        }
+
+        function renderExams() {
+            const tbody = document.getElementById('exams-table-body');
+            const grid = document.getElementById('home-exams-countdown-grid');
+            if (!tbody || !grid) return;
+
+            tbody.innerHTML = ''; grid.innerHTML = '';
+            appData.exams.sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            const today = new Date(); today.setHours(0,0,0,0);
+
+            appData.exams.forEach(ex => {
+                const target = new Date(ex.date); target.setHours(0,0,0,0);
+                const days = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+                const badge = days < 0 ? "bg-slate-100 text-slate-500" : (days === 0 ? "bg-red-50 text-red-600" : "bg-blue-50 text-blue-700");
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-2.5 font-semibold text-slate-900">${ex.name}</td>
+                        <td class="p-2.5 text-slate-700">${ex.date}</td>
+                        <td class="p-2.5"><span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${badge}">${days >= 0 ? days + ' ימים' : 'הסתיים'}</span></td>
+                        <td class="p-2.5"><button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td>
+                    </tr>
+                `;
+
+                grid.innerHTML += `
+                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4">
+                        <div class="overflow-hidden">
+                            <p class="text-xs text-slate-500 font-semibold truncate">${ex.name}</p>
+                            <p class="text-lg font-black text-slate-900 mt-0.5">${days >= 0 ? days + ' ימים' : 'הסתיים'}</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl shrink-0 shadow-inner">${getCuteExamIcon(ex.name)}</div>
+                    </div>
+                `;
+            });
+        }
+
+        // --- MEDICAL CALCULATORS ---
+        function setupMedicalCalculators() {
+            // BMI
+            const bmiW = document.getElementById('calc-bmi-weight');
+            const bmiH = document.getElementById('calc-bmi-height');
+            function calcBMI() {
+                const w = parseFloat(bmiW.value);
+                const h = parseFloat(bmiH.value) / 100;
+                if (w > 0 && h > 0) {
+                    const bmi = (w / (h * h)).toFixed(1);
+                    document.getElementById('res-bmi-val').innerText = bmi;
+                    let cat = "תקין";
+                    if (bmi < 18.5) cat = "תת-משקל";
+                    else if (bmi >= 25 && bmi < 30) cat = "עודף משקל";
+                    else if (bmi >= 30) cat = "השמנה";
+                    document.getElementById('res-bmi-cat').innerText = cat;
+                } else {
+                    document.getElementById('res-bmi-val').innerText = "-";
+                    document.getElementById('res-bmi-cat').innerText = "";
+                }
+            }
+            bmiW?.addEventListener('input', calcBMI);
+            bmiH?.addEventListener('input', calcBMI);
+
+            // MAP
+            const sbp = document.getElementById('calc-map-sbp');
+            const dbp = document.getElementById('calc-map-dbp');
+            function calcMAP() {
+                const s = parseFloat(sbp.value);
+                const d = parseFloat(dbp.value);
+                if (s > 0 && d > 0) {
+                    const map = Math.round((s + 2 * d) / 3);
+                    document.getElementById('res-map-val').innerText = map;
+                    let cat = (map >= 70 && map <= 100) ? "תקין (70-100 mmHg)" : "מחוץ לטווח התקין";
+                    document.getElementById('res-map-cat').innerText = cat;
+                } else {
+                    document.getElementById('res-map-val').innerText = "-";
+                    document.getElementById('res-map-cat').innerText = "";
+                }
+            }
+            sbp?.addEventListener('input', calcMAP);
+            dbp?.addEventListener('input', calcMAP);
+
+            // Anion Gap
+            const na = document.getElementById('calc-ag-na');
+            const cl = document.getElementById('calc-ag-cl');
+            const hco3 = document.getElementById('calc-ag-hco3');
+            function calcAG() {
+                const n = parseFloat(na.value);
+                const c = parseFloat(cl.value);
+                const h = parseFloat(hco3.value);
+                if (n > 0 && c > 0 && h > 0) {
+                    const ag = (n - (c + h)).toFixed(1);
+                    document.getElementById('res-ag-val').innerText = ag;
+                    let cat = (ag >= 8 && ag <= 12) ? "תקין (8-12 mEq/L)" : (ag > 12 ? "High Anion Gap" : "נמוך");
+                    document.getElementById('res-ag-cat').innerText = cat;
+                } else {
+                    document.getElementById('res-ag-val').innerText = "-";
+                    document.getElementById('res-ag-cat').innerText = "";
+                }
+            }
+            na?.addEventListener('input', calcAG);
+            cl?.addEventListener('input', calcAG);
+            hco3?.addEventListener('input', calcAG);
+
+            // eGFR / CrCl (Cockcroft-Gault)
+            const egfrAge = document.getElementById('calc-egfr-age');
+            const egfrWeight = document.getElementById('calc-egfr-weight');
+            const egfrCr = document.getElementById('calc-egfr-cr');
+            const egfrSex = document.getElementById('calc-egfr-sex');
+
+            function calcEGFR() {
+                const age = parseFloat(egfrAge.value);
+                const weight = parseFloat(egfrWeight.value);
+                const cr = parseFloat(egfrCr.value);
+                const sex = egfrSex.value;
+
+                if (age > 0 && weight > 0 && cr > 0) {
+                    let crcl = ((140 - age) * weight) / (72 * cr);
+                    if (sex === 'female') crcl *= 0.85;
+
+                    const val = Math.round(crcl);
+                    document.getElementById('res-egfr-val').innerText = val;
+
+                    let cat = "תפקוד כליות תקין (>90)";
+                    if (val < 15) cat = "אי-ספיקת כליות סופנית (Stage 5)";
+                    else if (val <= 29) cat = "ירידה חמורה מאוד (Stage 4)";
+                    else if (val <= 59) cat = "ירידה בינונית-חמורה (Stage 3)";
+                    else if (val <= 89) cat = "ירידה קלה בתפקוד הכליות (Stage 2)";
+
+                    document.getElementById('res-egfr-cat').innerText = cat;
+                } else {
+                    document.getElementById('res-egfr-val').innerText = "-";
+                    document.getElementById('res-egfr-cat').innerText = "";
+                }
+            }
+            egfrAge?.addEventListener('input', calcEGFR);
+            egfrWeight?.addEventListener('input', calcEGFR);
+            egfrCr?.addEventListener('input', calcEGFR);
+            egfrSex?.addEventListener('change', calcEGFR);
+
+            // CHA2DS2-VASc Score
+            const chadsChecks = document.querySelectorAll('.chads-check');
+            function calcCHADS() {
+                let score = 0;
+                chadsChecks.forEach(cb => {
+                    if (cb.checked) {
+                        score += parseInt(cb.getAttribute('data-score') || 1);
+                    }
+                });
+
+                document.getElementById('res-chads-val').innerText = score + ' נקודות';
+                let cat = "סיכון נמוך מאוד - אין צורך בנוגדי קרישה";
+                if (score === 1) cat = "סיכון נמוך-בינוני - לשקול נוגדי קרישה (DOACs)";
+                else if (score >= 2) cat = "סיכון גבוה לשבץ - מומלץ טיפול בנוגדי קרישה (DOACs)";
+
+                document.getElementById('res-chads-cat').innerText = cat;
+            }
+            chadsChecks.forEach(cb => cb.addEventListener('change', calcCHADS));
+        }
+
+        // --- MEDICAL PEARLS ---
+        document.getElementById('pearl-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const category = document.getElementById('pearl-category').value;
+            const title = document.getElementById('pearl-title').value.trim();
+            const note = document.getElementById('pearl-note').value.trim();
+            if (!title || !note) return;
+
+            appData.pearls.unshift({ id: Date.now(), category, title, note });
+            saveDataToCloud();
+            renderPearls();
+            e.target.reset();
+        });
+
+        window.deletePearl = function(id) {
+            if (confirm('האם למחוק פנינה רפואית זו?')) {
+                appData.pearls = appData.pearls.filter(p => p.id !== id);
+                saveDataToCloud();
+                renderPearls();
+            }
+        };
+
+        document.getElementById('pearl-search')?.addEventListener('input', renderPearls);
+
+        function renderPearls() {
+            const container = document.getElementById('pearls-list-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const query = document.getElementById('pearl-search')?.value.toLowerCase() || '';
+            const filtered = appData.pearls.filter(p => 
+                p.title.toLowerCase().includes(query) || 
+                p.note.toLowerCase().includes(query) || 
+                p.category.toLowerCase().includes(query)
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<p class="text-center text-slate-400 py-6 text-sm">אין פנינים רפואיות להצגה.</p>';
+                return;
+            }
+
+            filtered.forEach(p => {
+                container.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2 relative group hover:border-brand-300 transition">
+                        <div class="flex justify-between items-start gap-2">
+                            <div class="flex items-center gap-2">
+                                <span class="bg-brand-100 text-brand-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full">${p.category}</span>
+                                <h3 class="font-black text-slate-900 text-sm">${p.title}</h3>
+                            </div>
+                            <button onclick="deletePearl(${p.id})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1 transition">מחק</button>
+                        </div>
+                        <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${p.note}</p>
+                    </div>
+                `;
+            });
+        }
     </script>
 </body>
 </html>

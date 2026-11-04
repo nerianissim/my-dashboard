@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-title" content="MedControl">
     <link rel="manifest" href='data:application/manifest+json,{"name":"MedControl - לוח בקרה אישי","short_name":"MedControl","start_url":"./","display":"standalone","background_color":"#0f172a","theme_color":"#2563eb"}'>
 
-    <!-- Tailwind CSS & Libraries -->
+    <!-- Tailwind CSS & SheetJS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -73,7 +73,7 @@
     <!-- MAIN CONTENT AREA -->
     <main class="flex-grow p-6 md:p-10 overflow-y-auto bg-slate-50">
 
-        <!-- TAB 0: MAIN -->
+        <!-- TAB 0: MAIN (ראשי) -->
         <section id="tab-main" class="tab-content space-y-8">
             <div class="flex justify-between items-center">
                 <div>
@@ -81,7 +81,7 @@
                     <p class="text-slate-500 text-sm mt-1">ברוך הבא למערכת הניהול האישית שלך.</p>
                 </div>
                 <div class="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-xl font-bold flex items-center gap-1.5 shadow-sm">
-                    <span>🟢</span> פעיל ומסונכרן
+                    <span>🟢</span> מסונכרן לענן
                 </div>
             </div>
 
@@ -108,7 +108,7 @@
                         <p class="text-xs text-slate-500 font-semibold">שעות עבודה החודש</p>
                         <p id="home-total-hours" class="text-2xl font-black text-slate-900 mt-1">0 ש'</p>
                     </div>
-                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shrink-0">⏱️</div>
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl font-bold shrink-0 shadow-inner">⏱️</div>
                 </div>
             </div>
 
@@ -122,7 +122,7 @@
                 <div id="quick-link-form-container" class="hidden bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm space-y-3">
                     <h3 class="text-sm font-bold text-slate-800">הוספת קישור מהיר חדש</h3>
                     <form id="quick-link-form" onsubmit="addQuickLink(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
-                        <input type="text" id="ql-title" placeholder="שם האתר" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                        <input type="text" id="ql-title" placeholder="שם האתר (למשל: Spotify)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
                         <input type="url" id="ql-url" placeholder="כתובת URL (https://...)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
                         <div class="flex gap-2">
                             <input type="text" id="ql-icon" placeholder="אימוג'י" maxlength="2" value="🌐" class="w-16 text-center bg-slate-50 border border-slate-300 rounded-xl px-2 py-2 text-xs text-slate-800">
@@ -152,54 +152,154 @@
                     <div id="todo-list-container" class="space-y-2 pt-2"></div>
                 </div>
             </div>
+
+            <!-- CLINICAL ROTATIONS SUMMARY -->
+            <div class="space-y-4 pt-2 max-w-5xl">
+                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>🏥</span> סבבים קליניים קרובים</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0">🟢</div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold">סבב נוכחי</p>
+                            <p id="home-current-rotation" class="text-lg font-black text-slate-900 mt-0.5">פנימית א' (שיבא)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0">🔜</div>
+                        <div>
+                            <p class="text-xs text-slate-500 font-semibold">סבב הבא</p>
+                            <p id="home-next-rotation" class="text-lg font-black text-slate-900 mt-0.5">כירורגיה ב' (איכילוב)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <!-- TAB 1: SHIFTS -->
+        <!-- TAB 1: SHIFTS (ניהול משמרות) -->
         <section id="tab-shifts" class="tab-content hidden space-y-8">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                     <h1 class="text-2xl md:text-3xl font-black text-slate-900">מחשבון ומעקב משמרות</h1>
-                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, תעריפים וחישוב חודשי.</p>
+                    <p class="text-slate-500 text-sm mt-1">תיעוד שעות עבודה, הפרדה לשעות נוספות/שבת, קילומטרז' וייצוא לאקסל.</p>
                 </div>
             </div>
 
-            <!-- Shift Form -->
+            <!-- LIVE SHIFT WIDGET -->
+            <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm max-w-5xl">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <span>⏱️</span> שעון נוכחות בזמן אמת
+                        </h3>
+                        <p id="live-shift-status" class="text-xs text-slate-500 mt-1">אין משמרת פעילה כרגע</p>
+                    </div>
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button type="button" id="btn-start-live-shift" onclick="startLiveShift()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span>▶️</span> התחל משמרת
+                        </button>
+                        <button type="button" id="btn-end-live-shift" onclick="endLiveShift()" class="flex-1 sm:flex-none bg-rose-600 hover:bg-rose-700 text-white font-bold px-5 py-2.5 rounded-xl transition text-xs shadow-sm flex items-center justify-center gap-1.5 opacity-50 cursor-not-allowed" disabled>
+                            <span>⏹️</span> סיים משמרת
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STATS CARDS -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 max-w-5xl">
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">צפי הכנסה חודשי</p>
+                    <p id="stat-total-income" class="text-3xl font-black text-emerald-600 mt-2">₪0</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ שעות החודש</p>
+                    <p id="stat-total-hours" class="text-3xl font-black text-slate-900 mt-2">0 ש'</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ קילומטרים</p>
+                    <p id="stat-total-km" class="text-3xl font-black text-blue-600 mt-2">0 ק"מ</p>
+                </div>
+                <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
+                    <p class="text-xs text-slate-500 font-semibold">סה"כ משמרות</p>
+                    <p id="stat-total-shifts" class="text-3xl font-black text-indigo-600 mt-2">0</p>
+                </div>
+            </div>
+
+            <!-- SHIFT FORM & TABLE -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-5xl">
+                <!-- Shift Form -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-1 shadow-sm">
+                    <h2 class="text-lg font-bold text-slate-900 mb-4">הוספת משמרת</h2>
+                    <form id="shift-form" onsubmit="addShift(event)" class="space-y-3.5">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
+                            <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם העבודה / תפקיד</label>
+                            <input type="text" id="shift-job" placeholder="לדוגמה: חובש / הדרכה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מקום / סניף</label>
+                            <input type="text" id="shift-location" placeholder="לדוגמה: שיבא / תל אביב" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">סוג יום / תעריף</label>
+                            <select id="shift-type" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm font-bold text-slate-700">
+                                <option value="1">רגיל (100%)</option>
+                                <option value="1.5">שבת / חג (150%)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מס' שעות</label>
+                            <input type="number" id="shift-hours" step="0.1" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">קילומטרים (ק"מ)</label>
+                            <input type="number" id="shift-km" min="0" value="0" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף שעה בסיס (₪)</label>
+                            <input type="number" id="shift-rate" min="0" value="70" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
+                        </div>
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-2.5 rounded-xl transition shadow-md">שמור משמרת</button>
+                    </form>
+                </div>
+
+                <!-- Shift Table & Export -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl lg:col-span-2 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-base font-bold text-slate-900">היסטוריית משמרות</h3>
+                            <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-sm">
+                                <span>📊</span> ייצוא לאקסל (.xlsx)
+                            </button>
+                        </div>
+                        <div id="shifts-list-container" class="space-y-2 max-h-96 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: FITNESS (אימונים וכושר) -->
+        <section id="tab-fitness" class="tab-content hidden space-y-8">
+            <div>
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">אימונים וכושר</h1>
+                <p class="text-slate-500 text-sm mt-1">יומן אימונים, תרגילים ומעקב כושר אישי.</p>
+            </div>
+
             <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-4">
-                <h2 class="text-lg font-bold text-slate-900">הוספת משמרת חדשה</h2>
-                <form id="shift-form" onsubmit="addShift(event)" class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך</label>
-                        <input type="date" id="shift-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">תפקיד / מקום</label>
-                        <input type="text" id="shift-job" placeholder="משמרת..." required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">שעות עבודה</label>
-                        <input type="number" id="shift-hours" step="0.5" value="8" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1">תעריף לשעה (₪)</label>
-                        <input type="number" id="shift-rate" value="70" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800">
-                    </div>
-                    <div class="sm:col-span-3 lg:col-span-4 flex justify-end">
-                        <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold px-6 py-2.5 rounded-xl transition text-sm">שמור משמרת</button>
-                    </div>
+                <h2 class="text-lg font-bold text-slate-900">תיעוד אימון חדש</h2>
+                <form id="fitness-form" onsubmit="addWorkout(event)" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <input type="date" id="fit-date" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800">
+                    <input type="text" id="fit-type" placeholder="סוג אימון (חזה וכתפיים / רגליים / ריצה)" required class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
+                    <input type="text" id="fit-notes" placeholder="פירוט תרגילים, משקלים והערות..." class="bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 sm:col-span-2">
+                    <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs py-2 transition">שמור אימון</button>
                 </form>
             </div>
 
             <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl">
-                <h3 class="text-base font-bold text-slate-900 mb-4">רשימת משמרות</h3>
-                <div id="shifts-list-container" class="space-y-2"></div>
-            </div>
-        </section>
-
-        <!-- TAB 2: FITNESS -->
-        <section id="tab-fitness" class="tab-content hidden space-y-8">
-            <h1 class="text-2xl md:text-3xl font-black text-slate-900">אימונים וכושר</h1>
-            <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl">
-                <p class="text-slate-500 text-sm">יומן אימונים ומעקב כושר אישי.</p>
+                <h3 class="text-base font-bold text-slate-900 mb-4">היסטוריית אימונים</h3>
+                <div id="fitness-list-container" class="space-y-2"></div>
             </div>
         </section>
 
@@ -276,11 +376,11 @@
         <section id="tab-personal" class="tab-content hidden space-y-8">
             <div>
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">אזור אישי</h1>
-                <p class="text-slate-500 text-sm mt-1">ניהול מידע, מעקב וכלים אישיים.</p>
+                <p class="text-slate-500 text-sm mt-1">ניהול מידע, מעקב אחריויות וכלים אישיים.</p>
             </div>
 
             <!-- 🛡️ חלק אחריויות -->
-            <div class="space-y-6">
+            <div class="space-y-6 max-w-4xl">
                 <div class="border-b border-slate-200 pb-3">
                     <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                         <span>🛡️</span> מעקב אחריויות
@@ -289,7 +389,7 @@
                 </div>
 
                 <!-- Add Warranty Form -->
-                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm max-w-4xl space-y-4">
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                     <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
                         <span>➕</span> הוספת מוצר/אחריות חדשה
                     </h3>
@@ -317,7 +417,7 @@
                 </div>
 
                 <!-- Warranties Grid Container -->
-                <div class="space-y-3 max-w-4xl">
+                <div class="space-y-3">
                     <h3 class="text-base font-bold text-slate-900">מוצרים במעקב</h3>
                     <div id="warranties-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
@@ -468,16 +568,80 @@
             `).join('');
         }
 
+        // LIVE SHIFT TIMER LOGIC
+        let shiftTimerInterval = null;
+        function updateLiveShiftUI() {
+            const isActive = localStorage.getItem('live_shift_active') === 'true';
+            const startTime = parseInt(localStorage.getItem('live_shift_start') || '0');
+            const statusEl = document.getElementById('live-shift-status');
+            const startBtn = document.getElementById('btn-start-live-shift');
+            const endBtn = document.getElementById('btn-end-live-shift');
+
+            if (isActive && startTime) {
+                const diffMs = Date.now() - startTime;
+                const hours = Math.floor(diffMs / (1000 * 60 * 60));
+                const mins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+                const secs = Math.floor((diffMs % (1000 * 60)) / 1000);
+                statusEl.innerHTML = `<span class="text-emerald-600 font-bold">משמרת פעילה: ${String(hours).padStart(2,'0')}:${String(mins).padStart(2,'0')}:${String(secs).padStart(2,'0')}</span>`;
+                
+                startBtn.disabled = true;
+                startBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                endBtn.disabled = false;
+                endBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                statusEl.innerText = 'אין משמרת פעילה כרגע';
+                startBtn.disabled = false;
+                startBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                endBtn.disabled = true;
+                endBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        function startLiveShift() {
+            localStorage.setItem('live_shift_active', 'true');
+            localStorage.setItem('live_shift_start', Date.now().toString());
+            updateLiveShiftUI();
+            if (shiftTimerInterval) clearInterval(shiftTimerInterval);
+            shiftTimerInterval = setInterval(updateLiveShiftUI, 1000);
+        }
+        function endLiveShift() {
+            const startTime = parseInt(localStorage.getItem('live_shift_start') || '0');
+            if (startTime) {
+                const durationHours = ((Date.now() - startTime) / (1000 * 60 * 60)).toFixed(1);
+                const todayStr = new Date().toISOString().split('T')[0];
+                const shifts = getShifts();
+                shifts.push({
+                    id: Date.now(),
+                    date: todayStr,
+                    job: 'משמרת בזמן אמת',
+                    location: 'מרכז',
+                    type: '1',
+                    hours: parseFloat(durationHours),
+                    km: 0,
+                    rate: 70
+                });
+                localStorage.setItem('shifts_list', JSON.stringify(shifts));
+            }
+            localStorage.removeItem('live_shift_active');
+            localStorage.removeItem('live_shift_start');
+            if (shiftTimerInterval) clearInterval(shiftTimerInterval);
+            updateLiveShiftUI();
+            renderShifts();
+        }
+
         // SHIFTS LOGIC
         function getShifts() { return JSON.parse(localStorage.getItem('shifts_list') || '[]'); }
         function addShift(e) {
             e.preventDefault();
             const date = document.getElementById('shift-date').value;
             const job = document.getElementById('shift-job').value;
+            const location = document.getElementById('shift-location').value;
+            const type = document.getElementById('shift-type').value;
             const hours = parseFloat(document.getElementById('shift-hours').value) || 0;
+            const km = parseFloat(document.getElementById('shift-km').value) || 0;
             const rate = parseFloat(document.getElementById('shift-rate').value) || 0;
+
             const shifts = getShifts();
-            shifts.push({ id: Date.now(), date, job, hours, rate });
+            shifts.push({ id: Date.now(), date, job, location, type, hours, km, rate });
             localStorage.setItem('shifts_list', JSON.stringify(shifts));
             document.getElementById('shift-form').reset();
             renderShifts();
@@ -491,31 +655,102 @@
             const container = document.getElementById('shifts-list-container');
             const shifts = getShifts();
             let totalHours = 0;
+            let totalIncome = 0;
+            let totalKm = 0;
 
             if (shifts.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-400">אין משמרות רשומות בחודש זה.</p>`;
+                container.innerHTML = `<p class="text-xs text-slate-400">אין משמרות רשומות עדיין.</p>`;
+                document.getElementById('stat-total-income').innerText = '₪0';
+                document.getElementById('stat-total-hours').innerText = '0 ש\'';
+                document.getElementById('stat-total-km').innerText = '0 ק"מ';
+                document.getElementById('stat-total-shifts').innerText = '0';
                 document.getElementById('home-total-hours').innerText = '0 ש\'';
                 return;
             }
 
             container.innerHTML = shifts.map(s => {
                 totalHours += s.hours;
-                const totalIncome = s.hours * s.rate;
+                totalKm += (s.km || 0);
+                const shiftIncome = s.hours * s.rate * parseFloat(s.type || 1);
+                totalIncome += shiftIncome;
+
                 return `
                     <div class="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs">
                         <div>
-                            <strong class="text-slate-800">${s.job}</strong> - <span>${s.date}</span>
+                            <strong class="text-slate-800">${s.job}</strong> (${s.location || 'מרכז'}) - <span>${s.date}</span>
                         </div>
                         <div class="flex items-center gap-4">
-                            <span>${s.hours} שעות</span>
-                            <strong class="text-emerald-600">₪${totalIncome}</strong>
+                            <span>${s.hours} ש' ${s.type === '1.5' ? '(150%)' : ''}</span>
+                            <strong class="text-emerald-600">₪${shiftIncome.toFixed(0)}</strong>
                             <button onclick="deleteShift(${s.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
                         </div>
                     </div>
                 `;
             }).join('');
 
-            document.getElementById('home-total-hours').innerText = `${totalHours} ש'`;
+            document.getElementById('stat-total-income').innerText = `₪${totalIncome.toFixed(0)}`;
+            document.getElementById('stat-total-hours').innerText = `${totalHours.toFixed(1)} ש'`;
+            document.getElementById('stat-total-km').innerText = `${totalKm} ק"מ`;
+            document.getElementById('stat-total-shifts').innerText = shifts.length;
+            document.getElementById('home-total-hours').innerText = `${totalHours.toFixed(1)} ש'`;
+        }
+
+        function exportToExcel() {
+            const shifts = getShifts();
+            if (shifts.length === 0) {
+                alert('אין משמרות לייצוא!');
+                return;
+            }
+            const data = shifts.map(s => ({
+                'תאריך': s.date,
+                'תפקיד': s.job,
+                'מיקום': s.location || '',
+                'שעות': s.hours,
+                'תעריף': s.type === '1.5' ? '150%' : '100%',
+                'שכר לשעה': s.rate,
+                'קילומטראז': s.km || 0,
+                'סה"כ לתשלום': s.hours * s.rate * parseFloat(s.type || 1)
+            }));
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "משמרות");
+            XLSX.writeFile(wb, "MedControl_Shifts.xlsx");
+        }
+
+        // FITNESS LOGIC
+        function getWorkouts() { return JSON.parse(localStorage.getItem('fitness_list') || '[]'); }
+        function addWorkout(e) {
+            e.preventDefault();
+            const date = document.getElementById('fit-date').value;
+            const type = document.getElementById('fit-type').value;
+            const notes = document.getElementById('fit-notes').value;
+            const workouts = getWorkouts();
+            workouts.push({ id: Date.now(), date, type, notes });
+            localStorage.setItem('fitness_list', JSON.stringify(workouts));
+            document.getElementById('fitness-form').reset();
+            renderWorkouts();
+        }
+        function deleteWorkout(id) {
+            let workouts = getWorkouts().filter(w => w.id !== id);
+            localStorage.setItem('fitness_list', JSON.stringify(workouts));
+            renderWorkouts();
+        }
+        function renderWorkouts() {
+            const container = document.getElementById('fitness-list-container');
+            const workouts = getWorkouts();
+            if (workouts.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-400">אין אימונים רשומים עדיין.</p>`;
+                return;
+            }
+            container.innerHTML = workouts.map(w => `
+                <div class="flex justify-between items-center bg-slate-50 border border-slate-200 p-3 rounded-xl text-xs">
+                    <div>
+                        <strong class="text-slate-800">${w.type}</strong> - <span>${w.date}</span>
+                        ${w.notes ? `<p class="text-[11px] text-slate-500 mt-1">${w.notes}</p>` : ''}
+                    </div>
+                    <button onclick="deleteWorkout(${w.id})" class="text-slate-400 hover:text-rose-600 font-bold">✕</button>
+                </div>
+            `).join('');
         }
 
         // WARRANTY TRACKER LOGIC
@@ -591,7 +826,12 @@
             renderQuickLinks();
             renderTodos();
             renderShifts();
+            renderWorkouts();
             renderWarranties();
+            updateLiveShiftUI();
+            if (localStorage.getItem('live_shift_active') === 'true') {
+                shiftTimerInterval = setInterval(updateLiveShiftUI, 1000);
+            }
         });
     </script>
 </body>

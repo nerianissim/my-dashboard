@@ -213,7 +213,7 @@
                         </div>
                     </div>
 
-                    <!-- 📊 THESIS PROGRESS CARD WITH PIE CHART NEXT TO ROTATIONS -->
+                    <!-- THESIS PROGRESS CARD WITH PIE CHART -->
                     <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-3">
                         <div class="overflow-hidden flex-grow">
                             <p class="text-xs text-slate-500 font-semibold flex items-center gap-1"><span>📄</span> התקדמות עבודת גמר</p>
@@ -223,8 +223,6 @@
                                 <span id="home-thesis-rem-badge" class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100 truncate">🟠 100% נשאר (0)</span>
                             </div>
                         </div>
-                        
-                        <!-- Pie / Donut Chart Visual -->
                         <div class="relative shrink-0 flex items-center justify-center">
                             <div id="home-thesis-pie-chart" class="w-16 h-16 rounded-full border border-slate-200 flex items-center justify-center shadow-inner transition-all duration-500" style="background: conic-gradient(#10b981 0% 0%, #f1f5f9 0% 100%);">
                                 <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[11px] font-black text-slate-700 shadow-sm" id="home-thesis-pie-pct">0%</div>
@@ -864,13 +862,19 @@
 
         <!-- TAB 4: PERSONAL (אישי) -->
         <section id="tab-personal" class="tab-content hidden space-y-8">
-            <div>
-                <h1 class="text-2xl md:text-3xl font-black text-slate-900">אזור אישי</h1>
-                <p class="text-slate-500 text-sm mt-1">ניהול מידע אישי, מעקב אחריויות וקבלה של מכשירים וציוד.</p>
+            <div class="text-center pb-2 border-b border-slate-200">
+                <h1 class="text-2xl md:text-3xl font-black text-slate-900">👤 אזור אישי וציוד</h1>
+                <p class="text-slate-500 text-sm mt-1">ניהול מידע אישי, מעקב אחריויות וניהול ציוד רפואי</p>
             </div>
 
-            <!-- 🛡️ מעקב אחריויות -->
-            <div class="space-y-6 max-w-5xl">
+            <!-- Sub Tabs Header inside Personal -->
+            <div class="sub-tabs-header max-w-4xl mx-auto">
+                <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-personal', 'sub-warranties', this)">🛡️ אחריויות וקבלות</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-personal', 'sub-med-equipment', this)">🩺 מעקב ציוד רפואי</button>
+            </div>
+
+            <!-- SUB TAB 1: WARRANTIES -->
+            <div id="sub-warranties" class="sub-tab-content active space-y-6 max-w-5xl mx-auto">
                 <div class="border-b border-slate-200 pb-3">
                     <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                         <span>🛡️</span> מעקב אחריויות וקבלות
@@ -926,6 +930,90 @@
                     <div id="warranties-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </div>
+
+            <!-- SUB TAB 2: MEDICAL EQUIPMENT TRACKER (ציוד רפואי) -->
+            <div id="sub-med-equipment" class="sub-tab-content space-y-6 max-w-5xl mx-auto">
+                <div class="border-b border-slate-200 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
+                            <span>🩺</span> מעקב ציוד רפואי ומלאי
+                        </h2>
+                        <p class="text-slate-500 text-xs mt-0.5">ניהול מלאי ציוד רפואי, ערכות כונן, תוקפי תרופות וציוד מתכלה.</p>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <input type="text" id="eq-search" placeholder="🔍 חפש ציוד..." class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-48">
+                    </div>
+                </div>
+
+                <!-- Add/Edit Medical Equipment Form -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <h3 id="eq-form-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
+                        <span>➕</span> הוספת ציוד רפואי חדש
+                    </h3>
+                    <form id="med-eq-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <input type="hidden" id="eq-id" value="">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם הציוד / פריט</label>
+                            <input type="text" id="eq-name" placeholder="לדוגמה: סטטוסקופ / מד סטורציה / עט הזרקה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">כמות במלאי</label>
+                            <input type="number" id="eq-qty" min="0" value="1" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מיקום / ערכה</label>
+                            <select id="eq-location" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="תיק כונן / חובש">תיק כונן / חובש 🎒</option>
+                                <option value="אישי / בית">אישי / בית 🏠</option>
+                                <option value="מרפאה / סבב">מרפאה / סבב 🏥</option>
+                                <option value="רכב">רכב 🚗</option>
+                                <option value="אחר">אחר 📌</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">סטטוס ציוד</label>
+                            <select id="eq-status" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="ok">🟢 תקין / במלאי</option>
+                                <option value="missing">🟠 חסר / להשלמה</option>
+                                <option value="expired">🔴 פג תוקף / לא תקין</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך תוקף / בדיקה</label>
+                            <input type="date" id="eq-exp-date" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div class="sm:col-span-2 lg:col-span-2">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">הערות / דגשים</label>
+                            <input type="text" id="eq-notes" placeholder="מס' סידורי, מינון, הערות ספציפיות..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        
+                        <div class="sm:col-span-2 lg:col-span-4 flex justify-end gap-2 pt-1 border-t border-slate-100">
+                            <button type="submit" id="eq-submit-btn" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-6 py-2.5 transition shrink-0 cursor-pointer shadow-sm">שמור פריט</button>
+                            <button type="button" id="eq-cancel-btn" onclick="cancelEditMedEquipment()" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs px-4 py-2.5 transition shrink-0 cursor-pointer">ביטול עריכה</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Medical Equipment Table Container -->
+                <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                                    <th class="p-3 rounded-r-xl">שם הציוד</th>
+                                    <th class="p-3 text-center">כמות</th>
+                                    <th class="p-3">מיקום/שיוך</th>
+                                    <th class="p-3 text-center">סטטוס</th>
+                                    <th class="p-3 text-center">תאריך תוקף/בדיקה</th>
+                                    <th class="p-3">הערות</th>
+                                    <th class="p-3 rounded-l-xl text-center">פעולות</th>
+                                </tr>
+                            </thead>
+                            <tbody id="med-eq-table-body" class="text-sm divide-y divide-slate-100"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>
@@ -952,32 +1040,16 @@
         const CLOUD_URL = "https://script.google.com/macros/s/AKfycbzs22msbKYT0Yrt3QQ_e2X4TUzpcZAwh0YatlbiLAwlUpwei3qWQBsInkXtstvZvGDvLw/exec"; 
 
         const DEFAULT_WEIGHTLIFTING = {
-            "Back Squat": 120,
-            "Front Squat": 65,
-            "Overhead Squat": "",
-            "Deadlift": 110,
-            "Power Clean": 70,
-            "Squat Clean": "",
-            "Squat Snatch": "",
-            "Clean & Jerk": "",
-            "Push Jerk": 60,
-            "Split Jerk": "",
-            "Strict Press": 50,
-            "Push-Press": 55,
-            "Bench Press": 60,
-            "Power Snatch": 55
+            "Back Squat": 120, "Front Squat": 65, "Overhead Squat": "", "Deadlift": 110,
+            "Power Clean": 70, "Squat Clean": "", "Squat Snatch": "", "Clean & Jerk": "",
+            "Push Jerk": 60, "Split Jerk": "", "Strict Press": 50, "Push-Press": 55,
+            "Bench Press": 60, "Power Snatch": 55
         };
 
         const DEFAULT_GYMNASTICS = {
-            "Strict Pull-Ups": "",
-            "Kipping Pull-Ups": "",
-            "Strict Handstand Push-Ups": "",
-            "Kipping Handstand Push-Ups": "",
-            "Strict Chest to Bar Pull-Ups": "",
-            "Kipping Chest to Bar Pull-Ups": "",
-            "Ring Muscle-Ups": "",
-            "Toes to Bar": "",
-            "Bar Muscle-Ups": ""
+            "Strict Pull-Ups": "", "Kipping Pull-Ups": "", "Strict Handstand Push-Ups": "",
+            "Kipping Handstand Push-Ups": "", "Strict Chest to Bar Pull-Ups": "",
+            "Kipping Chest to Bar Pull-Ups": "", "Ring Muscle-Ups": "", "Toes to Bar": "", "Bar Muscle-Ups": ""
         };
 
         const DEFAULT_PEARLS = [
@@ -999,8 +1071,7 @@
 
         const DEFAULT_WARRANTIES = [
             { id: 1, title: 'מחשב נייד MacBook Pro', store: 'איידיגיטל / KSP', coverage: 'חומרה, סוללה ומטען', expDate: '2027-11-15', notes: 'קבלה 49302 - אחריות מורחבת', fileData: null, fileName: null },
-            { id: 2, title: 'שואב אבק Dyson V15', store: 'ב.נ.ז.כ', coverage: 'מנוע וסוללה בלבד', expDate: '2026-12-01', notes: 'אחריות יבואן רשמי', fileData: null, fileName: null },
-            { id: 3, title: 'אוזניות Sony WH-1000XM5', store: 'באג', coverage: 'אחריות יצרן מלאה', expDate: '2025-05-10', notes: 'אחריות פגה', fileData: null, fileName: null }
+            { id: 2, title: 'שואב אבק Dyson V15', store: 'ב.נ.ז.כ', coverage: 'מנוע וסוללה בלבד', expDate: '2026-12-01', notes: 'אחריות יבואן רשמי', fileData: null, fileName: null }
         ];
 
         const DEFAULT_THESIS = {
@@ -1010,6 +1081,12 @@
             notes: 'איסוף נתונים מתיקים רפואיים'
         };
 
+        const DEFAULT_MED_EQUIPMENT = [
+            { id: 1, name: 'סטטוסקופ Littmann Cardio IV', qty: 1, location: 'אישי / בית', status: 'ok', expDate: '', notes: 'כולל חריטת שם' },
+            { id: 2, name: 'מד סטורציה דופק נייד', qty: 1, location: 'תיק כונן / חובש', status: 'ok', expDate: '2027-01-01', notes: 'נבדקו סוללות' },
+            { id: 3, name: 'חבצי קיבוע / תחבושות אישיות', qty: 5, location: 'תיק כונן / חובש', status: 'missing', expDate: '2026-12-31', notes: 'חסרות 2 תחבושות 6 אינץ' }
+        ];
+
         let appData = {
             shifts: [
                 { id: 1, date: '2026-10-01', job: 'הדרכה', location: 'מרכז', dept: 'הדרכה', hours: 9, km: 50, kmRate: 2, rate: 70, shiftType: 'regular' },
@@ -1018,11 +1095,7 @@
             fitness: {
                 "Weightlifting": { ...DEFAULT_WEIGHTLIFTING },
                 "Gymnastics": { ...DEFAULT_GYMNASTICS },
-                "Metcon_Benchmarks": { 
-                    "500m Row (sec)": 95, "3000m Run (min)": 18.0, 
-                    "Fran (sec)": 240, "Grace (sec)": 180,
-                    "Helen (sec)": "", "Murph (min)": ""
-                }
+                "Metcon_Benchmarks": { "500m Row (sec)": 95, "3000m Run (min)": 18.0, "Fran (sec)": 240, "Grace (sec)": 180, "Helen (sec)": "", "Murph (min)": "" }
             },
             rotations: [{ id: 1, name: 'הרדמה טיפול נמרץ', start: '2026-10-10', end: '2026-11-05' }],
             exams: [
@@ -1035,10 +1108,11 @@
             todos: [...DEFAULT_TODOS],
             quickLinks: [...DEFAULT_QUICK_LINKS],
             warranties: [...DEFAULT_WARRANTIES],
+            medEquipment: [...DEFAULT_MED_EQUIPMENT],
             thesis: { ...DEFAULT_THESIS }
         };
 
-        // GLOBAL TAB SWITCHING FUNCTIONS ATTACHED TO WINDOW
+        // GLOBAL TAB SWITCHING FUNCTIONS
         window.switchMainTab = function(targetTab) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1077,17 +1151,14 @@
             if (!Array.isArray(appData.todos)) appData.todos = [...DEFAULT_TODOS];
             if (!Array.isArray(appData.quickLinks)) appData.quickLinks = [...DEFAULT_QUICK_LINKS];
             if (!Array.isArray(appData.warranties)) appData.warranties = [...DEFAULT_WARRANTIES];
+            if (!Array.isArray(appData.medEquipment)) appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
             if (!appData.thesis) appData.thesis = { ...DEFAULT_THESIS };
         }
 
         async function loadDataFromCloud() {
             const local = localStorage.getItem('medcontrol_all_data_v1');
             if (local) {
-                try {
-                    appData = JSON.parse(local);
-                } catch (e) {
-                    console.error("Error parsing local data", e);
-                }
+                try { appData = JSON.parse(local); } catch (e) {}
             }
             mergeDataDefaults();
             initApp();
@@ -1111,16 +1182,11 @@
 
         async function saveDataToCloud() {
             localStorage.setItem('medcontrol_all_data_v1', JSON.stringify(appData));
-            
             if (!CLOUD_URL) return;
 
             try {
                 document.getElementById('sync-status').innerHTML = '<span>🔄</span> מעדכן ענן...';
-                await fetch(CLOUD_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify(appData)
-                });
+                await fetch(CLOUD_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(appData) });
                 document.getElementById('sync-status').innerHTML = '<span>🟢</span> מסונכרן לענן';
             } catch (e) {
                 document.getElementById('sync-status').innerHTML = '<span>⚠️</span> שמור מקומית';
@@ -1130,7 +1196,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             loadDataFromCloud();
 
-            // Clock & Date
             function updateDateTime() {
                 const now = new Date();
                 const dateEl = document.getElementById('live-date');
@@ -1141,10 +1206,7 @@
             updateDateTime();
             setInterval(updateDateTime, 1000);
 
-            // Export to Excel Functionality
             document.getElementById('export-excel-btn')?.addEventListener('click', exportShiftsToExcel);
-
-            // Setup Calculators
             setupMedicalCalculators();
         });
 
@@ -1157,158 +1219,99 @@
             renderTodos();
             renderQuickLinks();
             renderWarranties();
+            renderMedEquipment();
             renderThesis();
         }
 
-        // --- PWA INSTALLATION PROMPT ---
+        // PWA PROMPT
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            const btn = document.getElementById('install-pwa-btn');
-            if (btn) btn.classList.remove('hidden');
+            e.preventDefault(); deferredPrompt = e;
+            document.getElementById('install-pwa-btn')?.classList.remove('hidden');
         });
-
         window.installPWA = function() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
-            }
+            if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; }); }
         };
 
-        // --- QUICK LINKS DASHBOARD ---
-        window.toggleQuickLinkModal = function() {
-            const container = document.getElementById('quick-link-form-container');
-            if (container) container.classList.toggle('hidden');
-        };
-
+        // QUICK LINKS
+        window.toggleQuickLinkModal = function() { document.getElementById('quick-link-form-container')?.classList.toggle('hidden'); };
         document.getElementById('quick-link-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const title = document.getElementById('ql-title').value.trim();
             const url = document.getElementById('ql-url').value.trim();
             const icon = document.getElementById('ql-icon').value.trim() || '🌐';
-
             if (!title || !url) return;
-
             appData.quickLinks.push({ id: Date.now(), title, url, icon });
-            saveDataToCloud();
-            renderQuickLinks();
-            e.target.reset();
-            toggleQuickLinkModal();
+            saveDataToCloud(); renderQuickLinks(); e.target.reset(); toggleQuickLinkModal();
         });
-
         window.deleteQuickLink = function(id, e) {
-            e.preventDefault();
-            e.stopPropagation();
-            if (confirm('להסיר קישור זה?')) {
-                appData.quickLinks = appData.quickLinks.filter(ql => ql.id !== id);
-                saveDataToCloud();
-                renderQuickLinks();
-            }
+            e.preventDefault(); e.stopPropagation();
+            if (confirm('להסיר קישור זה?')) { appData.quickLinks = appData.quickLinks.filter(ql => ql.id !== id); saveDataToCloud(); renderQuickLinks(); }
         };
-
         function renderQuickLinks() {
             const grid = document.getElementById('quick-links-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            if (appData.quickLinks.length === 0) {
-                grid.innerHTML = '<p class="text-xs text-slate-400 col-span-full">אין קישורים שמורים.</p>';
-                return;
-            }
-
+            if (!grid) return; grid.innerHTML = '';
+            if (appData.quickLinks.length === 0) { grid.innerHTML = '<p class="text-xs text-slate-400 col-span-full">אין קישורים שמורים.</p>'; return; }
             appData.quickLinks.forEach(ql => {
-                grid.innerHTML += `
-                    <div class="relative group">
-                        <a href="${ql.url}" target="_blank" rel="noopener noreferrer" class="bg-white border border-slate-200/80 hover:border-brand-500 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 text-center transition transform hover:-translate-y-1 block">
-                            <span class="text-3xl">${ql.icon}</span>
-                            <span class="text-xs font-bold text-slate-800 truncate w-full">${ql.title}</span>
-                        </a>
-                        <button onclick="deleteQuickLink(${ql.id}, event)" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">✕</button>
-                    </div>
-                `;
+                grid.innerHTML += `<div class="relative group">
+                    <a href="${ql.url}" target="_blank" rel="noopener noreferrer" class="bg-white border border-slate-200/80 hover:border-brand-500 p-4 rounded-2xl shadow-sm flex flex-col items-center justify-center gap-2 text-center transition transform hover:-translate-y-1 block">
+                        <span class="text-3xl">${ql.icon}</span>
+                        <span class="text-xs font-bold text-slate-800 truncate w-full">${ql.title}</span>
+                    </a>
+                    <button onclick="deleteQuickLink(${ql.id}, event)" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white rounded-full w-5 h-5 text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow">✕</button>
+                </div>`;
             });
         }
 
-        // --- DAILY TO-DO LIST ---
+        // DAILY TO-DOS
         document.getElementById('todo-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const input = document.getElementById('todo-input');
             const category = document.getElementById('todo-category').value;
             const text = input.value.trim();
             if (!text) return;
-
             appData.todos.unshift({ id: Date.now(), text, completed: false, category });
-            saveDataToCloud();
-            renderTodos();
-            input.value = '';
+            saveDataToCloud(); renderTodos(); input.value = '';
         });
-
         window.toggleTodo = function(id) {
             const todo = appData.todos.find(t => t.id === id);
-            if (todo) {
-                todo.completed = !todo.completed;
-                saveDataToCloud();
-                renderTodos();
-            }
+            if (todo) { todo.completed = !todo.completed; saveDataToCloud(); renderTodos(); }
         };
-
-        window.deleteTodo = function(id) {
-            appData.todos = appData.todos.filter(t => t.id !== id);
-            saveDataToCloud();
-            renderTodos();
-        };
-
+        window.deleteTodo = function(id) { appData.todos = appData.todos.filter(t => t.id !== id); saveDataToCloud(); renderTodos(); };
         function renderTodos() {
             const container = document.getElementById('todo-list-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            if (appData.todos.length === 0) {
-                container.innerHTML = '<p class="text-center text-xs text-slate-400 py-3">אין משימות פתוחות. פנאי מוחלט! 🎉</p>';
-                return;
-            }
-
+            if (!container) return; container.innerHTML = '';
+            if (appData.todos.length === 0) { container.innerHTML = '<p class="text-center text-xs text-slate-400 py-3">אין משימות פתוחות. 🎉</p>'; return; }
             appData.todos.forEach(t => {
                 const isDone = t.completed;
                 const textStyle = isDone ? 'line-through text-slate-400' : 'text-slate-800 font-medium';
                 const bgStyle = isDone ? 'bg-slate-50 border-slate-200 opacity-75' : 'bg-slate-50 border-slate-200 hover:border-brand-300';
                 const catIcon = t.category === 'סידורים' ? '🏃' : (t.category === 'קניות' ? '🛒' : (t.category === 'בית' ? '🏠' : '📌'));
-
-                container.innerHTML += `
-                    <div class="${bgStyle} border p-3 rounded-xl flex items-center justify-between gap-3 transition">
-                        <div class="flex items-center gap-3 overflow-hidden cursor-pointer flex-grow" onclick="toggleTodo(${t.id})">
-                            <input type="checkbox" ${isDone ? 'checked' : ''} onclick="event.stopPropagation(); toggleTodo(${t.id})" class="w-4 h-4 text-brand-600 rounded border-slate-300 cursor-pointer">
-                            <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-semibold shrink-0">${catIcon} ${t.category}</span>
-                            <span class="text-sm ${textStyle} truncate">${t.text}</span>
-                        </div>
-                        <button onclick="deleteTodo(${t.id})" class="text-red-400 hover:text-red-600 text-xs px-2 py-1 rounded-lg hover:bg-red-50 font-bold transition shrink-0">מחק</button>
+                container.innerHTML += `<div class="${bgStyle} border p-3 rounded-xl flex items-center justify-between gap-3 transition">
+                    <div class="flex items-center gap-3 overflow-hidden cursor-pointer flex-grow" onclick="toggleTodo(${t.id})">
+                        <input type="checkbox" ${isDone ? 'checked' : ''} onclick="event.stopPropagation(); toggleTodo(${t.id})" class="w-4 h-4 text-brand-600 rounded border-slate-300 cursor-pointer">
+                        <span class="text-xs bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md font-semibold shrink-0">${catIcon} ${t.category}</span>
+                        <span class="text-sm ${textStyle} truncate">${t.text}</span>
                     </div>
-                `;
+                    <button onclick="deleteTodo(${t.id})" class="text-red-400 hover:text-red-600 text-xs px-2 py-1 rounded-lg hover:bg-red-50 font-bold transition shrink-0">מחק</button>
+                </div>`;
             });
         }
 
-        // --- SHIFTS CALCULATION LOGIC ---
+        // SHIFTS LOGIC & EXCEL
         function calculateShiftPay(totalHours, hourlyRate, shiftType) {
             shiftType = shiftType || 'regular';
             let regularHours = Math.min(totalHours, 8);
             let overtime125 = Math.max(0, Math.min(totalHours - 8, 2));
             let overtime150 = Math.max(0, totalHours - 10);
-            
             let regMult = shiftType === 'weekend' ? 1.5 : 1.0;
             let ot125Mult = shiftType === 'weekend' ? 1.75 : 1.25;
             let ot150Mult = shiftType === 'weekend' ? 2.0 : 1.5;
-
-            let totalHoursPay = (regularHours * hourlyRate * regMult) + 
-                                (overtime125 * hourlyRate * ot125Mult) + 
-                                (overtime150 * hourlyRate * ot150Mult);
+            let totalHoursPay = (regularHours * hourlyRate * regMult) + (overtime125 * hourlyRate * ot125Mult) + (overtime150 * hourlyRate * ot150Mult);
             return { regularHours, overtime125, overtime150, totalHoursPay, regMult, ot125Mult, ot150Mult };
         }
-
         const startDaySelect = document.getElementById('start-day-select');
-        if (startDaySelect) {
-            startDaySelect.addEventListener('change', renderShifts);
-        }
+        if (startDaySelect) startDaySelect.addEventListener('change', renderShifts);
 
         document.getElementById('shift-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1325,23 +1328,17 @@
             if (!date) return;
 
             if (editId) {
-                const index = appData.shifts.findIndex(s => s.id == editId);
-                if (index !== -1) {
-                    appData.shifts[index] = { id: Number(editId), date, job, location, dept, shiftType, hours, km, kmRate, rate };
-                }
+                const idx = appData.shifts.findIndex(s => s.id == editId);
+                if (idx !== -1) appData.shifts[idx] = { id: Number(editId), date, job, location, dept, shiftType, hours, km, kmRate, rate };
             } else {
                 appData.shifts.push({ id: Date.now(), date, job, location, dept, shiftType, hours, km, kmRate, rate });
             }
-
-            saveDataToCloud();
-            renderShifts();
-            cancelEditShift();
+            saveDataToCloud(); renderShifts(); cancelEditShift();
         });
 
         window.editShift = function(id) {
             const shift = appData.shifts.find(s => s.id === id);
             if (!shift) return;
-
             document.getElementById('shift-id').value = shift.id;
             document.getElementById('shift-date').value = shift.date;
             document.getElementById('shift-job').value = shift.job || '';
@@ -1352,19 +1349,15 @@
             document.getElementById('shift-km').value = shift.km;
             document.getElementById('shift-km-rate').value = shift.kmRate;
             document.getElementById('shift-rate').value = shift.rate;
-
             document.getElementById('shift-form-title').innerText = 'עריכת משמרת';
             document.getElementById('shift-submit-btn').innerText = 'עדכן משמרת';
             document.getElementById('cancel-edit-btn').classList.remove('hidden');
-
             document.getElementById('shift-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
 
         window.cancelEditShift = function() {
             document.getElementById('shift-id').value = '';
             document.getElementById('shift-form').reset();
-            document.getElementById('shift-job').value = '';
-            document.getElementById('shift-location').value = '';
             document.getElementById('shift-date').valueAsDate = new Date();
             document.getElementById('shift-type').value = 'regular';
             document.getElementById('shift-form-title').innerText = 'הוספת משמרת חדשה';
@@ -1375,34 +1368,22 @@
         window.deleteShift = function(id) {
             if (confirm('האם למחוק משמרת זו?')) {
                 appData.shifts = appData.shifts.filter(s => s.id !== id);
-                if (document.getElementById('shift-id').value == id) {
-                    cancelEditShift();
-                }
-                saveDataToCloud();
-                renderShifts();
+                if (document.getElementById('shift-id').value == id) cancelEditShift();
+                saveDataToCloud(); renderShifts();
             }
         };
 
         document.getElementById('clear-shifts-btn')?.addEventListener('click', () => {
-            if (confirm('האם למחוק את כל המשמרות?')) {
-                appData.shifts = [];
-                cancelEditShift();
-                saveDataToCloud();
-                renderShifts();
-            }
+            if (confirm('האם למחוק את כל המשמרות?')) { appData.shifts = []; cancelEditShift(); saveDataToCloud(); renderShifts(); }
         });
 
         function renderShifts() {
             const tbody = document.getElementById('shifts-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
+            if (!tbody) return; tbody.innerHTML = '';
             const startDay = startDaySelect ? parseInt(startDaySelect.value) || 20 : 20;
             let totalHours = 0, totalKm = 0, totalIncome = 0, count = 0;
 
-            if (appData.shifts.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="13" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>';
-            }
+            if (appData.shifts.length === 0) tbody.innerHTML = '<tr><td colspan="13" class="p-4 text-center text-slate-400">אין משמרות שמורות עדיין.</td></tr>';
 
             appData.shifts.forEach(s => {
                 const sType = s.shiftType || 'regular';
@@ -1419,16 +1400,10 @@
                     nextStart = new Date(now.getFullYear(), now.getMonth(), startDay);
                 }
                 if (shiftDate >= curStart && shiftDate < nextStart) {
-                    totalHours += (s.hours || 0);
-                    totalKm += (s.km || 0);
-                    totalIncome += totalPay;
-                    count++;
+                    totalHours += (s.hours || 0); totalKm += (s.km || 0); totalIncome += totalPay; count++;
                 }
 
-                const typeBadge = sType === 'weekend' 
-                    ? '<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-200">שבת/חג</span>' 
-                    : '<span class="text-slate-500 text-xs">חול</span>';
-
+                const typeBadge = sType === 'weekend' ? '<span class="bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full border border-amber-200">שבת/חג</span>' : '<span class="text-slate-500 text-xs">חול</span>';
                 const ot125Str = pay.overtime125 > 0 ? (pay.overtime125 + ' ש\' (' + Math.round(pay.ot125Mult * 100) + '%)') : '-';
                 const ot150Str = pay.overtime150 > 0 ? (pay.overtime150 + ' ש\' (' + Math.round(pay.ot150Mult * 100) + '%)') : '-';
 
@@ -1464,290 +1439,118 @@
         }
 
         function exportShiftsToExcel() {
-            if (!appData.shifts || appData.shifts.length === 0) {
-                alert('אין משמרות לייצוא');
-                return;
-            }
-
+            if (!appData.shifts || appData.shifts.length === 0) { alert('אין משמרות לייצוא'); return; }
             try {
                 function createSheetData(shiftsArray) {
-                    if (!shiftsArray || shiftsArray.length === 0) {
-                        return [{
-                            "תאריך": "אין משמרות",
-                            "שם העבודה": "-",
-                            "מקום": "-",
-                            "מחלקה": "-",
-                            "סוג יום": "-",
-                            "שעות רגילות": 0,
-                            "שעות נוספות ראשונות": 0,
-                            "שעות נוספות מרובות": 0,
-                            "קילומטראז'": 0,
-                            "שכר שעות (₪)": 0,
-                            "שכר ק\"מ (₪)": 0,
-                            "סה\"כ לתשלום (₪)": 0
-                        }];
-                    }
-
-                    let totalReg = 0, total125 = 0, total150 = 0, totalKm = 0;
-                    let totalHoursPay = 0, totalKmPay = 0, totalPayAll = 0;
-
+                    if (!shiftsArray || shiftsArray.length === 0) return [{"תאריך": "אין משמרות", "סה\"כ לתשלום (₪)": 0}];
+                    let totalReg = 0, total125 = 0, total150 = 0, totalKm = 0, totalHoursPay = 0, totalKmPay = 0, totalPayAll = 0;
                     const rows = shiftsArray.map(s => {
                         const sType = s.shiftType || 'regular';
                         const pay = calculateShiftPay(s.hours || 0, s.rate || 0, sType);
                         const kmPay = (s.km || 0) * (s.kmRate || 0);
                         const totalPay = pay.totalHoursPay + kmPay;
-
-                        totalReg += pay.regularHours;
-                        total125 += pay.overtime125;
-                        total150 += pay.overtime150;
-                        totalKm += (s.km || 0);
-                        totalHoursPay += pay.totalHoursPay;
-                        totalKmPay += kmPay;
-                        totalPayAll += totalPay;
-
+                        totalReg += pay.regularHours; total125 += pay.overtime125; total150 += pay.overtime150;
+                        totalKm += (s.km || 0); totalHoursPay += pay.totalHoursPay; totalKmPay += kmPay; totalPayAll += totalPay;
                         return {
-                            "תאריך": s.date,
-                            "שם העבודה": s.job || '-',
-                            "מקום": s.location || '-',
-                            "מחלקה": s.dept,
+                            "תאריך": s.date, "שם העבודה": s.job || '-', "מקום": s.location || '-', "מחלקה": s.dept,
                             "סוג יום": sType === 'weekend' ? 'שבת/חג (150%)' : 'יום חול',
-                            "שעות רגילות": pay.regularHours,
-                            "שעות נוספות ראשונות": pay.overtime125,
-                            "שעות נוספות מרובות": pay.overtime150,
-                            "קילומטראז'": s.km,
-                            "שכר שעות (₪)": Number(pay.totalHoursPay.toFixed(2)),
-                            "שכר ק\"מ (₪)": Number(kmPay.toFixed(2)),
-                            "סה\"כ לתשלום (₪)": Number(totalPay.toFixed(2))
+                            "שעות רגילות": pay.regularHours, "שעות נוספות ראשונות": pay.overtime125, "שעות נוספות מרובות": pay.overtime150,
+                            "קילומטראז'": s.km, "שכר שעות (₪)": Number(pay.totalHoursPay.toFixed(2)), "שכר ק\"מ (₪)": Number(kmPay.toFixed(2)), "סה\"כ לתשלום (₪)": Number(totalPay.toFixed(2))
                         };
                     });
-
-                    rows.push({
-                        "תאריך": "סה\"כ כולל",
-                        "שם העבודה": "-",
-                        "מקום": "-",
-                        "מחלקה": `${shiftsArray.length} משמרות`,
-                        "סוג יום": "-",
-                        "שעות רגילות": Number(totalReg.toFixed(1)),
-                        "שעות נוספות ראשונות": Number(total125.toFixed(1)),
-                        "שעות נוספות מרובות": Number(total150.toFixed(1)),
-                        "קילומטראז'": totalKm,
-                        "שכר שעות (₪)": Number(totalHoursPay.toFixed(2)),
-                        "שכר ק\"מ (₪)": Number(totalKmPay.toFixed(2)),
-                        "סה\"כ לתשלום (₪)": Number(totalPayAll.toFixed(2))
-                    });
-
+                    rows.push({ "תאריך": "סה\"כ כולל", "שם העבודה": "-", "מקום": "-", "מחלקה": `${shiftsArray.length} משמרות`, "סוג יום": "-", "שעות רגילות": Number(totalReg.toFixed(1)), "שעות נוספות ראשונות": Number(total125.toFixed(1)), "שעות נוספות מרובות": Number(total150.toFixed(1)), "קילומטראז'": totalKm, "שכר שעות (₪)": Number(totalHoursPay.toFixed(2)), "שכר ק\"מ (₪)": Number(totalKmPay.toFixed(2)), "סה\"כ לתשלום (₪)": Number(totalPayAll.toFixed(2)) });
                     return rows;
                 }
-
                 const workbook = XLSX.utils.book_new();
-
-                const hidrachaShifts = appData.shifts.filter(s => s.dept === 'הדרכה');
-                const ws1 = XLSX.utils.json_to_sheet(createSheetData(hidrachaShifts));
-                ws1['!views'] = [{ RTL: true }];
-                XLSX.utils.book_append_sheet(workbook, ws1, "הדרכה");
-
-                const mivtsaimShifts = appData.shifts.filter(s => s.dept === 'מבצעים');
-                const ws2 = XLSX.utils.json_to_sheet(createSheetData(mivtsaimShifts));
-                ws2['!views'] = [{ RTL: true }];
-                XLSX.utils.book_append_sheet(workbook, ws2, "מבצעים");
-
-                const ws3 = XLSX.utils.json_to_sheet(createSheetData(appData.shifts));
-                ws3['!views'] = [{ RTL: true }];
-                XLSX.utils.book_append_sheet(workbook, ws3, "סה\"כ");
-
-                const fileName = `MedControl_Shifts_${new Date().toISOString().slice(0,10)}.xlsx`;
-                XLSX.writeFile(workbook, fileName);
-            } catch (err) {
-                console.error("שגיאה בייצוא לאקסל:", err);
-                alert("אירעה שגיאה בעת ביצוע הייצוא.");
-            }
+                const ws1 = XLSX.utils.json_to_sheet(createSheetData(appData.shifts.filter(s => s.dept === 'הדרכה'))); ws1['!views'] = [{ RTL: true }]; XLSX.utils.book_append_sheet(workbook, ws1, "הדרכה");
+                const ws2 = XLSX.utils.json_to_sheet(createSheetData(appData.shifts.filter(s => s.dept === 'מבצעים'))); ws2['!views'] = [{ RTL: true }]; XLSX.utils.book_append_sheet(workbook, ws2, "מבצעים");
+                const ws3 = XLSX.utils.json_to_sheet(createSheetData(appData.shifts)); ws3['!views'] = [{ RTL: true }]; XLSX.utils.book_append_sheet(workbook, ws3, "סה\"כ");
+                XLSX.writeFile(workbook, `MedControl_Shifts_${new Date().toISOString().slice(0,10)}.xlsx`);
+            } catch (err) { alert("אירעה שגיאה בעת ביצוע הייצוא."); }
         }
 
-        // --- FITNESS ---
+        // FITNESS
         function renderFitnessSuite() {
             const wlGrid = document.getElementById('wl-inputs-grid');
             const calcSelect = document.getElementById('calc-exercise-select');
             if (wlGrid && calcSelect) {
-                wlGrid.innerHTML = '';
-                calcSelect.innerHTML = '';
+                wlGrid.innerHTML = ''; calcSelect.innerHTML = '';
                 for (const [ex, val] of Object.entries(appData.fitness.Weightlifting)) {
-                    wlGrid.innerHTML += `
-                        <div class="flex flex-col items-center text-center">
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
-                            <input type="number" step="2.5" id="wl_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        </div>`;
+                    wlGrid.innerHTML += `<div class="flex flex-col items-center text-center"><label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label><input type="number" step="2.5" id="wl_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800"></div>`;
                     calcSelect.innerHTML += `<option value="${val || 100}">${ex}</option>`;
                 }
             }
-
             const gymGrid = document.getElementById('gym-inputs-grid');
             const gymCalcSelect = document.getElementById('calc-gym-exercise-select');
             if (gymGrid && gymCalcSelect) {
-                gymGrid.innerHTML = '';
-                gymCalcSelect.innerHTML = '';
+                gymGrid.innerHTML = ''; gymCalcSelect.innerHTML = '';
                 for (const [ex, val] of Object.entries(appData.fitness.Gymnastics)) {
-                    gymGrid.innerHTML += `
-                        <div class="flex flex-col items-center text-center">
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
-                            <input type="number" step="1" id="gym_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        </div>`;
+                    gymGrid.innerHTML += `<div class="flex flex-col items-center text-center"><label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label><input type="number" step="1" id="gym_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800"></div>`;
                     gymCalcSelect.innerHTML += `<option value="${val || 30}">${ex}</option>`;
                 }
             }
-
             const metGrid = document.getElementById('metcon-inputs-grid');
             if (metGrid) {
                 metGrid.innerHTML = '';
                 for (const [ex, val] of Object.entries(appData.fitness.Metcon_Benchmarks)) {
-                    metGrid.innerHTML += `
-                        <div class="flex flex-col items-center text-center">
-                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label>
-                            <input type="number" step="0.1" id="met_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                        </div>`;
+                    metGrid.innerHTML += `<div class="flex flex-col items-center text-center"><label class="block text-xs font-semibold text-slate-700 mb-1.5">${ex}</label><input type="number" step="0.1" id="met_${ex}" value="${val !== undefined && val !== null ? val : ''}" placeholder="-" class="w-full text-center bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-sm text-slate-800"></div>`;
                 }
             }
-
-            updateRIRTable();
-            updateGymRIRTable();
+            updateRIRTable(); updateGymRIRTable();
         }
 
         function updateRIRTable() {
             const base = parseFloat(document.getElementById('calc-base-weight')?.value) || 120;
-            const tbody = document.getElementById('rir-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            const levels = [
-                { desc: "כשל מוחלט (0 RIR)", mult: 1.0 },
-                { desc: "1 RIR", mult: 0.92 },
-                { desc: "2 RIR", mult: 0.86 },
-                { desc: "עצימות בינונית (3 RIR)", mult: 0.80 }
-            ];
-            levels.forEach(l => {
+            const tbody = document.getElementById('rir-table-body'); if (!tbody) return; tbody.innerHTML = '';
+            [{ desc: "כשל מוחלט (0 RIR)", mult: 1.0 }, { desc: "1 RIR", mult: 0.92 }, { desc: "2 RIR", mult: 0.86 }, { desc: "עצימות בינונית (3 RIR)", mult: 0.80 }].forEach(l => {
                 tbody.innerHTML += `<tr class="hover:bg-slate-50"><td class="p-3">${l.desc}</td><td class="p-3 text-left-nums">${Math.round(l.mult*100)}%</td><td class="p-3 text-left-nums font-bold">${Math.round(base*l.mult*10)/10} ק"ג</td></tr>`;
             });
         }
-
         function updateGymRIRTable() {
             const base = parseFloat(document.getElementById('calc-gym-base-reps')?.value) || 40;
-            const tbody = document.getElementById('gym-rir-table-body');
-            if (!tbody) return;
-            tbody.innerHTML = '';
-            const levels = [
-                { desc: "מקסימום חזרות (0 RIR)", mult: 1.0 },
-                { desc: "1 RIR", mult: 0.90 },
-                { desc: "2 RIR", mult: 0.80 },
-                { desc: "עצימות בינונית (3+ RIR)", mult: 0.70 }
-            ];
-            levels.forEach(l => {
+            const tbody = document.getElementById('gym-rir-table-body'); if (!tbody) return; tbody.innerHTML = '';
+            [{ desc: "מקסימום חזרות (0 RIR)", mult: 1.0 }, { desc: "1 RIR", mult: 0.90 }, { desc: "2 RIR", mult: 0.80 }, { desc: "עצימות בינונית (3+ RIR)", mult: 0.70 }].forEach(l => {
                 tbody.innerHTML += `<tr class="hover:bg-slate-50"><td class="p-3">${l.desc}</td><td class="p-3 text-left-nums">${Math.round(l.mult*100)}%</td><td class="p-3 text-left-nums font-bold">${Math.round(base*l.mult)} חזרות</td></tr>`;
             });
         }
-
-        document.getElementById('calc-exercise-select')?.addEventListener('change', (e) => {
-            const bw = document.getElementById('calc-base-weight');
-            if (bw && e.target.value) { bw.value = e.target.value; updateRIRTable(); }
-        });
+        document.getElementById('calc-exercise-select')?.addEventListener('change', (e) => { const bw = document.getElementById('calc-base-weight'); if (bw && e.target.value) { bw.value = e.target.value; updateRIRTable(); } });
         document.getElementById('calc-base-weight')?.addEventListener('input', updateRIRTable);
-
-        document.getElementById('calc-gym-exercise-select')?.addEventListener('change', (e) => {
-            const br = document.getElementById('calc-gym-base-reps');
-            if (br && e.target.value) { br.value = e.target.value; updateGymRIRTable(); }
-        });
+        document.getElementById('calc-gym-exercise-select')?.addEventListener('change', (e) => { const br = document.getElementById('calc-gym-base-reps'); if (br && e.target.value) { br.value = e.target.value; updateGymRIRTable(); } });
         document.getElementById('calc-gym-base-reps')?.addEventListener('input', updateGymRIRTable);
-
         document.getElementById('save-fitness-btn')?.addEventListener('click', () => {
-            for (const ex of Object.keys(appData.fitness.Weightlifting)) {
-                const el = document.getElementById(`wl_${ex}`);
-                if (el) appData.fitness.Weightlifting[ex] = el.value !== "" ? parseFloat(el.value) : "";
-            }
-            for (const ex of Object.keys(appData.fitness.Gymnastics)) {
-                const el = document.getElementById(`gym_${ex}`);
-                if (el) appData.fitness.Gymnastics[ex] = el.value !== "" ? parseInt(el.value) : "";
-            }
-            for (const ex of Object.keys(appData.fitness.Metcon_Benchmarks)) {
-                const el = document.getElementById(`met_${ex}`);
-                if (el) appData.fitness.Metcon_Benchmarks[ex] = el.value !== "" ? parseFloat(el.value) : "";
-            }
-            saveDataToCloud();
-            alert('השיאים נשמרו לענן בהצלחה! 🎉');
-            renderFitnessSuite();
+            for (const ex of Object.keys(appData.fitness.Weightlifting)) { const el = document.getElementById(`wl_${ex}`); if (el) appData.fitness.Weightlifting[ex] = el.value !== "" ? parseFloat(el.value) : ""; }
+            for (const ex of Object.keys(appData.fitness.Gymnastics)) { const el = document.getElementById(`gym_${ex}`); if (el) appData.fitness.Gymnastics[ex] = el.value !== "" ? parseInt(el.value) : ""; }
+            for (const ex of Object.keys(appData.fitness.Metcon_Benchmarks)) { const el = document.getElementById(`met_${ex}`); if (el) appData.fitness.Metcon_Benchmarks[ex] = el.value !== "" ? parseFloat(el.value) : ""; }
+            saveDataToCloud(); alert('השיאים נשמרו לענן בהצלחה! 🎉'); renderFitnessSuite();
         });
 
-        // --- ROTATIONS & EXAMS ---
+        // ROTATIONS & EXAMS
         document.getElementById('rotation-form')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('rotation-name').value.trim();
-            const start = document.getElementById('rotation-start').value;
-            const end = document.getElementById('rotation-end').value;
+            e.preventDefault(); const name = document.getElementById('rotation-name').value.trim(); const start = document.getElementById('rotation-start').value; const end = document.getElementById('rotation-end').value;
             if (!name || !start || !end) return;
-
-            appData.rotations.push({ id: Date.now(), name, start, end });
-            saveDataToCloud();
-            renderRotations();
-            e.target.reset();
+            appData.rotations.push({ id: Date.now(), name, start, end }); saveDataToCloud(); renderRotations(); e.target.reset();
         });
-
-        window.deleteRotation = function(id) {
-            appData.rotations = appData.rotations.filter(r => r.id !== id);
-            saveDataToCloud();
-            renderRotations();
-        };
-
+        window.deleteRotation = function(id) { appData.rotations = appData.rotations.filter(r => r.id !== id); saveDataToCloud(); renderRotations(); };
         function renderRotations() {
-            const tbody = document.getElementById('rotations-table-body');
-            const curEl = document.getElementById('home-current-rotation');
-            const nextEl = document.getElementById('home-next-rotation');
-            if (!tbody || !curEl || !nextEl) return;
-
-            tbody.innerHTML = '';
+            const tbody = document.getElementById('rotations-table-body'); const curEl = document.getElementById('home-current-rotation'); const nextEl = document.getElementById('home-next-rotation');
+            if (!tbody || !curEl || !nextEl) return; tbody.innerHTML = '';
             appData.rotations.sort((a,b) => new Date(a.start) - new Date(b.start));
-
             const today = new Date(); today.setHours(0,0,0,0);
             let current = null, next = null;
-
-            if (appData.rotations.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">אין סבבים שמורים.</td></tr>';
-                curEl.innerText = "אין סבב פעיל"; nextEl.innerText = "אין סבב עתידי";
-                return;
-            }
-
+            if (appData.rotations.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-400">אין סבבים שמורים.</td></tr>'; curEl.innerText = "אין סבב פעיל"; nextEl.innerText = "אין סבב עתידי"; return; }
             appData.rotations.forEach(r => {
-                const start = new Date(r.start); start.setHours(0,0,0,0);
-                const end = new Date(r.end); end.setHours(23,59,59,999);
-                if (today >= start && today <= end) current = r;
-                else if (start > today && !next) next = r;
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                        <td class="p-2.5 font-semibold text-slate-900">${r.name}</td>
-                        <td class="p-2.5 text-slate-700">${r.start}</td>
-                        <td class="p-2.5 text-slate-700">${r.end}</td>
-                        <td class="p-2.5"><button type="button" onclick="deleteRotation(${r.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td>
-                    </tr>
-                `;
+                const start = new Date(r.start); start.setHours(0,0,0,0); const end = new Date(r.end); end.setHours(23,59,59,999);
+                if (today >= start && today <= end) current = r; else if (start > today && !next) next = r;
+                tbody.innerHTML += `<tr class="hover:bg-slate-50 transition border-b border-slate-100"><td class="p-2.5 font-semibold text-slate-900">${r.name}</td><td class="p-2.5 text-slate-700">${r.start}</td><td class="p-2.5 text-slate-700">${r.end}</td><td class="p-2.5"><button type="button" onclick="deleteRotation(${r.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td></tr>`;
             });
-            curEl.innerText = current ? current.name : "אין סבב פעיל כרגע";
-            nextEl.innerText = next ? next.name : "אין סבב עתידי ברשימה";
+            curEl.innerText = current ? current.name : "אין סבב פעיל כרגע"; nextEl.innerText = next ? next.name : "אין סבב עתידי ברשימה";
         }
 
         document.getElementById('exam-form')?.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const name = document.getElementById('exam-name').value.trim();
-            const date = document.getElementById('exam-date').value;
-            if (!name || !date) return;
-
-            appData.exams.push({ id: Date.now(), name, date });
-            saveDataToCloud();
-            renderExams();
-            e.target.reset();
+            e.preventDefault(); const name = document.getElementById('exam-name').value.trim(); const date = document.getElementById('exam-date').value;
+            if (!name || !date) return; appData.exams.push({ id: Date.now(), name, date }); saveDataToCloud(); renderExams(); e.target.reset();
         });
-
-        window.deleteExam = function(id) {
-            appData.exams = appData.exams.filter(ex => ex.id !== id);
-            saveDataToCloud();
-            renderExams();
-        };
-
+        window.deleteExam = function(id) { appData.exams = appData.exams.filter(ex => ex.id !== id); saveDataToCloud(); renderExams(); };
         function getCuteExamIcon(name) {
             const n = name.toLowerCase();
             if (n.includes('ילדים') || n.includes('פדיאטריה')) return '🧸';
@@ -1756,68 +1559,37 @@
             if (n.includes('הרדמה') || n.includes('טיפול נמרץ')) return '💉';
             return '🎓';
         }
-
         function renderExams() {
-            const tbody = document.getElementById('exams-table-body');
-            const grid = document.getElementById('home-exams-countdown-grid');
-            if (!tbody || !grid) return;
-
-            tbody.innerHTML = ''; grid.innerHTML = '';
+            const tbody = document.getElementById('exams-table-body'); const grid = document.getElementById('home-exams-countdown-grid');
+            if (!tbody || !grid) return; tbody.innerHTML = ''; grid.innerHTML = '';
             appData.exams.sort((a,b) => new Date(a.date) - new Date(b.date));
-
             const today = new Date(); today.setHours(0,0,0,0);
-
             appData.exams.forEach(ex => {
                 const target = new Date(ex.date); target.setHours(0,0,0,0);
                 const days = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
                 const badge = days < 0 ? "bg-slate-100 text-slate-500" : (days === 0 ? "bg-red-50 text-red-600" : "bg-blue-50 text-blue-700");
-
-                tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                        <td class="p-2.5 font-semibold text-slate-900">${ex.name}</td>
-                        <td class="p-2.5 text-slate-700">${ex.date}</td>
-                        <td class="p-2.5"><span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${badge}">${days >= 0 ? days + ' ימים' : 'הסתיים'}</span></td>
-                        <td class="p-2.5"><button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td>
-                    </tr>
-                `;
-
-                grid.innerHTML += `
-                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4">
-                        <div class="overflow-hidden">
-                            <p class="text-xs text-slate-500 font-semibold truncate">${ex.name}</p>
-                            <p class="text-lg font-black text-slate-900 mt-0.5">${days >= 0 ? days + ' ימים' : 'הסתיים'}</p>
-                        </div>
-                        <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl shrink-0 shadow-inner">${getCuteExamIcon(ex.name)}</div>
-                    </div>
-                `;
+                tbody.innerHTML += `<tr class="hover:bg-slate-50 transition border-b border-slate-100"><td class="p-2.5 font-semibold text-slate-900">${ex.name}</td><td class="p-2.5 text-slate-700">${ex.date}</td><td class="p-2.5"><span class="px-2.5 py-1 rounded-lg text-xs font-bold border ${badge}">${days >= 0 ? days + ' ימים' : 'הסתיים'}</span></td><td class="p-2.5"><button type="button" onclick="deleteExam(${ex.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer">מחק</button></td></tr>`;
+                grid.innerHTML += `<div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-4"><div class="overflow-hidden"><p class="text-xs text-slate-500 font-semibold truncate">${ex.name}</p><p class="text-lg font-black text-slate-900 mt-0.5">${days >= 0 ? days + ' ימים' : 'הסתיים'}</p></div><div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl shrink-0 shadow-inner">${getCuteExamIcon(ex.name)}</div></div>`;
             });
         }
 
-        // --- THESIS TRACKER (עבודת גמר) ---
+        // THESIS TRACKER
         document.getElementById('thesis-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const title = document.getElementById('thesis-title').value.trim();
             const completed = parseInt(document.getElementById('thesis-completed').value) || 0;
             const target = parseInt(document.getElementById('thesis-target').value) || 100;
             const notes = document.getElementById('thesis-notes').value.trim();
-
             if (!title) return;
-
-            appData.thesis = { title, completed, target, notes };
-            saveDataToCloud();
-            renderThesis();
+            appData.thesis = { title, completed, target, notes }; saveDataToCloud(); renderThesis();
         });
-
         window.adjustThesisCount = function(delta) {
             if (!appData.thesis) appData.thesis = { ...DEFAULT_THESIS };
             appData.thesis.completed = Math.max(0, (appData.thesis.completed || 0) + delta);
-            saveDataToCloud();
-            renderThesis();
+            saveDataToCloud(); renderThesis();
         };
-
         function renderThesis() {
             if (!appData.thesis) appData.thesis = { ...DEFAULT_THESIS };
-
             const t = appData.thesis;
             const titleEl = document.getElementById('thesis-display-title');
             const doneStat = document.getElementById('thesis-stat-done');
@@ -1829,15 +1601,12 @@
             const barLabel = document.getElementById('thesis-bar-label');
             const notesContainer = document.getElementById('thesis-notes-preview-container');
             const notesPreview = document.getElementById('thesis-notes-preview');
-
-            // Home Card Elements
             const homeCount = document.getElementById('home-thesis-count');
             const homeDoneBadge = document.getElementById('home-thesis-done-badge');
             const homeRemBadge = document.getElementById('home-thesis-rem-badge');
             const homePieChart = document.getElementById('home-thesis-pie-chart');
             const homePiePct = document.getElementById('home-thesis-pie-pct');
 
-            // Set Form Values
             const formTitle = document.getElementById('thesis-title');
             const formComp = document.getElementById('thesis-completed');
             const formTgt = document.getElementById('thesis-target');
@@ -1848,7 +1617,6 @@
             if (formTgt && document.activeElement !== formTgt) formTgt.value = t.target || 100;
             if (formNotes && document.activeElement !== formNotes) formNotes.value = t.notes || '';
 
-            // Compute Progress
             const completed = Math.max(0, t.completed || 0);
             const target = Math.max(1, t.target || 100);
             const remaining = Math.max(0, target - completed);
@@ -1861,22 +1629,13 @@
             if (targetStat) targetStat.innerText = target;
             if (pctBadge) pctBadge.innerText = `${percent}%`;
             if (pText) pText.innerText = `${completed} / ${target} מטופלים`;
-
-            if (pBar) {
-                pBar.style.width = `${percent}%`;
-                if (barLabel) barLabel.innerText = `${percent}%`;
-            }
+            if (pBar) { pBar.style.width = `${percent}%`; if (barLabel) barLabel.innerText = `${percent}%`; }
 
             if (notesContainer && notesPreview) {
-                if (t.notes) {
-                    notesPreview.innerText = t.notes;
-                    notesContainer.classList.remove('hidden');
-                } else {
-                    notesContainer.classList.add('hidden');
-                }
+                if (t.notes) { notesPreview.innerText = t.notes; notesContainer.classList.remove('hidden'); }
+                else { notesContainer.classList.add('hidden'); }
             }
 
-            // Update Home Dashboard Card next to Rotations
             if (homeCount) homeCount.innerText = `${completed} / ${target} מטופלים`;
             if (homeDoneBadge) homeDoneBadge.innerText = `🟢 ${percent}% בוצע (${completed})`;
             if (homeRemBadge) homeRemBadge.innerText = `🟠 ${remPercent}% נשאר (${remaining})`;
@@ -1884,185 +1643,92 @@
             if (homePiePct) homePiePct.innerText = `${percent}%`;
         }
 
-        // --- MEDICAL CALCULATORS ---
+        // MEDICAL CALCULATORS
         function setupMedicalCalculators() {
-            // BMI
-            const bmiW = document.getElementById('calc-bmi-weight');
-            const bmiH = document.getElementById('calc-bmi-height');
+            const bmiW = document.getElementById('calc-bmi-weight'), bmiH = document.getElementById('calc-bmi-height');
             function calcBMI() {
-                const w = parseFloat(bmiW.value);
-                const h = parseFloat(bmiH.value) / 100;
+                const w = parseFloat(bmiW.value), h = parseFloat(bmiH.value) / 100;
                 if (w > 0 && h > 0) {
                     const bmi = (w / (h * h)).toFixed(1);
                     document.getElementById('res-bmi-val').innerText = bmi;
-                    let cat = "תקין";
-                    if (bmi < 18.5) cat = "תת-משקל";
-                    else if (bmi >= 25 && bmi < 30) cat = "עודף משקל";
-                    else if (bmi >= 30) cat = "השמנה";
+                    let cat = "תקין"; if (bmi < 18.5) cat = "תת-משקל"; else if (bmi >= 25 && bmi < 30) cat = "עודף משקל"; else if (bmi >= 30) cat = "השמנה";
                     document.getElementById('res-bmi-cat').innerText = cat;
-                } else {
-                    document.getElementById('res-bmi-val').innerText = "-";
-                    document.getElementById('res-bmi-cat').innerText = "";
-                }
+                } else { document.getElementById('res-bmi-val').innerText = "-"; document.getElementById('res-bmi-cat').innerText = ""; }
             }
-            bmiW?.addEventListener('input', calcBMI);
-            bmiH?.addEventListener('input', calcBMI);
+            bmiW?.addEventListener('input', calcBMI); bmiH?.addEventListener('input', calcBMI);
 
-            // MAP
-            const sbp = document.getElementById('calc-map-sbp');
-            const dbp = document.getElementById('calc-map-dbp');
+            const sbp = document.getElementById('calc-map-sbp'), dbp = document.getElementById('calc-map-dbp');
             function calcMAP() {
-                const s = parseFloat(sbp.value);
-                const d = parseFloat(dbp.value);
+                const s = parseFloat(sbp.value), d = parseFloat(dbp.value);
                 if (s > 0 && d > 0) {
                     const map = Math.round((s + 2 * d) / 3);
                     document.getElementById('res-map-val').innerText = map;
-                    let cat = (map >= 70 && map <= 100) ? "תקין (70-100 mmHg)" : "מחוץ לטווח התקין";
-                    document.getElementById('res-map-cat').innerText = cat;
-                } else {
-                    document.getElementById('res-map-val').innerText = "-";
-                    document.getElementById('res-map-cat').innerText = "";
-                }
+                    document.getElementById('res-map-cat').innerText = (map >= 70 && map <= 100) ? "תקין (70-100 mmHg)" : "מחוץ לטווח התקין";
+                } else { document.getElementById('res-map-val').innerText = "-"; document.getElementById('res-map-cat').innerText = ""; }
             }
-            sbp?.addEventListener('input', calcMAP);
-            dbp?.addEventListener('input', calcMAP);
+            sbp?.addEventListener('input', calcMAP); dbp?.addEventListener('input', calcMAP);
 
-            // Anion Gap
-            const na = document.getElementById('calc-ag-na');
-            const cl = document.getElementById('calc-ag-cl');
-            const hco3 = document.getElementById('calc-ag-hco3');
+            const na = document.getElementById('calc-ag-na'), cl = document.getElementById('calc-ag-cl'), hco3 = document.getElementById('calc-ag-hco3');
             function calcAG() {
-                const n = parseFloat(na.value);
-                const c = parseFloat(cl.value);
-                const h = parseFloat(hco3.value);
+                const n = parseFloat(na.value), c = parseFloat(cl.value), h = parseFloat(hco3.value);
                 if (n > 0 && c > 0 && h > 0) {
                     const ag = (n - (c + h)).toFixed(1);
                     document.getElementById('res-ag-val').innerText = ag;
-                    let cat = (ag >= 8 && ag <= 12) ? "תקין (8-12 mEq/L)" : (ag > 12 ? "High Anion Gap" : "נמוך");
-                    document.getElementById('res-ag-cat').innerText = cat;
-                } else {
-                    document.getElementById('res-ag-val').innerText = "-";
-                    document.getElementById('res-ag-cat').innerText = "";
-                }
+                    document.getElementById('res-ag-cat').innerText = (ag >= 8 && ag <= 12) ? "תקין (8-12 mEq/L)" : (ag > 12 ? "High Anion Gap" : "נמוך");
+                } else { document.getElementById('res-ag-val').innerText = "-"; document.getElementById('res-ag-cat').innerText = ""; }
             }
-            na?.addEventListener('input', calcAG);
-            cl?.addEventListener('input', calcAG);
-            hco3?.addEventListener('input', calcAG);
+            na?.addEventListener('input', calcAG); cl?.addEventListener('input', calcAG); hco3?.addEventListener('input', calcAG);
 
-            // eGFR / CrCl (Cockcroft-Gault)
-            const egfrAge = document.getElementById('calc-egfr-age');
-            const egfrWeight = document.getElementById('calc-egfr-weight');
-            const egfrCr = document.getElementById('calc-egfr-cr');
-            const egfrSex = document.getElementById('calc-egfr-sex');
-
+            const egfrAge = document.getElementById('calc-egfr-age'), egfrWeight = document.getElementById('calc-egfr-weight'), egfrCr = document.getElementById('calc-egfr-cr'), egfrSex = document.getElementById('calc-egfr-sex');
             function calcEGFR() {
-                const age = parseFloat(egfrAge.value);
-                const weight = parseFloat(egfrWeight.value);
-                const cr = parseFloat(egfrCr.value);
-                const sex = egfrSex.value;
-
+                const age = parseFloat(egfrAge.value), weight = parseFloat(egfrWeight.value), cr = parseFloat(egfrCr.value), sex = egfrSex.value;
                 if (age > 0 && weight > 0 && cr > 0) {
-                    let crcl = ((140 - age) * weight) / (72 * cr);
-                    if (sex === 'female') crcl *= 0.85;
-
-                    const val = Math.round(crcl);
-                    document.getElementById('res-egfr-val').innerText = val;
-
-                    let cat = "תפקוד כליות תקין (>90)";
-                    if (val < 15) cat = "אי-ספיקת כליות סופנית (Stage 5)";
-                    else if (val <= 29) cat = "ירידה חמורה מאוד (Stage 4)";
-                    else if (val <= 59) cat = "ירידה בינונית-חמורה (Stage 3)";
-                    else if (val <= 89) cat = "ירידה קלה בתפקוד הכליות (Stage 2)";
-
+                    let crcl = ((140 - age) * weight) / (72 * cr); if (sex === 'female') crcl *= 0.85;
+                    const val = Math.round(crcl); document.getElementById('res-egfr-val').innerText = val;
+                    let cat = "תפקוד כליות תקין (>90)"; if (val < 15) cat = "אי-ספיקת כליות סופנית (Stage 5)"; else if (val <= 29) cat = "ירידה חמורה מאוד (Stage 4)"; else if (val <= 59) cat = "ירידה בינונית-חמורה (Stage 3)"; else if (val <= 89) cat = "ירידה קלה (Stage 2)";
                     document.getElementById('res-egfr-cat').innerText = cat;
-                } else {
-                    document.getElementById('res-egfr-val').innerText = "-";
-                    document.getElementById('res-egfr-cat').innerText = "";
-                }
+                } else { document.getElementById('res-egfr-val').innerText = "-"; document.getElementById('res-egfr-cat').innerText = ""; }
             }
-            egfrAge?.addEventListener('input', calcEGFR);
-            egfrWeight?.addEventListener('input', calcEGFR);
-            egfrCr?.addEventListener('input', calcEGFR);
-            egfrSex?.addEventListener('change', calcEGFR);
+            egfrAge?.addEventListener('input', calcEGFR); egfrWeight?.addEventListener('input', calcEGFR); egfrCr?.addEventListener('input', calcEGFR); egfrSex?.addEventListener('change', calcEGFR);
 
-            // CHA2DS2-VASc Score
             const chadsChecks = document.querySelectorAll('.chads-check');
             function calcCHADS() {
-                let score = 0;
-                chadsChecks.forEach(cb => {
-                    if (cb.checked) {
-                        score += parseInt(cb.getAttribute('data-score') || 1);
-                    }
-                });
-
+                let score = 0; chadsChecks.forEach(cb => { if (cb.checked) score += parseInt(cb.getAttribute('data-score') || 1); });
                 document.getElementById('res-chads-val').innerText = score + ' נקודות';
-                let cat = "סיכון נמוך מאוד - אין צורך בנוגדי קרישה";
-                if (score === 1) cat = "סיכון נמוך-בינוני - לשקול נוגדי קרישה (DOACs)";
-                else if (score >= 2) cat = "סיכון גבוה לשבץ - מומלץ טיפול בנוגדי קרישה (DOACs)";
-
+                let cat = "סיכון נמוך מאוד - אין צורך בנוגדי קרישה"; if (score === 1) cat = "סיכון נמוך-בינוני - לשקול נוגדי קרישה (DOACs)"; else if (score >= 2) cat = "סיכון גבוה לשבץ - מומלץ טיפול בנוגדי קרישה (DOACs)";
                 document.getElementById('res-chads-cat').innerText = cat;
             }
             chadsChecks.forEach(cb => cb.addEventListener('change', calcCHADS));
         }
 
-        // --- MEDICAL PEARLS ---
+        // MEDICAL PEARLS
         document.getElementById('pearl-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const category = document.getElementById('pearl-category').value;
             const title = document.getElementById('pearl-title').value.trim();
             const note = document.getElementById('pearl-note').value.trim();
             if (!title || !note) return;
-
-            appData.pearls.unshift({ id: Date.now(), category, title, note });
-            saveDataToCloud();
-            renderPearls();
-            e.target.reset();
+            appData.pearls.unshift({ id: Date.now(), category, title, note }); saveDataToCloud(); renderPearls(); e.target.reset();
         });
-
-        window.deletePearl = function(id) {
-            if (confirm('האם למחוק פנינה רפואית זו?')) {
-                appData.pearls = appData.pearls.filter(p => p.id !== id);
-                saveDataToCloud();
-                renderPearls();
-            }
-        };
-
+        window.deletePearl = function(id) { if (confirm('האם למחוק פנינה רפואית זו?')) { appData.pearls = appData.pearls.filter(p => p.id !== id); saveDataToCloud(); renderPearls(); } };
         document.getElementById('pearl-search')?.addEventListener('input', renderPearls);
-
         function renderPearls() {
-            const container = document.getElementById('pearls-list-container');
-            if (!container) return;
-            container.innerHTML = '';
-
+            const container = document.getElementById('pearls-list-container'); if (!container) return; container.innerHTML = '';
             const query = document.getElementById('pearl-search')?.value.toLowerCase() || '';
-            const filtered = appData.pearls.filter(p => 
-                p.title.toLowerCase().includes(query) || 
-                p.note.toLowerCase().includes(query) || 
-                p.category.toLowerCase().includes(query)
-            );
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<p class="text-center text-slate-400 py-6 text-sm">אין פנינים רפואיות להצגה.</p>';
-                return;
-            }
-
+            const filtered = appData.pearls.filter(p => p.title.toLowerCase().includes(query) || p.note.toLowerCase().includes(query) || p.category.toLowerCase().includes(query));
+            if (filtered.length === 0) { container.innerHTML = '<p class="text-center text-slate-400 py-6 text-sm">אין פנינים רפואיות להצגה.</p>'; return; }
             filtered.forEach(p => {
-                container.innerHTML += `
-                    <div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2 relative group hover:border-brand-300 transition">
-                        <div class="flex justify-between items-start gap-2">
-                            <div class="flex items-center gap-2">
-                                <span class="bg-brand-100 text-brand-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full">${p.category}</span>
-                                <h3 class="font-black text-slate-900 text-sm">${p.title}</h3>
-                            </div>
-                            <button onclick="deletePearl(${p.id})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1 transition">מחק</button>
-                        </div>
-                        <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${p.note}</p>
+                container.innerHTML += `<div class="bg-slate-50 border border-slate-200 p-4 rounded-xl space-y-2 relative group hover:border-brand-300 transition">
+                    <div class="flex justify-between items-start gap-2">
+                        <div class="flex items-center gap-2"><span class="bg-brand-100 text-brand-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full">${p.category}</span><h3 class="font-black text-slate-900 text-sm">${p.title}</h3></div>
+                        <button onclick="deletePearl(${p.id})" class="text-red-400 hover:text-red-600 text-xs font-bold px-1 transition">מחק</button>
                     </div>
-                `;
+                    <p class="text-xs text-slate-700 leading-relaxed whitespace-pre-line">${p.note}</p>
+                </div>`;
             });
         }
 
-        // --- WARRANTY TRACKER & RECEIPT FILE ATTACHMENTS ---
+        // WARRANTY TRACKER
         document.getElementById('warranty-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const editId = document.getElementById('war-id').value;
@@ -2072,7 +1738,6 @@
             const expDate = document.getElementById('war-exp-date').value;
             const notes = document.getElementById('war-notes').value.trim();
             const fileInput = document.getElementById('war-file');
-
             if (!title || !expDate) return;
 
             const existingItem = editId ? appData.warranties.find(w => w.id == editId) : null;
@@ -2081,154 +1746,196 @@
 
             if (fileInput && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
-                if (file.size > 4 * 1024 * 1024) { // Limit file size to 4MB for optimal LocalStorage/Cloud sync
-                    alert('גודל הקובץ חורג מ-4MB. נא להעלות קובץ קטן יותר.');
-                    return;
-                }
+                if (file.size > 4 * 1024 * 1024) { alert('גודל הקובץ חורג מ-4MB.'); return; }
                 fileData = await new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (event) => resolve(event.target.result);
-                    reader.readAsDataURL(file);
+                    const reader = new FileReader(); reader.onload = (event) => resolve(event.target.result); reader.readAsDataURL(file);
                 });
                 fileName = file.name;
             }
 
             if (editId) {
                 const index = appData.warranties.findIndex(w => w.id == editId);
-                if (index !== -1) {
-                    appData.warranties[index] = { id: Number(editId), title, store, coverage, expDate, notes, fileData, fileName };
-                }
+                if (index !== -1) appData.warranties[index] = { id: Number(editId), title, store, coverage, expDate, notes, fileData, fileName };
             } else {
                 appData.warranties.push({ id: Date.now(), title, store, coverage, expDate, notes, fileData, fileName });
             }
-
-            saveDataToCloud();
-            renderWarranties();
-            cancelEditWarranty();
+            saveDataToCloud(); renderWarranties(); cancelEditWarranty();
         });
 
         window.editWarranty = function(id) {
-            const item = appData.warranties.find(w => w.id === id);
-            if (!item) return;
-
-            document.getElementById('war-id').value = item.id;
-            document.getElementById('war-title').value = item.title || '';
-            document.getElementById('war-store').value = item.store || '';
-            document.getElementById('war-coverage').value = item.coverage || '';
-            document.getElementById('war-exp-date').value = item.expDate || '';
-            document.getElementById('war-notes').value = item.notes || '';
-
-            document.getElementById('war-form-title').innerHTML = '<span>✏️</span> עריכת מוצר / אחריות';
-            document.getElementById('war-submit-btn').innerText = 'עדכן מוצר';
-            document.getElementById('war-cancel-btn').classList.remove('hidden');
-
+            const item = appData.warranties.find(w => w.id === id); if (!item) return;
+            document.getElementById('war-id').value = item.id; document.getElementById('war-title').value = item.title || ''; document.getElementById('war-store').value = item.store || ''; document.getElementById('war-coverage').value = item.coverage || ''; document.getElementById('war-exp-date').value = item.expDate || ''; document.getElementById('war-notes').value = item.notes || '';
+            document.getElementById('war-form-title').innerHTML = '<span>✏️</span> עריכת מוצר / אחריות'; document.getElementById('war-submit-btn').innerText = 'עדכן מוצר'; document.getElementById('war-cancel-btn').classList.remove('hidden');
             document.getElementById('warranty-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
 
         window.cancelEditWarranty = function() {
-            document.getElementById('war-id').value = '';
-            document.getElementById('warranty-form').reset();
-            document.getElementById('war-form-title').innerHTML = '<span>➕</span> הוספת מוצר/אחריות חדשה';
-            document.getElementById('war-submit-btn').innerText = 'שמור מוצר';
-            document.getElementById('war-cancel-btn').classList.add('hidden');
+            document.getElementById('war-id').value = ''; document.getElementById('warranty-form').reset();
+            document.getElementById('war-form-title').innerHTML = '<span>➕</span> הוספת מוצר/אחריות חדשה'; document.getElementById('war-submit-btn').innerText = 'שמור מוצר'; document.getElementById('war-cancel-btn').classList.add('hidden');
         };
 
         window.deleteWarranty = function(id) {
-            if (confirm('האם למחוק מוצר זה ברשימה?')) {
-                appData.warranties = appData.warranties.filter(item => item.id !== id);
-                if (document.getElementById('war-id').value == id) {
-                    cancelEditWarranty();
-                }
-                saveDataToCloud();
-                renderWarranties();
-            }
+            if (confirm('האם למחוק מוצר זה ברשימה?')) { appData.warranties = appData.warranties.filter(item => item.id !== id); if (document.getElementById('war-id').value == id) cancelEditWarranty(); saveDataToCloud(); renderWarranties(); }
         };
 
         window.viewReceiptFile = function(id) {
-            const item = appData.warranties.find(w => w.id === id);
-            if (!item || !item.fileData) return;
-
-            const modal = document.getElementById('receipt-modal');
-            const title = document.getElementById('receipt-modal-title');
-            const content = document.getElementById('receipt-modal-content');
-            const dlBtn = document.getElementById('receipt-modal-download');
-
-            title.innerText = `קבלה עבור: ${item.title}`;
-            dlBtn.href = item.fileData;
-            dlBtn.download = item.fileName || `receipt_${item.id}`;
-
-            if (item.fileData.startsWith('data:image/')) {
-                content.innerHTML = `<img src="${item.fileData}" class="max-h-[60vh] object-contain rounded-xl shadow-md border border-slate-200" alt="קבלה" />`;
-            } else if (item.fileData.startsWith('data:application/pdf')) {
-                content.innerHTML = `<iframe src="${item.fileData}" class="w-full h-[60vh] rounded-xl border border-slate-200"></iframe>`;
-            } else {
-                content.innerHTML = `<p class="text-xs text-slate-500">קובץ מסוג זה ניתן להורדה בלבד.</p>`;
-            }
-
+            const item = appData.warranties.find(w => w.id === id); if (!item || !item.fileData) return;
+            const modal = document.getElementById('receipt-modal'), title = document.getElementById('receipt-modal-title'), content = document.getElementById('receipt-modal-content'), dlBtn = document.getElementById('receipt-modal-download');
+            title.innerText = `קבלה עבור: ${item.title}`; dlBtn.href = item.fileData; dlBtn.download = item.fileName || `receipt_${item.id}`;
+            if (item.fileData.startsWith('data:image/')) content.innerHTML = `<img src="${item.fileData}" class="max-h-[60vh] object-contain rounded-xl shadow-md border border-slate-200" alt="קבלה" />`;
+            else if (item.fileData.startsWith('data:application/pdf')) content.innerHTML = `<iframe src="${item.fileData}" class="w-full h-[60vh] rounded-xl border border-slate-200"></iframe>`;
+            else content.innerHTML = `<p class="text-xs text-slate-500">קובץ מסוג זה ניתן להורדה בלבד.</p>`;
             modal.classList.remove('hidden');
         };
 
-        window.closeReceiptModal = function() {
-            document.getElementById('receipt-modal')?.classList.add('hidden');
-        };
+        window.closeReceiptModal = function() { document.getElementById('receipt-modal')?.classList.add('hidden'); };
 
         function renderWarranties() {
-            const container = document.getElementById('warranties-container');
-            if (!container) return;
-            container.innerHTML = '';
+            const container = document.getElementById('warranties-container'); if (!container) return; container.innerHTML = '';
+            if (!appData.warranties || appData.warranties.length === 0) { container.innerHTML = `<div class="col-span-full bg-white border border-slate-200 p-8 rounded-2xl text-center text-slate-400 text-xs">אין מוצרים במעקב אחריות כרגע.</div>`; return; }
+            const today = new Date(); today.setHours(0,0,0,0);
+            appData.warranties.forEach(item => {
+                const exp = new Date(item.expDate); exp.setHours(0,0,0,0);
+                const diffTime = exp - today; const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                let statusBadge = '', borderStyle = '';
+                if (diffDays < 0) { statusBadge = `<span class="bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">פג תוקף</span>`; borderStyle = 'border-rose-200 bg-rose-50/20'; }
+                else if (diffDays <= 30) { statusBadge = `<span class="bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">מסתיים עוד ${diffDays} ימים</span>`; borderStyle = 'border-amber-200 bg-amber-50/20'; }
+                else { statusBadge = `<span class="bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">בתוקף (${diffDays} ימים)</span>`; borderStyle = 'border-slate-200 bg-white'; }
+                const formattedExpDate = exp.toLocaleDateString('he-IL');
+                const receiptBtn = item.fileData ? `<button onclick="viewReceiptFile(${item.id})" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer"><span>📎</span> קבלה</button>` : `<span class="text-[11px] text-slate-400">אין קבלה</span>`;
+                container.innerHTML += `<div class="border ${borderStyle} p-4 rounded-2xl shadow-sm flex flex-col justify-between space-y-3">
+                    <div>
+                        <div class="flex justify-between items-start"><h3 class="font-bold text-slate-900 text-sm">${item.title}</h3>${statusBadge}</div>
+                        <p class="text-xs text-slate-500 mt-1">חנות/מותג: <strong>${item.store || '-'}</strong></p>
+                        ${item.coverage ? `<p class="text-xs text-brand-700 bg-brand-50 border border-brand-100 px-2.5 py-1 rounded-lg mt-1.5 font-semibold flex items-center gap-1"><span>🛡️</span> כיסוי: ${item.coverage}</p>` : ''}
+                        <p class="text-xs text-slate-500 mt-1.5">תפוגה: <strong>${formattedExpDate}</strong></p>
+                        ${item.notes ? `<p class="text-xs bg-slate-100/70 text-slate-600 p-2 rounded-lg mt-2 text-[11px]">${item.notes}</p>` : ''}
+                    </div>
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                        <div class="flex items-center gap-2">${receiptBtn}<button onclick="editWarranty(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 font-bold px-2.5 py-1 rounded-lg transition cursor-pointer">ערוך</button></div>
+                        <button onclick="deleteWarranty(${item.id})" class="text-xs text-rose-600 hover:text-rose-800 font-bold transition cursor-pointer">מחק</button>
+                    </div>
+                </div>`;
+            });
+        }
 
-            if (!appData.warranties || appData.warranties.length === 0) {
-                container.innerHTML = `<div class="col-span-full bg-white border border-slate-200 p-8 rounded-2xl text-center text-slate-400 text-xs">אין מוצרים במעקב אחריות כרגע.</div>`;
+        // --- MEDICAL EQUIPMENT TRACKER (ציוד רפואי) LOGIC ---
+        document.getElementById('med-eq-form')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('eq-id').value;
+            const name = document.getElementById('eq-name').value.trim();
+            const qty = parseInt(document.getElementById('eq-qty').value) || 1;
+            const location = document.getElementById('eq-location').value;
+            const status = document.getElementById('eq-status').value;
+            const expDate = document.getElementById('eq-exp-date').value;
+            const notes = document.getElementById('eq-notes').value.trim();
+
+            if (!name) return;
+
+            if (editId) {
+                const idx = appData.medEquipment.findIndex(item => item.id == editId);
+                if (idx !== -1) {
+                    appData.medEquipment[idx] = { id: Number(editId), name, qty, location, status, expDate, notes };
+                }
+            } else {
+                appData.medEquipment.push({ id: Date.now(), name, qty, location, status, expDate, notes });
+            }
+
+            saveDataToCloud();
+            renderMedEquipment();
+            cancelEditMedEquipment();
+        });
+
+        window.editMedEquipment = function(id) {
+            const item = appData.medEquipment.find(eq => eq.id === id);
+            if (!item) return;
+
+            document.getElementById('eq-id').value = item.id;
+            document.getElementById('eq-name').value = item.name || '';
+            document.getElementById('eq-qty').value = item.qty || 1;
+            document.getElementById('eq-location').value = item.location || 'תיק כונן / חובש';
+            document.getElementById('eq-status').value = item.status || 'ok';
+            document.getElementById('eq-exp-date').value = item.expDate || '';
+            document.getElementById('eq-notes').value = item.notes || '';
+
+            document.getElementById('eq-form-title').innerHTML = '<span>✏️</span> עריכת פריט ציוד רפואי';
+            document.getElementById('eq-submit-btn').innerText = 'עדכן פריט';
+            document.getElementById('eq-cancel-btn').classList.remove('hidden');
+
+            document.getElementById('med-eq-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        window.cancelEditMedEquipment = function() {
+            document.getElementById('eq-id').value = '';
+            document.getElementById('med-eq-form').reset();
+            document.getElementById('eq-form-title').innerHTML = '<span>➕</span> הוספת ציוד רפואי חדש';
+            document.getElementById('eq-submit-btn').innerText = 'שמור פריט';
+            document.getElementById('eq-cancel-btn').classList.add('hidden');
+        };
+
+        window.deleteMedEquipment = function(id) {
+            if (confirm('האם למחוק פריט ציוד זה?')) {
+                appData.medEquipment = appData.medEquipment.filter(item => item.id !== id);
+                if (document.getElementById('eq-id').value == id) cancelEditMedEquipment();
+                saveDataToCloud();
+                renderMedEquipment();
+            }
+        };
+
+        window.quickChangeEqStatus = function(id, newStatus) {
+            const item = appData.medEquipment.find(eq => eq.id === id);
+            if (item) {
+                item.status = newStatus;
+                saveDataToCloud();
+                renderMedEquipment();
+            }
+        };
+
+        document.getElementById('eq-search')?.addEventListener('input', renderMedEquipment);
+
+        function renderMedEquipment() {
+            const tbody = document.getElementById('med-eq-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const query = document.getElementById('eq-search')?.value.toLowerCase() || '';
+            const filtered = appData.medEquipment.filter(item => 
+                item.name.toLowerCase().includes(query) || 
+                (item.location && item.location.toLowerCase().includes(query)) ||
+                (item.notes && item.notes.toLowerCase().includes(query))
+            );
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400">אין ציוד רפואי להצגה.</td></tr>';
                 return;
             }
 
-            const today = new Date();
-            today.setHours(0,0,0,0);
-
-            appData.warranties.forEach(item => {
-                const exp = new Date(item.expDate);
-                exp.setHours(0,0,0,0);
-                const diffTime = exp - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            filtered.forEach(item => {
                 let statusBadge = '';
-                let borderStyle = '';
-
-                if (diffDays < 0) {
-                    statusBadge = `<span class="bg-rose-100 text-rose-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">פג תוקף</span>`;
-                    borderStyle = 'border-rose-200 bg-rose-50/20';
-                } else if (diffDays <= 30) {
-                    statusBadge = `<span class="bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">מסתיים עוד ${diffDays} ימים</span>`;
-                    borderStyle = 'border-amber-200 bg-amber-50/20';
+                if (item.status === 'ok') {
+                    statusBadge = '<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">🟢 תקין / במלאי</span>';
+                } else if (item.status === 'missing') {
+                    statusBadge = '<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-200">🟠 חסר / להשלמה</span>';
                 } else {
-                    statusBadge = `<span class="bg-emerald-100 text-emerald-700 px-2.5 py-0.5 rounded-full text-[11px] font-bold">בתוקף (${diffDays} ימים)</span>`;
-                    borderStyle = 'border-slate-200 bg-white';
+                    statusBadge = '<span class="bg-rose-100 text-rose-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-rose-200">🔴 פג תוקף / לקוי</span>';
                 }
-                const formattedExpDate = exp.toLocaleDateString('he-IL');
 
-                const receiptBtn = item.fileData 
-                    ? `<button onclick="viewReceiptFile(${item.id})" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer"><span>📎</span> קבלה</button>` 
-                    : `<span class="text-[11px] text-slate-400">אין קבלה</span>`;
-
-                container.innerHTML += `
-                    <div class="border ${borderStyle} p-4 rounded-2xl shadow-sm flex flex-col justify-between space-y-3">
-                        <div>
-                            <div class="flex justify-between items-start">
-                                <h3 class="font-bold text-slate-900 text-sm">${item.title}</h3>
-                                ${statusBadge}
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-3 font-bold text-slate-900">${item.name}</td>
+                        <td class="p-3 text-center font-bold text-brand-600">${item.qty}</td>
+                        <td class="p-3 text-slate-700">${item.location || '-'}</td>
+                        <td class="p-3 text-center">${statusBadge}</td>
+                        <td class="p-3 text-center text-slate-600">${item.expDate || '-'}</td>
+                        <td class="p-3 text-slate-600 text-xs">${item.notes || '-'}</td>
+                        <td class="p-3">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button type="button" onclick="quickChangeEqStatus(${item.id}, '${item.status === 'ok' ? 'missing' : 'ok'}')" title="שנה סטטוס תקין/חסר" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg border border-slate-200 cursor-pointer font-medium">⚡</button>
+                                <button type="button" onclick="editMedEquipment(${item.id})" class="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded-lg border border-blue-100 cursor-pointer font-medium">ערוך</button>
+                                <button type="button" onclick="deleteMedEquipment(${item.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">חנות/מותג: <strong>${item.store || '-'}</strong></p>
-                            ${item.coverage ? `<p class="text-xs text-brand-700 bg-brand-50 border border-brand-100 px-2.5 py-1 rounded-lg mt-1.5 font-semibold flex items-center gap-1"><span>🛡️</span> כיסוי: ${item.coverage}</p>` : ''}
-                            <p class="text-xs text-slate-500 mt-1.5">תפוגה: <strong>${formattedExpDate}</strong></p>
-                            ${item.notes ? `<p class="text-xs bg-slate-100/70 text-slate-600 p-2 rounded-lg mt-2 text-[11px]">${item.notes}</p>` : ''}
-                        </div>
-                        <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                ${receiptBtn}
-                                <button onclick="editWarranty(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 font-bold px-2.5 py-1 rounded-lg transition cursor-pointer">ערוך</button>
-                            </div>
-                            <button onclick="deleteWarranty(${item.id})" class="text-xs text-rose-600 hover:text-rose-800 font-bold transition cursor-pointer">מחק</button>
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 `;
             });
         }

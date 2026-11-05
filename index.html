@@ -158,7 +158,7 @@
                     <button type="button" onclick="toggleQuickLinkModal()" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-600 border border-brand-200 px-3 py-1.5 rounded-xl font-bold transition">➕ הוסף קישור</button>
                 </div>
 
-                <!-- Add Quick Link Inline Form (Hidden by default) -->
+                <!-- Add Quick Link Inline Form -->
                 <div id="quick-link-form-container" class="hidden bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm max-w-5xl space-y-3">
                     <h3 class="text-sm font-bold text-slate-800">הוספת קישור מהיר חדש</h3>
                     <form id="quick-link-form" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -864,13 +864,13 @@
         <section id="tab-personal" class="tab-content hidden space-y-8">
             <div class="text-center pb-2 border-b border-slate-200">
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">👤 אזור אישי וציוד</h1>
-                <p class="text-slate-500 text-sm mt-1">ניהול מידע אישי, מעקב אחריויות וניהול ציוד רפואי</p>
+                <p class="text-slate-500 text-sm mt-1">ניהול מידע אישי, מעקב אחריויות וניהול מלאי ציוד רפואי</p>
             </div>
 
             <!-- Sub Tabs Header inside Personal -->
             <div class="sub-tabs-header max-w-4xl mx-auto">
                 <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-personal', 'sub-warranties', this)">🛡️ אחריויות וקבלות</button>
-                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-personal', 'sub-med-equipment', this)">🩺 מעקב ציוד רפואי</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-personal', 'sub-med-equipment', this)">🩺 מעקב ציוד רפואי & תרופות</button>
             </div>
 
             <!-- SUB TAB 1: WARRANTIES -->
@@ -931,60 +931,64 @@
                 </div>
             </div>
 
-            <!-- SUB TAB 2: MEDICAL EQUIPMENT TRACKER (ציוד רפואי) -->
-            <div id="sub-med-equipment" class="sub-tab-content space-y-6 max-w-5xl mx-auto">
+            <!-- SUB TAB 2: MEDICAL EQUIPMENT TRACKER (ציוד רפואי & תרופות) -->
+            <div id="sub-med-equipment" class="sub-tab-content space-y-6 max-w-6xl mx-auto">
                 <div class="border-b border-slate-200 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
-                            <span>🩺</span> מעקב ציוד רפואי ומלאי
+                            <span>🩺</span> מעקב ציוד רפואי ותרופות (איחוד הצלה)
                         </h2>
-                        <p class="text-slate-500 text-xs mt-0.5">ניהול מלאי ציוד רפואי, ערכות כונן, תוקפי תרופות וציוד מתכלה.</p>
+                        <p class="text-slate-500 text-xs mt-0.5">ניהול תקן נדרש מול מלאי בפועל, תאריכי תוקף (בתוקף / 3 חודשים / פג תוקף) וסינון לפי ערכות.</p>
                     </div>
-                    <div class="flex gap-2 w-full sm:w-auto">
-                        <input type="text" id="eq-search" placeholder="🔍 חפש ציוד..." class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 w-full sm:w-48">
+                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                        <select id="eq-filter-location" onchange="renderMedEquipment()" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="all">כל הערכות 🎒</option>
+                            <option value="תיק ALS (פראמדיק)">תיק ALS (פראמדיק) 🚑</option>
+                            <option value="ערכת תרופות">ערכת תרופות 💊</option>
+                        </select>
+                        <input type="text" id="eq-search" placeholder="🔍 חפש לפי שם/מק&quot;ט..." class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 flex-grow sm:w-44">
                     </div>
                 </div>
 
                 <!-- Add/Edit Medical Equipment Form -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                     <h3 id="eq-form-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
-                        <span>➕</span> הוספת ציוד רפואי חדש
+                        <span>➕</span> הוספת / עדכון פריט ציוד
                     </h3>
                     <form id="med-eq-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                         <input type="hidden" id="eq-id" value="">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם הציוד / פריט</label>
-                            <input type="text" id="eq-name" placeholder="לדוגמה: סטטוסקופ / מד סטורציה / עט הזרקה" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם הציוד / התרופה</label>
+                            <input type="text" id="eq-name" placeholder="למשל: Amp. Adrenaline 1mg/1cc" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">כמות במלאי</label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">מק"ט</label>
+                            <input type="text" id="eq-sku" placeholder="למשל: 2406" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">כמות תקן (נדרשת)</label>
+                            <input type="number" id="eq-target" min="1" value="1" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">כמות במלאי (יש לי)</label>
                             <input type="number" id="eq-qty" min="0" value="1" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">מיקום / ערכה</label>
                             <select id="eq-location" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                                <option value="תיק כונן / חובש">תיק כונן / חובש 🎒</option>
+                                <option value="תיק ALS (פראמדיק)">תיק ALS (פראמדיק) 🚑</option>
+                                <option value="ערכת תרופות">ערכת תרופות 💊</option>
                                 <option value="אישי / בית">אישי / בית 🏠</option>
-                                <option value="מרפאה / סבב">מרפאה / סבב 🏥</option>
                                 <option value="רכב">רכב 🚗</option>
-                                <option value="אחר">אחר 📌</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">סטטוס ציוד</label>
-                            <select id="eq-status" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
-                                <option value="ok">🟢 תקין / במלאי</option>
-                                <option value="missing">🟠 חסר / להשלמה</option>
-                                <option value="expired">🔴 פג תוקף / לא תקין</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך תוקף / בדיקה</label>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך תוקף</label>
                             <input type="date" id="eq-exp-date" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div class="sm:col-span-2 lg:col-span-2">
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">הערות / דגשים</label>
-                            <input type="text" id="eq-notes" placeholder="מס' סידורי, מינון, הערות ספציפיות..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">הערות / אצווה</label>
+                            <input type="text" id="eq-notes" placeholder="מס' אצווה, מינון, דגשים..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         
                         <div class="sm:col-span-2 lg:col-span-4 flex justify-end gap-2 pt-1 border-t border-slate-100">
@@ -1000,11 +1004,14 @@
                         <table class="w-full text-right border-collapse text-xs">
                             <thead>
                                 <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
-                                    <th class="p-3 rounded-r-xl">שם הציוד</th>
-                                    <th class="p-3 text-center">כמות</th>
-                                    <th class="p-3">מיקום/שיוך</th>
-                                    <th class="p-3 text-center">סטטוס</th>
-                                    <th class="p-3 text-center">תאריך תוקף/בדיקה</th>
+                                    <th class="p-3 rounded-r-xl">מק"ט</th>
+                                    <th class="p-3">שם הציוד / תרופה</th>
+                                    <th class="p-3">ערכה / מיקום</th>
+                                    <th class="p-3 text-center">תקן נדרש</th>
+                                    <th class="p-3 text-center">יש לי (במלאי)</th>
+                                    <th class="p-3 text-center">סטטוס מלאי</th>
+                                    <th class="p-3 text-center">תאריך תוקף</th>
+                                    <th class="p-3 text-center">סטטוס תוקף</th>
                                     <th class="p-3">הערות</th>
                                     <th class="p-3 rounded-l-xl text-center">פעולות</th>
                                 </tr>
@@ -1081,10 +1088,75 @@
             notes: 'איסוף נתונים מתיקים רפואיים'
         };
 
+        // FULL ITEMS POPULATED FROM PDF 1 (ALS Kit) & PDF 2 (Medication Kit)
         const DEFAULT_MED_EQUIPMENT = [
-            { id: 1, name: 'סטטוסקופ Littmann Cardio IV', qty: 1, location: 'אישי / בית', status: 'ok', expDate: '', notes: 'כולל חריטת שם' },
-            { id: 2, name: 'מד סטורציה דופק נייד', qty: 1, location: 'תיק כונן / חובש', status: 'ok', expDate: '2027-01-01', notes: 'נבדקו סוללות' },
-            { id: 3, name: 'חבצי קיבוע / תחבושות אישיות', qty: 5, location: 'תיק כונן / חובש', status: 'missing', expDate: '2026-12-31', notes: 'חסרות 2 תחבושות 6 אינץ' }
+            // --- ערכת תיק ALS פראמדיק (מק"ט 1004) ---
+            { id: 101, sku: '100009', name: 'סט 30 כפפות ניטריל L', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-08-01', notes: '' },
+            { id: 102, sku: '100072', name: 'ערכת תיק חבישה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-12-01', notes: '' },
+            { id: 103, sku: '100073', name: 'סט אינטובציה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-01-01', notes: '' },
+            { id: 104, sku: '100098', name: 'ערכת חמצן לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-06-15', notes: '' },
+            { id: 105, sku: '1035', name: 'ערכת ניקור חזה (וייגון)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-02-10', notes: 'תוקף קרוב' },
+            { id: 106, sku: '1120', name: 'סד מתכוונן לקיבוע 1120', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 107, sku: '1204', name: 'סקשן ידני + קטטר אדום וכחול', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 108, sku: '1209', name: 'מסכת הנשמה מס\' 0', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 109, sku: '1210', name: 'קטטר לסקשן - אדום (18)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-09-01', notes: '' },
+            { id: 110, sku: '1211', name: 'קטטר לסקשן - כחול (8)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-09-01', notes: '' },
+            { id: 111, sku: '1212', name: 'ערכת מנתבי אוויר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-05-01', notes: '' },
+            { id: 112, sku: '1219', name: 'מסנן ויראלי מבוגר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-01-15', notes: 'נשאר לו חודש בתוקף' },
+            { id: 113, sku: '1220', name: 'מסנן ויראלי ילד', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-01-15', notes: '' },
+            { id: 114, sku: '14016', name: 'סוגר ביטחון פלסטיק - אזיקון כתום', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 115, sku: '1404', name: 'גלוקוג\'ל/דקסטרוג\'ל 15 גר\'', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2026-10-01', notes: 'פג תוקף' },
+            { id: 116, sku: '1603', name: 'ג\'ל לחיטוי ידיים - 100 מ"ל', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-05-01', notes: '' },
+            { id: 117, sku: '1604', name: 'מסכת הגנה - N95', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 118, sku: '1639', name: 'מגבון אישי לחיטוי 70% אלכוהול', targetQty: 5, qty: 3, location: 'תיק ALS (פראמדיק)', expDate: '2027-11-01', notes: 'חסר במלאי' },
+            { id: 119, sku: '1701', name: 'ערכה לפתיחת וריד - ללא סליין', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-09-01', notes: '' },
+            { id: 120, sku: '1704', name: 'סט עירוי (צינורית בלבד)', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-03-01', notes: '' },
+            { id: 121, sku: '1705', name: 'סליין 0.5 ליטר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-02-01', notes: 'תוקף קרוב' },
+            { id: 122, sku: '1708', name: 'פח מחטים נפח 0.6 ליטר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 123, sku: '1709', name: 'ונפלון כחול - G22 בטיחותי', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-06-01', notes: '' },
+            { id: 124, sku: '1710', name: 'וונפלון ירוק - G18 בטיחותי', targetQty: 2, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-06-01', notes: 'חסר 1' },
+            { id: 125, sku: '1711', name: 'וונפלון ורוד - G20 בטיחותי', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-06-01', notes: '' },
+            { id: 126, sku: '1801', name: 'צווארון מתכוונן מבוגר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 127, sku: '1902', name: 'מדל"ד מבוגר + סטטוסקופ', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 128, sku: '2001', name: 'ערכת לידה', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-01-01', notes: '' },
+            { id: 129, sku: '2201', name: 'מחט סטר G18 1 1/2 - ורוד', targetQty: 6, qty: 6, location: 'תיק ALS (פראמדיק)', expDate: '2028-10-01', notes: '' },
+            { id: 130, sku: '2202', name: 'מחט סטרילית G21 1 1/2 - ירוק', targetQty: 6, qty: 6, location: 'תיק ALS (פראמדיק)', expDate: '2028-10-01', notes: '' },
+            { id: 131, sku: '2203', name: 'מזרק 20 סמ"ק ללא מחט', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
+            { id: 132, sku: '2208', name: 'וונפלון צהוב G24', targetQty: 1, qty: 0, location: 'תיק ALS (פראמדיק)', expDate: '2027-12-01', notes: 'חסר במלאי' },
+            { id: 133, sku: '2209', name: 'מזרק נזאלי - קונוס להחדרת תרופות', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-04-01', notes: '' },
+            { id: 134, sku: '2210', name: 'מזרק תוך גרמי לילדים BIG', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-01-20', notes: 'תוקף קרוב' },
+            { id: 135, sku: '2211', name: 'מזרק תוך גרמי למבוגר BIG', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-08-01', notes: '' },
+            { id: 136, sku: '2212', name: 'ברז תלת כיווני + מאריך 10 ס"מ', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-05-01', notes: '' },
+            { id: 137, sku: '2218', name: 'מזרק 1 מ"ל', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
+            { id: 138, sku: '2223', name: 'מזרק 10 סמ"ק ללא מחט', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
+            { id: 139, sku: '2224', name: 'מזרק 2.5/3 סמ"ק ללא מחט', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
+            { id: 140, sku: '2227', name: 'מזרק 5 סמ"ק ללא מחט', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
+            { id: 141, sku: '2401', name: 'Sodium Chloride 0.9% 100ml', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2027-07-01', notes: '' },
+            { id: 142, sku: '2424', name: 'Amp. Acamol 1g/100cc (אקמול נוזלי)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-04-01', notes: '' },
+            { id: 143, sku: '2917', name: 'תיק כוננים חדש ALS/BLS (ריק)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 144, sku: '3207', name: 'אלונקה טקטית מתקפלת מבד', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 145, sku: '3708', name: 'אמבו PVC למבוגר + מסכה 5', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2029-01-01', notes: '' },
+            { id: 146, sku: '3733', name: 'אמבו PVC לילד + מסכה 2', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2029-01-01', notes: '' },
+            { id: 147, sku: '4377', name: 'קטטר פולי - מידה FN18', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-10-01', notes: '' },
+
+            // --- ערכת תרופות רגילה (מק"ט 1006) ---
+            { id: 201, sku: '2403', name: 'Sol. Aerovent 0.25mg/1cc (ארוונט)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2027-05-15', notes: '' },
+            { id: 202, sku: '2404', name: 'אספירין 300 מ"ג (Tab Aspirin)', targetQty: 10, qty: 10, location: 'ערכת תרופות', expDate: '2027-11-01', notes: '' },
+            { id: 203, sku: '2405', name: 'Nitrolingual-Spray 0.4mg (איזוט ספריי)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2027-01-10', notes: 'תוקף קרוב' },
+            { id: 204, sku: '2406', name: 'Amp. Adrenaline 1mg/1cc (אדרנלין)', targetQty: 10, qty: 8, location: 'ערכת תרופות', expDate: '2027-09-01', notes: 'חסר 2 אמפולות' },
+            { id: 205, sku: '2408', name: 'Amp. Fusid 20mg/2cc (פוסיד)', targetQty: 6, qty: 6, location: 'ערכת תרופות', expDate: '2027-10-01', notes: '' },
+            { id: 206, sku: '2409', name: 'Normal Saline 10ml (סודיום 0.9%)', targetQty: 9, qty: 9, location: 'ערכת תרופות', expDate: '2028-02-01', notes: '' },
+            { id: 207, sku: '2410', name: 'Amp. Dormicum 5mg/1cc (דורמיקום)', targetQty: 3, qty: 3, location: 'ערכת תרופות', expDate: '2027-06-01', notes: '' },
+            { id: 208, sku: '2412', name: 'Amp. Solo-medrol 125mg/2cc (סולומדרול)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2026-09-01', notes: 'פג תוקף' },
+            { id: 209, sku: '2413', name: 'Amp. Narcan 0.4mg/1cc (נרקן)', targetQty: 5, qty: 5, location: 'ערכת תרופות', expDate: '2027-12-01', notes: '' },
+            { id: 210, sku: '2414', name: 'Amp. Dextrose 10GR 20CC 50%', targetQty: 3, qty: 3, location: 'ערכת תרופות', expDate: '2027-08-01', notes: '' },
+            { id: 211, sku: '2415', name: 'Sol Ventolin 5mg/1cc (ונטולין 20 מ"ל)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2027-01-25', notes: 'תוקף קרוב' },
+            { id: 212, sku: '2416', name: 'אקמול אברול / דקסמול (טבליות)', targetQty: 10, qty: 10, location: 'ערכת תרופות', expDate: '2028-01-01', notes: '' },
+            { id: 213, sku: '2418', name: 'מארז לתרופות כתום ממותג (ריק)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 214, sku: '2425', name: 'Amp. Pramin 10mg (פראמין)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-07-01', notes: '' },
+            { id: 215, sku: '2426', name: 'Amp. Optalgin 1000mg/2cc (אופטלגין)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-11-01', notes: '' },
+            { id: 216, sku: '2432', name: 'Amp. Tramal 100mg/2cc (טרמל)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-05-01', notes: '' },
+            { id: 217, sku: '2433', name: 'Amp. Etomidate 20mg/10cc (אטומידאט)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-08-01', notes: '' }
         ];
 
         let appData = {
@@ -1151,7 +1223,7 @@
             if (!Array.isArray(appData.todos)) appData.todos = [...DEFAULT_TODOS];
             if (!Array.isArray(appData.quickLinks)) appData.quickLinks = [...DEFAULT_QUICK_LINKS];
             if (!Array.isArray(appData.warranties)) appData.warranties = [...DEFAULT_WARRANTIES];
-            if (!Array.isArray(appData.medEquipment)) appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
+            if (!Array.isArray(appData.medEquipment) || appData.medEquipment.length === 0) appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
             if (!appData.thesis) appData.thesis = { ...DEFAULT_THESIS };
         }
 
@@ -1819,14 +1891,15 @@
             });
         }
 
-        // --- MEDICAL EQUIPMENT TRACKER (ציוד רפואי) LOGIC ---
+        // --- MEDICAL EQUIPMENT TRACKER (ציוד רפואי ותרופות) LOGIC ---
         document.getElementById('med-eq-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const editId = document.getElementById('eq-id').value;
+            const sku = document.getElementById('eq-sku').value.trim();
             const name = document.getElementById('eq-name').value.trim();
-            const qty = parseInt(document.getElementById('eq-qty').value) || 1;
+            const targetQty = parseInt(document.getElementById('eq-target').value) || 1;
+            const qty = parseInt(document.getElementById('eq-qty').value) || 0;
             const location = document.getElementById('eq-location').value;
-            const status = document.getElementById('eq-status').value;
             const expDate = document.getElementById('eq-exp-date').value;
             const notes = document.getElementById('eq-notes').value.trim();
 
@@ -1835,10 +1908,10 @@
             if (editId) {
                 const idx = appData.medEquipment.findIndex(item => item.id == editId);
                 if (idx !== -1) {
-                    appData.medEquipment[idx] = { id: Number(editId), name, qty, location, status, expDate, notes };
+                    appData.medEquipment[idx] = { id: Number(editId), sku, name, targetQty, qty, location, expDate, notes };
                 }
             } else {
-                appData.medEquipment.push({ id: Date.now(), name, qty, location, status, expDate, notes });
+                appData.medEquipment.push({ id: Date.now(), sku, name, targetQty, qty, location, expDate, notes });
             }
 
             saveDataToCloud();
@@ -1851,14 +1924,15 @@
             if (!item) return;
 
             document.getElementById('eq-id').value = item.id;
+            document.getElementById('eq-sku').value = item.sku || '';
             document.getElementById('eq-name').value = item.name || '';
-            document.getElementById('eq-qty').value = item.qty || 1;
-            document.getElementById('eq-location').value = item.location || 'תיק כונן / חובש';
-            document.getElementById('eq-status').value = item.status || 'ok';
+            document.getElementById('eq-target').value = item.targetQty || 1;
+            document.getElementById('eq-qty').value = item.qty !== undefined ? item.qty : 1;
+            document.getElementById('eq-location').value = item.location || 'תיק ALS (פראמדיק)';
             document.getElementById('eq-exp-date').value = item.expDate || '';
             document.getElementById('eq-notes').value = item.notes || '';
 
-            document.getElementById('eq-form-title').innerHTML = '<span>✏️</span> עריכת פריט ציוד רפואי';
+            document.getElementById('eq-form-title').innerHTML = '<span>✏️</span> עריכת פריט ציוד / תרופה';
             document.getElementById('eq-submit-btn').innerText = 'עדכן פריט';
             document.getElementById('eq-cancel-btn').classList.remove('hidden');
 
@@ -1868,7 +1942,7 @@
         window.cancelEditMedEquipment = function() {
             document.getElementById('eq-id').value = '';
             document.getElementById('med-eq-form').reset();
-            document.getElementById('eq-form-title').innerHTML = '<span>➕</span> הוספת ציוד רפואי חדש';
+            document.getElementById('eq-form-title').innerHTML = '<span>➕</span> הוספת / עדכון פריט ציוד';
             document.getElementById('eq-submit-btn').innerText = 'שמור פריט';
             document.getElementById('eq-cancel-btn').classList.add('hidden');
         };
@@ -1882,10 +1956,10 @@
             }
         };
 
-        window.quickChangeEqStatus = function(id, newStatus) {
+        window.adjustMedEqQty = function(id, delta) {
             const item = appData.medEquipment.find(eq => eq.id === id);
             if (item) {
-                item.status = newStatus;
+                item.qty = Math.max(0, (item.qty || 0) + delta);
                 saveDataToCloud();
                 renderMedEquipment();
             }
@@ -1899,38 +1973,73 @@
             tbody.innerHTML = '';
 
             const query = document.getElementById('eq-search')?.value.toLowerCase() || '';
-            const filtered = appData.medEquipment.filter(item => 
-                item.name.toLowerCase().includes(query) || 
-                (item.location && item.location.toLowerCase().includes(query)) ||
-                (item.notes && item.notes.toLowerCase().includes(query))
-            );
+            const locationFilter = document.getElementById('eq-filter-location')?.value || 'all';
+
+            const filtered = appData.medEquipment.filter(item => {
+                const matchesSearch = item.name.toLowerCase().includes(query) || 
+                                      (item.sku && item.sku.toLowerCase().includes(query)) ||
+                                      (item.notes && item.notes.toLowerCase().includes(query));
+                const matchesLocation = (locationFilter === 'all') || (item.location === locationFilter);
+                return matchesSearch && matchesLocation;
+            });
 
             if (filtered.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-6 text-center text-slate-400">אין ציוד רפואי להצגה.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="10" class="p-6 text-center text-slate-400">אין פריטי ציוד או תרופות להצגה.</td></tr>';
                 return;
             }
 
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
             filtered.forEach(item => {
-                let statusBadge = '';
-                if (item.status === 'ok') {
-                    statusBadge = '<span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-200">🟢 תקין / במלאי</span>';
-                } else if (item.status === 'missing') {
-                    statusBadge = '<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-200">🟠 חסר / להשלמה</span>';
-                } else {
-                    statusBadge = '<span class="bg-rose-100 text-rose-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-rose-200">🔴 פג תוקף / לקוי</span>';
+                // Stock status check (Target vs Actual)
+                const targetQty = item.targetQty || 1;
+                const qty = item.qty !== undefined ? item.qty : 0;
+                const isMissing = qty < targetQty;
+                const missingBadge = isMissing 
+                    ? `<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-200">🟠 חסר (${targetQty - qty})</span>`
+                    : `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-0.5 rounded-full">✅ מלא</span>`;
+
+                // Expiry Date Logic (Green > 3 months, Yellow <= 3 months, Red = Expired)
+                let expBadge = '<span class="text-slate-400 text-xs">ללא תוקף</span>';
+                let rowBgClass = '';
+
+                if (item.expDate) {
+                    const exp = new Date(item.expDate);
+                    exp.setHours(0,0,0,0);
+                    const diffTime = exp - today;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    if (diffDays < 0) {
+                        expBadge = '<span class="bg-rose-100 text-rose-800 border border-rose-200 text-[11px] font-black px-2.5 py-0.5 rounded-full">🔴 פג תוקף</span>';
+                        rowBgClass = 'bg-rose-50/40';
+                    } else if (diffDays <= 90) { // 3 months or less
+                        expBadge = `<span class="bg-amber-100 text-amber-800 border border-amber-200 text-[11px] font-black px-2.5 py-0.5 rounded-full">🟡 תוקף קרוב (${diffDays} ימים)</span>`;
+                        rowBgClass = 'bg-amber-50/30';
+                    } else {
+                        expBadge = '<span class="bg-emerald-100 text-emerald-800 border border-emerald-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full">🟢 בתוקף</span>';
+                    }
                 }
 
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100 ${rowBgClass}">
+                        <td class="p-3 text-slate-500 font-mono text-xs font-semibold">${item.sku || '-'}</td>
                         <td class="p-3 font-bold text-slate-900">${item.name}</td>
-                        <td class="p-3 text-center font-bold text-brand-600">${item.qty}</td>
-                        <td class="p-3 text-slate-700">${item.location || '-'}</td>
-                        <td class="p-3 text-center">${statusBadge}</td>
-                        <td class="p-3 text-center text-slate-600">${item.expDate || '-'}</td>
+                        <td class="p-3 text-slate-700 text-xs">${item.location || '-'}</td>
+                        <td class="p-3 text-center font-bold text-slate-700">${targetQty}</td>
+                        <td class="p-3 text-center">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button type="button" onclick="adjustMedEqQty(${item.id}, -1)" class="w-6 h-6 bg-slate-200 hover:bg-slate-300 text-slate-700 font-black rounded-lg text-xs flex items-center justify-center transition cursor-pointer">-</button>
+                                <span class="font-black text-brand-600 min-w-[20px] text-center">${qty}</span>
+                                <button type="button" onclick="adjustMedEqQty(${item.id}, 1)" class="w-6 h-6 bg-brand-100 hover:bg-brand-200 text-brand-700 font-black rounded-lg text-xs flex items-center justify-center transition cursor-pointer">+</button>
+                            </div>
+                        </td>
+                        <td class="p-3 text-center">${missingBadge}</td>
+                        <td class="p-3 text-center text-xs font-medium text-slate-700">${item.expDate || '-'}</td>
+                        <td class="p-3 text-center">${expBadge}</td>
                         <td class="p-3 text-slate-600 text-xs">${item.notes || '-'}</td>
                         <td class="p-3">
                             <div class="flex items-center justify-center gap-1.5">
-                                <button type="button" onclick="quickChangeEqStatus(${item.id}, '${item.status === 'ok' ? 'missing' : 'ok'}')" title="שנה סטטוס תקין/חסר" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 px-2 py-1 rounded-lg border border-slate-200 cursor-pointer font-medium">⚡</button>
                                 <button type="button" onclick="editMedEquipment(${item.id})" class="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded-lg border border-blue-100 cursor-pointer font-medium">ערוך</button>
                                 <button type="button" onclick="deleteMedEquipment(${item.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
                             </div>

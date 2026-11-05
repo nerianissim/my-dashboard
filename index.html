@@ -193,10 +193,10 @@
                 </div>
             </div>
 
-            <!-- Clinical Rotations Summary -->
+            <!-- Clinical Rotations & Thesis Summary -->
             <div class="space-y-4 pt-2">
-                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>🏥</span> סבבים קליניים</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
+                <h2 class="text-xl font-black text-slate-900 flex items-center gap-2"><span>🏥</span> סבבים קליניים ועבודת גמר</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl">
                     <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold shrink-0">🟢</div>
                         <div>
@@ -204,11 +204,31 @@
                             <p id="home-current-rotation" class="text-lg font-black text-slate-900 mt-0.5">אין סבב פעיל</p>
                         </div>
                     </div>
+
                     <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold shrink-0">🔜</div>
                         <div>
                             <p class="text-xs text-slate-500 font-semibold">סבב הבא</p>
                             <p id="home-next-rotation" class="text-lg font-black text-slate-900 mt-0.5">אין סבב עתידי</p>
+                        </div>
+                    </div>
+
+                    <!-- 📊 THESIS PROGRESS CARD WITH PIE CHART NEXT TO ROTATIONS -->
+                    <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between gap-3">
+                        <div class="overflow-hidden flex-grow">
+                            <p class="text-xs text-slate-500 font-semibold flex items-center gap-1"><span>📄</span> התקדמות עבודת גמר</p>
+                            <p id="home-thesis-count" class="text-base font-black text-slate-900 mt-1">0 / 0 מטופלים</p>
+                            <div class="flex flex-col gap-1 mt-1.5">
+                                <span id="home-thesis-done-badge" class="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100 truncate">🟢 0% בוצע (0)</span>
+                                <span id="home-thesis-rem-badge" class="text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-100 truncate">🟠 100% נשאר (0)</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Pie / Donut Chart Visual -->
+                        <div class="relative shrink-0 flex items-center justify-center">
+                            <div id="home-thesis-pie-chart" class="w-16 h-16 rounded-full border border-slate-200 flex items-center justify-center shadow-inner transition-all duration-500" style="background: conic-gradient(#10b981 0% 0%, #f1f5f9 0% 100%);">
+                                <div class="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[11px] font-black text-slate-700 shadow-sm" id="home-thesis-pie-pct">0%</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -539,7 +559,7 @@
                 </div>
             </div>
 
-            <!-- NEW SUB TAB: THESIS TRACKER (עבודת גמר) -->
+            <!-- SUB TAB: THESIS TRACKER (עבודת גמר) -->
             <div id="sub-thesis" class="sub-tab-content space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
                     <!-- Thesis Inputs Form -->
@@ -1810,6 +1830,13 @@
             const notesContainer = document.getElementById('thesis-notes-preview-container');
             const notesPreview = document.getElementById('thesis-notes-preview');
 
+            // Home Card Elements
+            const homeCount = document.getElementById('home-thesis-count');
+            const homeDoneBadge = document.getElementById('home-thesis-done-badge');
+            const homeRemBadge = document.getElementById('home-thesis-rem-badge');
+            const homePieChart = document.getElementById('home-thesis-pie-chart');
+            const homePiePct = document.getElementById('home-thesis-pie-pct');
+
             // Set Form Values
             const formTitle = document.getElementById('thesis-title');
             const formComp = document.getElementById('thesis-completed');
@@ -1826,6 +1853,7 @@
             const target = Math.max(1, t.target || 100);
             const remaining = Math.max(0, target - completed);
             const percent = Math.min(100, Math.round((completed / target) * 100));
+            const remPercent = 100 - percent;
 
             if (titleEl) titleEl.innerText = t.title || 'עבודת גמר';
             if (doneStat) doneStat.innerText = completed;
@@ -1847,6 +1875,13 @@
                     notesContainer.classList.add('hidden');
                 }
             }
+
+            // Update Home Dashboard Card next to Rotations
+            if (homeCount) homeCount.innerText = `${completed} / ${target} מטופלים`;
+            if (homeDoneBadge) homeDoneBadge.innerText = `🟢 ${percent}% בוצע (${completed})`;
+            if (homeRemBadge) homeRemBadge.innerText = `🟠 ${remPercent}% נשאר (${remaining})`;
+            if (homePieChart) homePieChart.style.background = `conic-gradient(#10b981 0% ${percent}%, #f1f5f9 ${percent}% 100%)`;
+            if (homePiePct) homePiePct.innerText = `${percent}%`;
         }
 
         // --- MEDICAL CALCULATORS ---

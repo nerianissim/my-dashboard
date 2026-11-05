@@ -760,39 +760,47 @@
                     <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                         <span>🛡️</span> מעקב אחריויות וקבלות
                     </h2>
-                    <p class="text-slate-500 text-xs mt-0.5">ניהול תוקפי אחריות של מוצרי חשמל, ציוד ומכשירים כולל העלאה וצפייה בקבלות.</p>
+                    <p class="text-slate-500 text-xs mt-0.5">ניהול תוקפי אחריות של מוצרי חשמל, ציוד ומכשירים כולל פירוט היקף האחריות, העלאת קבלות ועריכה.</p>
                 </div>
 
-                <!-- Add Warranty Form -->
+                <!-- Add/Edit Warranty Form -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-                    <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                    <h3 id="war-form-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
                         <span>➕</span> הוספת מוצר/אחריות חדשה
                     </h3>
-                    <form id="warranty-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <form id="warranty-form" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <input type="hidden" id="war-id" value="">
                         <div>
-                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם המוצר</label>
-                            <input type="text" id="war-title" placeholder="למשל: מחשב נייד" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">שם המוצר / החפץ</label>
+                            <input type="text" id="war-title" placeholder="למשל: מחשב נייד / שואב אבק" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">חנות / מותג</label>
-                            <input type="text" id="war-store" placeholder="למשל: באג / KSP" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <input type="text" id="war-store" placeholder="למשל: באג / KSP / Dyson" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">על מה האחריות / היקף כיסוי</label>
+                            <input type="text" id="war-coverage" placeholder="למשל: מנוע בלבד / אחריות מלאה כולל שבר" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">תאריך תפוגת אחריות</label>
                             <input type="date" id="war-exp-date" required class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
-                        <div>
+                        <div class="sm:col-span-2 lg:col-span-2">
                             <label class="block text-xs font-semibold text-slate-700 mb-1">הערות / מס' קבלה</label>
-                            <input type="text" id="war-notes" placeholder="מס' קבלה..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <input type="text" id="war-notes" placeholder="מס' קבלה, מס' סידורי..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         
                         <!-- File Upload input row -->
-                        <div class="sm:col-span-2 lg:col-span-4 flex flex-col sm:flex-row gap-3 items-end pt-1">
+                        <div class="sm:col-span-2 lg:col-span-3 flex flex-col sm:flex-row gap-3 items-end pt-1 border-t border-slate-100">
                             <div class="flex-grow w-full">
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">📎 צירוף קבלה / מסמך (תמונה או PDF)</label>
                                 <input type="file" id="war-file" accept="image/*,.pdf" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 file:mr-2 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100 cursor-pointer">
                             </div>
-                            <button type="submit" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-6 py-2.5 transition shrink-0 cursor-pointer shadow-sm w-full sm:w-auto">שמור מוצר</button>
+                            <div class="flex gap-2 w-full sm:w-auto shrink-0">
+                                <button type="submit" id="war-submit-btn" class="bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl text-xs px-6 py-2.5 transition shrink-0 cursor-pointer shadow-sm flex-grow sm:flex-grow-0">שמור מוצר</button>
+                                <button type="button" id="war-cancel-btn" onclick="cancelEditWarranty()" class="hidden bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs px-4 py-2.5 transition shrink-0 cursor-pointer">ביטול עריכה</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -875,9 +883,9 @@
         ];
 
         const DEFAULT_WARRANTIES = [
-            { id: 1, title: 'מחשב נייד MacBook Pro', store: 'איידיגיטל / KSP', expDate: '2027-11-15', notes: 'קבלה 49302 - אחריות מורחבת', fileData: null, fileName: null },
-            { id: 2, title: 'שואב אבק Dyson V15', store: 'ב.נ.ז.כ', expDate: '2026-12-01', notes: 'אחריות יבואן רשמי', fileData: null, fileName: null },
-            { id: 3, title: 'אוזניות Sony WH-1000XM5', store: 'באג', expDate: '2025-05-10', notes: 'אחריות פגה', fileData: null, fileName: null }
+            { id: 1, title: 'מחשב נייד MacBook Pro', store: 'איידיגיטל / KSP', coverage: 'חומרה, סוללה ומטען', expDate: '2027-11-15', notes: 'קבלה 49302 - אחריות מורחבת', fileData: null, fileName: null },
+            { id: 2, title: 'שואב אבק Dyson V15', store: 'ב.נ.ז.כ', coverage: 'מנוע וסוללה בלבד', expDate: '2026-12-01', notes: 'אחריות יבואן רשמי', fileData: null, fileName: null },
+            { id: 3, title: 'אוזניות Sony WH-1000XM5', store: 'באג', coverage: 'אחריות יצרן מלאה', expDate: '2025-05-10', notes: 'אחריות פגה', fileData: null, fileName: null }
         ];
 
         let appData = {
@@ -1841,16 +1849,19 @@
         // --- WARRANTY TRACKER & RECEIPT FILE ATTACHMENTS ---
         document.getElementById('warranty-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
+            const editId = document.getElementById('war-id').value;
             const title = document.getElementById('war-title').value.trim();
             const store = document.getElementById('war-store').value.trim();
+            const coverage = document.getElementById('war-coverage').value.trim();
             const expDate = document.getElementById('war-exp-date').value;
             const notes = document.getElementById('war-notes').value.trim();
             const fileInput = document.getElementById('war-file');
 
             if (!title || !expDate) return;
 
-            let fileData = null;
-            let fileName = null;
+            const existingItem = editId ? appData.warranties.find(w => w.id == editId) : null;
+            let fileData = existingItem ? existingItem.fileData : null;
+            let fileName = existingItem ? existingItem.fileName : null;
 
             if (fileInput && fileInput.files.length > 0) {
                 const file = fileInput.files[0];
@@ -1866,15 +1877,52 @@
                 fileName = file.name;
             }
 
-            appData.warranties.push({ id: Date.now(), title, store, expDate, notes, fileData, fileName });
+            if (editId) {
+                const index = appData.warranties.findIndex(w => w.id == editId);
+                if (index !== -1) {
+                    appData.warranties[index] = { id: Number(editId), title, store, coverage, expDate, notes, fileData, fileName };
+                }
+            } else {
+                appData.warranties.push({ id: Date.now(), title, store, coverage, expDate, notes, fileData, fileName });
+            }
+
             saveDataToCloud();
             renderWarranties();
-            e.target.reset();
+            cancelEditWarranty();
         });
+
+        window.editWarranty = function(id) {
+            const item = appData.warranties.find(w => w.id === id);
+            if (!item) return;
+
+            document.getElementById('war-id').value = item.id;
+            document.getElementById('war-title').value = item.title || '';
+            document.getElementById('war-store').value = item.store || '';
+            document.getElementById('war-coverage').value = item.coverage || '';
+            document.getElementById('war-exp-date').value = item.expDate || '';
+            document.getElementById('war-notes').value = item.notes || '';
+
+            document.getElementById('war-form-title').innerHTML = '<span>✏️</span> עריכת מוצר / אחריות';
+            document.getElementById('war-submit-btn').innerText = 'עדכן מוצר';
+            document.getElementById('war-cancel-btn').classList.remove('hidden');
+
+            document.getElementById('warranty-form').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        };
+
+        window.cancelEditWarranty = function() {
+            document.getElementById('war-id').value = '';
+            document.getElementById('warranty-form').reset();
+            document.getElementById('war-form-title').innerHTML = '<span>➕</span> הוספת מוצר/אחריות חדשה';
+            document.getElementById('war-submit-btn').innerText = 'שמור מוצר';
+            document.getElementById('war-cancel-btn').classList.add('hidden');
+        };
 
         window.deleteWarranty = function(id) {
             if (confirm('האם למחוק מוצר זה ברשימה?')) {
                 appData.warranties = appData.warranties.filter(item => item.id !== id);
+                if (document.getElementById('war-id').value == id) {
+                    cancelEditWarranty();
+                }
                 saveDataToCloud();
                 renderWarranties();
             }
@@ -1942,8 +1990,8 @@
                 const formattedExpDate = exp.toLocaleDateString('he-IL');
 
                 const receiptBtn = item.fileData 
-                    ? `<button onclick="viewReceiptFile(${item.id})" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer"><span>📎</span> צפה בקבלה</button>` 
-                    : `<span class="text-[11px] text-slate-400">אין קבלה מצורפת</span>`;
+                    ? `<button onclick="viewReceiptFile(${item.id})" class="text-xs bg-brand-50 text-brand-700 border border-brand-200 hover:bg-brand-100 font-bold px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer"><span>📎</span> קבלה</button>` 
+                    : `<span class="text-[11px] text-slate-400">אין קבלה</span>`;
 
                 container.innerHTML += `
                     <div class="border ${borderStyle} p-4 rounded-2xl shadow-sm flex flex-col justify-between space-y-3">
@@ -1952,12 +2000,16 @@
                                 <h3 class="font-bold text-slate-900 text-sm">${item.title}</h3>
                                 ${statusBadge}
                             </div>
-                            <p class="text-xs text-slate-500 mt-1">חנות: <strong>${item.store || '-'}</strong></p>
-                            <p class="text-xs text-slate-500 mt-0.5">תפוגה: <strong>${formattedExpDate}</strong></p>
+                            <p class="text-xs text-slate-500 mt-1">חנות/מותג: <strong>${item.store || '-'}</strong></p>
+                            ${item.coverage ? `<p class="text-xs text-brand-700 bg-brand-50 border border-brand-100 px-2.5 py-1 rounded-lg mt-1.5 font-semibold flex items-center gap-1"><span>🛡️</span> כיסוי: ${item.coverage}</p>` : ''}
+                            <p class="text-xs text-slate-500 mt-1.5">תפוגה: <strong>${formattedExpDate}</strong></p>
                             ${item.notes ? `<p class="text-xs bg-slate-100/70 text-slate-600 p-2 rounded-lg mt-2 text-[11px]">${item.notes}</p>` : ''}
                         </div>
                         <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-                            ${receiptBtn}
+                            <div class="flex items-center gap-2">
+                                ${receiptBtn}
+                                <button onclick="editWarranty(${item.id})" class="text-xs bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 font-bold px-2.5 py-1 rounded-lg transition cursor-pointer">ערוך</button>
+                            </div>
                             <button onclick="deleteWarranty(${item.id})" class="text-xs text-rose-600 hover:text-rose-800 font-bold transition cursor-pointer">מחק</button>
                         </div>
                     </div>

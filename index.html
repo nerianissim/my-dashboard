@@ -1013,7 +1013,7 @@
                                     <th class="p-3 text-center">תאריך תוקף</th>
                                     <th class="p-3 text-center">סטטוס תוקף</th>
                                     <th class="p-3">הערות</th>
-                                    <th class="p-3 rounded-l-xl text-center">פעולות</th>
+                                    <th class="p-3 rounded-l-xl text-center">פעולות עריכה</th>
                                 </tr>
                             </thead>
                             <tbody id="med-eq-table-body" class="text-sm divide-y divide-slate-100"></tbody>
@@ -1088,75 +1088,78 @@
             notes: 'איסוף נתונים מתיקים רפואיים'
         };
 
-        // FULL ITEMS POPULATED FROM PDF 1 (ALS Kit) & PDF 2 (Medication Kit)
+        // ALL 67 ITEMS FULLY POPULATED FROM PDF 1 (ALS Kit 1004) & PDF 2 (Medication Kit 1006)
         const DEFAULT_MED_EQUIPMENT = [
             // --- ערכת תיק ALS פראמדיק (מק"ט 1004) ---
-            { id: 101, sku: '100009', name: 'סט 30 כפפות ניטריל L', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-08-01', notes: '' },
-            { id: 102, sku: '100072', name: 'ערכת תיק חבישה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-12-01', notes: '' },
-            { id: 103, sku: '100073', name: 'סט אינטובציה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-01-01', notes: '' },
-            { id: 104, sku: '100098', name: 'ערכת חמצן לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-06-15', notes: '' },
-            { id: 105, sku: '1035', name: 'ערכת ניקור חזה (וייגון)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-02-10', notes: 'תוקף קרוב' },
+            { id: 101, sku: '100009', name: 'סט 30 כפפות ניטריל מידה L', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 102, sku: '100072', name: 'ערכת תיק חבישה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 103, sku: '100073', name: 'סט אינטובציה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 104, sku: '100098', name: 'ערכת חמצן לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 105, sku: '1035', name: 'ערכת ניקור חזה (וייגון)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
             { id: 106, sku: '1120', name: 'סד מתכוונן לקיבוע 1120', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 107, sku: '1204', name: 'סקשן ידני + קטטר אדום וכחול', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 108, sku: '1209', name: 'מסכת הנשמה מס\' 0', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 109, sku: '1210', name: 'קטטר לסקשן - אדום (18)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-09-01', notes: '' },
-            { id: 110, sku: '1211', name: 'קטטר לסקשן - כחול (8)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-09-01', notes: '' },
-            { id: 111, sku: '1212', name: 'ערכת מנתבי אוויר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-05-01', notes: '' },
-            { id: 112, sku: '1219', name: 'מסנן ויראלי מבוגר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-01-15', notes: 'נשאר לו חודש בתוקף' },
-            { id: 113, sku: '1220', name: 'מסנן ויראלי ילד', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-01-15', notes: '' },
+            { id: 107, sku: '1204', name: 'סקשן ידני + קטטר אדום וכחול 1204', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 108, sku: '1209', name: 'מסכת הנשמה מס\' 0 1209', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 109, sku: '1210', name: 'קטטר לסקשן - אדום (18) 1210', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 110, sku: '1211', name: 'קטטר לסקשן - כחול (8) 1211', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 111, sku: '1212', name: 'ערכת מנתבי אוויר 1212', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 112, sku: '1219', name: 'מסנן ויראלי מבוגר 1219', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 113, sku: '1220', name: 'מסנן ויראלי ילד 1220', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
             { id: 114, sku: '14016', name: 'סוגר ביטחון פלסטיק - אזיקון כתום', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 115, sku: '1404', name: 'גלוקוג\'ל/דקסטרוג\'ל 15 גר\'', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2026-10-01', notes: 'פג תוקף' },
-            { id: 116, sku: '1603', name: 'ג\'ל לחיטוי ידיים - 100 מ"ל', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-05-01', notes: '' },
-            { id: 117, sku: '1604', name: 'מסכת הגנה - N95', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 118, sku: '1639', name: 'מגבון אישי לחיטוי 70% אלכוהול', targetQty: 5, qty: 3, location: 'תיק ALS (פראמדיק)', expDate: '2027-11-01', notes: 'חסר במלאי' },
-            { id: 119, sku: '1701', name: 'ערכה לפתיחת וריד - ללא סליין', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-09-01', notes: '' },
-            { id: 120, sku: '1704', name: 'סט עירוי (צינורית בלבד)', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-03-01', notes: '' },
-            { id: 121, sku: '1705', name: 'סליין 0.5 ליטר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-02-01', notes: 'תוקף קרוב' },
-            { id: 122, sku: '1708', name: 'פח מחטים נפח 0.6 ליטר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 123, sku: '1709', name: 'ונפלון כחול - G22 בטיחותי', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-06-01', notes: '' },
-            { id: 124, sku: '1710', name: 'וונפלון ירוק - G18 בטיחותי', targetQty: 2, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-06-01', notes: 'חסר 1' },
-            { id: 125, sku: '1711', name: 'וונפלון ורוד - G20 בטיחותי', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-06-01', notes: '' },
-            { id: 126, sku: '1801', name: 'צווארון מתכוונן מבוגר', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 127, sku: '1902', name: 'מדל"ד מבוגר + סטטוסקופ', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 128, sku: '2001', name: 'ערכת לידה', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-01-01', notes: '' },
-            { id: 129, sku: '2201', name: 'מחט סטר G18 1 1/2 - ורוד', targetQty: 6, qty: 6, location: 'תיק ALS (פראמדיק)', expDate: '2028-10-01', notes: '' },
-            { id: 130, sku: '2202', name: 'מחט סטרילית G21 1 1/2 - ירוק', targetQty: 6, qty: 6, location: 'תיק ALS (פראמדיק)', expDate: '2028-10-01', notes: '' },
-            { id: 131, sku: '2203', name: 'מזרק 20 סמ"ק ללא מחט', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
-            { id: 132, sku: '2208', name: 'וונפלון צהוב G24', targetQty: 1, qty: 0, location: 'תיק ALS (פראמדיק)', expDate: '2027-12-01', notes: 'חסר במלאי' },
-            { id: 133, sku: '2209', name: 'מזרק נזאלי - קונוס להחדרת תרופות', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-04-01', notes: '' },
-            { id: 134, sku: '2210', name: 'מזרק תוך גרמי לילדים BIG', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-01-20', notes: 'תוקף קרוב' },
-            { id: 135, sku: '2211', name: 'מזרק תוך גרמי למבוגר BIG', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-08-01', notes: '' },
-            { id: 136, sku: '2212', name: 'ברז תלת כיווני + מאריך 10 ס"מ', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2028-05-01', notes: '' },
-            { id: 137, sku: '2218', name: 'מזרק 1 מ"ל', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
-            { id: 138, sku: '2223', name: 'מזרק 10 סמ"ק ללא מחט', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
-            { id: 139, sku: '2224', name: 'מזרק 2.5/3 סמ"ק ללא מחט', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
-            { id: 140, sku: '2227', name: 'מזרק 5 סמ"ק ללא מחט', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '2028-02-01', notes: '' },
-            { id: 141, sku: '2401', name: 'Sodium Chloride 0.9% 100ml', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '2027-07-01', notes: '' },
-            { id: 142, sku: '2424', name: 'Amp. Acamol 1g/100cc (אקמול נוזלי)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-04-01', notes: '' },
-            { id: 143, sku: '2917', name: 'תיק כוננים חדש ALS/BLS (ריק)', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 144, sku: '3207', name: 'אלונקה טקטית מתקפלת מבד', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
-            { id: 145, sku: '3708', name: 'אמבו PVC למבוגר + מסכה 5', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2029-01-01', notes: '' },
-            { id: 146, sku: '3733', name: 'אמבו PVC לילד + מסכה 2', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2029-01-01', notes: '' },
-            { id: 147, sku: '4377', name: 'קטטר פולי - מידה FN18', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '2027-10-01', notes: '' },
+            { id: 115, sku: '1404', name: 'גלוקוג\'ל/דקסטרוג\'ל 15 גר\' 1404', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 116, sku: '1603', name: 'ג\'ל לחיטוי ידיים - 100 מ"ל 1603', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 117, sku: '1604', name: 'מסכת הגנה - N95 1604', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 118, sku: '1639', name: 'מגבון אישי לחיטוי 70% אלכוהול 1639', targetQty: 5, qty: 5, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 119, sku: '1701', name: 'ערכה לפתיחת וריד - ללא סליין 1701', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 120, sku: '1704', name: 'סט עירוי (צינורית בלבד) 1704', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 121, sku: '1705', name: 'סליין 0.5 ליטר 1705', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 122, sku: '1708', name: 'פח מחטים נפח 0.6 ליטר 1708', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 123, sku: '1709', name: 'ונפלון כחול - G22, בטיחותי 1709', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 124, sku: '1710', name: 'וונפלון ירוק - G18, בטיחותי 1710', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 125, sku: '1711', name: 'וונפלון ורוד- G20, בטיחותי 1711', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 126, sku: '1801', name: 'צווארון מתכוונן מבוגר 1801', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 127, sku: '1902', name: 'מדל"ד מבוגר + סטטוסקופ 1902', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 128, sku: '2001', name: 'ערכת לידה 2001', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 129, sku: '2201', name: 'מחט סטר G18 1 1/2 - ורוד 2201', targetQty: 6, qty: 6, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 130, sku: '2202', name: 'מחט סטרילית 1 1/2 " G21 - ירוק 2202', targetQty: 6, qty: 6, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 131, sku: '2203', name: 'מזרק 20 סמ"ק ללא מחט 2203', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 132, sku: '2208', name: 'וונפלון צהוב G24 2208', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 133, sku: '2209', name: 'מזרק נזאלי - קונוס להחדרת תרופות 2209', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 134, sku: '2210', name: 'מזרק תוך גרמי לילדים BIG 2210', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 135, sku: '2211', name: 'מזרק תוך גרמי למבוגר BIG 2211', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 136, sku: '2212', name: 'ברז תלת כיווני + מאריך 10 ס"מ 2212', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 137, sku: '2218', name: 'מזרק 1 מ"ל 2218', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 138, sku: '2223', name: 'מזרק 10 סמ"ק ללא מחט 2223', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 139, sku: '2224', name: 'מזרק 2.5/3 סמ"ק ללא מחט 2224', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 140, sku: '2227', name: 'מזרק 5 סמ"ק ללא מחט 2227', targetQty: 4, qty: 4, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 141, sku: '2401', name: 'Sodium cloride 0.9% 100ml 2401', targetQty: 2, qty: 2, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 142, sku: '2424', name: 'Amp. Acamol 1g/100cc (אקמול נוזלי) 2424', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 143, sku: '2917', name: 'תיק כוננים חדש ALS/BLS (ריק) 2917', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 144, sku: '3207', name: 'אלונקה טקטית מתקפלת מבד 3207', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 145, sku: '3708', name: 'אמבו PVC למבוגר כולל מסכה 5 3708', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 146, sku: '3733', name: 'אמבו PVC לילד כולל מסכה 2 3733', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 147, sku: '4377', name: 'קטטר פולי - מידה FN18 4377', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
+            { id: 148, sku: '4608', name: 'טופס עץ מוצר (ערכת ALS) 4608', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
 
             // --- ערכת תרופות רגילה (מק"ט 1006) ---
-            { id: 201, sku: '2403', name: 'Sol. Aerovent 0.25mg/1cc (ארוונט)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2027-05-15', notes: '' },
-            { id: 202, sku: '2404', name: 'אספירין 300 מ"ג (Tab Aspirin)', targetQty: 10, qty: 10, location: 'ערכת תרופות', expDate: '2027-11-01', notes: '' },
-            { id: 203, sku: '2405', name: 'Nitrolingual-Spray 0.4mg (איזוט ספריי)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2027-01-10', notes: 'תוקף קרוב' },
-            { id: 204, sku: '2406', name: 'Amp. Adrenaline 1mg/1cc (אדרנלין)', targetQty: 10, qty: 8, location: 'ערכת תרופות', expDate: '2027-09-01', notes: 'חסר 2 אמפולות' },
-            { id: 205, sku: '2408', name: 'Amp. Fusid 20mg/2cc (פוסיד)', targetQty: 6, qty: 6, location: 'ערכת תרופות', expDate: '2027-10-01', notes: '' },
-            { id: 206, sku: '2409', name: 'Normal Saline 10ml (סודיום 0.9%)', targetQty: 9, qty: 9, location: 'ערכת תרופות', expDate: '2028-02-01', notes: '' },
-            { id: 207, sku: '2410', name: 'Amp. Dormicum 5mg/1cc (דורמיקום)', targetQty: 3, qty: 3, location: 'ערכת תרופות', expDate: '2027-06-01', notes: '' },
-            { id: 208, sku: '2412', name: 'Amp. Solo-medrol 125mg/2cc (סולומדרול)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2026-09-01', notes: 'פג תוקף' },
-            { id: 209, sku: '2413', name: 'Amp. Narcan 0.4mg/1cc (נרקן)', targetQty: 5, qty: 5, location: 'ערכת תרופות', expDate: '2027-12-01', notes: '' },
-            { id: 210, sku: '2414', name: 'Amp. Dextrose 10GR 20CC 50%', targetQty: 3, qty: 3, location: 'ערכת תרופות', expDate: '2027-08-01', notes: '' },
-            { id: 211, sku: '2415', name: 'Sol Ventolin 5mg/1cc (ונטולין 20 מ"ל)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '2027-01-25', notes: 'תוקף קרוב' },
-            { id: 212, sku: '2416', name: 'אקמול אברול / דקסמול (טבליות)', targetQty: 10, qty: 10, location: 'ערכת תרופות', expDate: '2028-01-01', notes: '' },
-            { id: 213, sku: '2418', name: 'מארז לתרופות כתום ממותג (ריק)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
-            { id: 214, sku: '2425', name: 'Amp. Pramin 10mg (פראמין)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-07-01', notes: '' },
-            { id: 215, sku: '2426', name: 'Amp. Optalgin 1000mg/2cc (אופטלגין)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-11-01', notes: '' },
-            { id: 216, sku: '2432', name: 'Amp. Tramal 100mg/2cc (טרמל)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-05-01', notes: '' },
-            { id: 217, sku: '2433', name: 'Amp. Etomidate 20mg/10cc (אטומידאט)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '2027-08-01', notes: '' }
+            { id: 201, sku: '14016', name: 'אזיקון כתום (ערכת תרופות)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 202, sku: '2403', name: 'Sol. Aerovent 0.25mg/1cc (ארוונט)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 203, sku: '2404', name: 'Tab Aspirin 300mg (אספירין 300 מ"ג)', targetQty: 10, qty: 10, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 204, sku: '2405', name: 'Nitrolingual-Spray 0.4mg (איזוט ספריי)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 205, sku: '2406', name: 'Amp. Adrenaline 1mg/1cc (אדרנלין)', targetQty: 10, qty: 10, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 206, sku: '2408', name: 'Amp. Fusid 20mg/2cc (פוסיד)', targetQty: 6, qty: 6, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 207, sku: '2409', name: 'Normal Saline 10ml (סודיום 0.9%)', targetQty: 9, qty: 9, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 208, sku: '2410', name: 'Amp. Dormicum 5mg/1cc (דורמיקום)', targetQty: 3, qty: 3, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 209, sku: '2412', name: 'Amp. Solo-medrol 125mg/2cc (סולומדרול)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 210, sku: '2413', name: 'Amp. Narcan 0.4mg/1cc (נרקן)', targetQty: 5, qty: 5, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 211, sku: '2414', name: 'Amp. Dextrose 10GR 20CC-50%', targetQty: 3, qty: 3, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 212, sku: '2415', name: 'Sol Ventolin 5mg/1cc (ונטולין 20 מ"ל)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 213, sku: '2416', name: 'אקמול אברול / דקסמול (טבליות)', targetQty: 10, qty: 10, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 214, sku: '2418', name: 'מארז לתרופות כתום ממותג (ריק)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 215, sku: '2425', name: 'Amp. Pramin 10mg (פראמין)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 216, sku: '2426', name: 'Amp. Optalgin 1000mg/2cc (אופטלגין)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 217, sku: '2432', name: 'Amp. Tramal 100mg/2cc (טרמל)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 218, sku: '2433', name: 'Amp. Etomidate 20mg/10cc (אטומידאט)', targetQty: 2, qty: 2, location: 'ערכת תרופות', expDate: '', notes: '' },
+            { id: 219, sku: '4608', name: 'טופס עץ מוצר (ערכת תרופות)', targetQty: 1, qty: 1, location: 'ערכת תרופות', expDate: '', notes: '' }
         ];
 
         let appData = {
@@ -1223,7 +1226,11 @@
             if (!Array.isArray(appData.todos)) appData.todos = [...DEFAULT_TODOS];
             if (!Array.isArray(appData.quickLinks)) appData.quickLinks = [...DEFAULT_QUICK_LINKS];
             if (!Array.isArray(appData.warranties)) appData.warranties = [...DEFAULT_WARRANTIES];
-            if (!Array.isArray(appData.medEquipment) || appData.medEquipment.length === 0) appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
+            
+            // If local storage has fewer items than our newly added PDF default items, load defaults
+            if (!Array.isArray(appData.medEquipment) || appData.medEquipment.length < DEFAULT_MED_EQUIPMENT.length) {
+                appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
+            }
             if (!appData.thesis) appData.thesis = { ...DEFAULT_THESIS };
         }
 
@@ -1891,7 +1898,7 @@
             });
         }
 
-        // --- MEDICAL EQUIPMENT TRACKER (ציוד רפואי ותרופות) LOGIC ---
+        // --- MEDICAL EQUIPMENT TRACKER LOGIC ---
         document.getElementById('med-eq-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const editId = document.getElementById('eq-id').value;
@@ -1992,7 +1999,7 @@
             today.setHours(0,0,0,0);
 
             filtered.forEach(item => {
-                // Stock status check (Target vs Actual)
+                // Target vs Actual Stock status
                 const targetQty = item.targetQty || 1;
                 const qty = item.qty !== undefined ? item.qty : 0;
                 const isMissing = qty < targetQty;
@@ -2040,8 +2047,12 @@
                         <td class="p-3 text-slate-600 text-xs">${item.notes || '-'}</td>
                         <td class="p-3">
                             <div class="flex items-center justify-center gap-1.5">
-                                <button type="button" onclick="editMedEquipment(${item.id})" class="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 px-2 py-1 rounded-lg border border-blue-100 cursor-pointer font-medium">ערוך</button>
-                                <button type="button" onclick="deleteMedEquipment(${item.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium">מחק</button>
+                                <button type="button" onclick="editMedEquipment(${item.id})" class="text-blue-600 hover:text-blue-800 text-xs bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg border border-blue-200 cursor-pointer font-bold transition flex items-center gap-1">
+                                    <span>✏️</span> ערוך
+                                </button>
+                                <button type="button" onclick="deleteMedEquipment(${item.id})" class="text-red-500 hover:text-red-700 text-xs bg-red-50 hover:bg-red-100 px-2 py-1 rounded-lg border border-red-100 cursor-pointer font-medium transition">
+                                    מחק
+                                </button>
                             </div>
                         </td>
                     </tr>

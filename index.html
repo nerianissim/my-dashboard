@@ -158,7 +158,6 @@
                     <button type="button" onclick="toggleQuickLinkModal()" class="text-xs bg-brand-50 hover:bg-brand-100 text-brand-600 border border-brand-200 px-3 py-1.5 rounded-xl font-bold transition">➕ הוסף קישור</button>
                 </div>
 
-                <!-- Add Quick Link Inline Form -->
                 <div id="quick-link-form-container" class="hidden bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm max-w-5xl space-y-3">
                     <h3 class="text-sm font-bold text-slate-800">הוספת קישור מהיר חדש</h3>
                     <form id="quick-link-form" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
@@ -557,10 +556,9 @@
                 </div>
             </div>
 
-            <!-- SUB TAB: THESIS TRACKER (עבודת גמר) -->
+            <!-- SUB TAB: THESIS TRACKER -->
             <div id="sub-thesis" class="sub-tab-content space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                    <!-- Thesis Inputs Form -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-1 space-y-4">
                         <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
                             <span>📝</span> הגדרת עבודת גמר ומטופלים
@@ -588,7 +586,6 @@
                         </form>
                     </div>
 
-                    <!-- Thesis Visual Dashboard & Progress Chart -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-2 space-y-6 flex flex-col justify-between">
                         <div>
                             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-4 border-b border-slate-100">
@@ -601,7 +598,6 @@
                                 </div>
                             </div>
 
-                            <!-- Big Progress Bar Component -->
                             <div class="space-y-2 mt-6">
                                 <div class="flex justify-between items-center text-xs font-bold text-slate-700">
                                     <span>התקדמות איסוף הנתונים</span>
@@ -614,7 +610,6 @@
                                 </div>
                             </div>
 
-                            <!-- Stat Cards Grid -->
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
                                 <div class="bg-slate-50 border border-slate-200/80 p-4 rounded-xl text-center">
                                     <p class="text-xs text-slate-500 font-semibold">נסקרו בפועל</p>
@@ -630,14 +625,12 @@
                                 </div>
                             </div>
 
-                            <!-- Notes Preview -->
                             <div id="thesis-notes-preview-container" class="mt-4 hidden">
                                 <p class="text-xs font-bold text-slate-700 mb-1">📌 הערות ודגשים:</p>
                                 <p id="thesis-notes-preview" class="text-xs bg-slate-50 border border-slate-200 p-3 rounded-xl text-slate-600 leading-relaxed whitespace-pre-line"></p>
                             </div>
                         </div>
 
-                        <!-- Quick Increment Control Panel -->
                         <div class="pt-4 border-t border-slate-100">
                             <p class="text-xs font-bold text-slate-700 mb-2">⚡ עדכון מהיר בלחיצה (במהלך סקירת תיקים):</p>
                             <div class="flex flex-wrap gap-2">
@@ -652,9 +645,7 @@
 
             <!-- SUB TAB 2: MEDICAL CALCULATORS -->
             <div id="sub-med-calc" class="sub-tab-content space-y-6">
-                <!-- Row 1: BMI, MAP, Anion Gap -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                    <!-- Calculator 1: BMI -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                             <span class="text-2xl">⚖️</span>
@@ -677,7 +668,6 @@
                         </div>
                     </div>
 
-                    <!-- Calculator 2: MAP -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                             <span class="text-2xl">🫀</span>
@@ -700,7 +690,6 @@
                         </div>
                     </div>
 
-                    <!-- Calculator 3: Anion Gap -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                             <span class="text-2xl">🧪</span>
@@ -730,9 +719,7 @@
                     </div>
                 </div>
 
-                <!-- Row 2: eGFR / CrCl & CHA2DS2-VASc -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-6xl mx-auto pt-2">
-                    <!-- Calculator 4: eGFR / CrCl -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                             <span class="text-2xl">🩸</span>
@@ -766,7 +753,6 @@
                         </div>
                     </div>
 
-                    <!-- Calculator 5: CHA2DS2-VASc -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                             <span class="text-2xl">⚡</span>
@@ -818,7 +804,6 @@
             <!-- SUB TAB 3: MEDICAL PEARLS -->
             <div id="sub-med-pearls" class="sub-tab-content space-y-6">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Form -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-1">
                         <h2 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
                             <span>💡</span> הוספת פנינה רפואית
@@ -848,7 +833,6 @@
                         </form>
                     </div>
 
-                    <!-- List & Filter -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm lg:col-span-2 space-y-4">
                         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                             <h2 class="text-lg font-bold text-slate-900">מאגר פנינים רפואיות</h2>
@@ -860,14 +844,13 @@
             </div>
         </section>
 
-        <!-- TAB 4: PERSONAL (אישי) -->
+        <!-- TAB 4: PERSONAL -->
         <section id="tab-personal" class="tab-content hidden space-y-8">
             <div class="text-center pb-2 border-b border-slate-200">
                 <h1 class="text-2xl md:text-3xl font-black text-slate-900">👤 אזור אישי וציוד</h1>
                 <p class="text-slate-500 text-sm mt-1">ניהול מידע אישי, מעקב אחריויות וניהול מלאי ציוד רפואי</p>
             </div>
 
-            <!-- Sub Tabs Header inside Personal -->
             <div class="sub-tabs-header max-w-4xl mx-auto">
                 <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-personal', 'sub-warranties', this)">🛡️ אחריויות וקבלות</button>
                 <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-personal', 'sub-med-equipment', this)">🩺 מעקב ציוד רפואי & תרופות</button>
@@ -882,7 +865,6 @@
                     <p class="text-slate-500 text-xs mt-0.5">ניהול תוקפי אחריות של מוצרי חשמל, ציוד ומכשירים כולל פירוט היקף האחריות, העלאת קבלות ועריכה.</p>
                 </div>
 
-                <!-- Add/Edit Warranty Form -->
                 <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                     <h3 id="war-form-title" class="text-base font-bold text-slate-900 flex items-center gap-2">
                         <span>➕</span> הוספת מוצר/אחריות חדשה
@@ -910,7 +892,6 @@
                             <input type="text" id="war-notes" placeholder="מס' קבלה, מס' סידורי..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500">
                         </div>
                         
-                        <!-- File Upload input row -->
                         <div class="sm:col-span-2 lg:col-span-3 flex flex-col sm:flex-row gap-3 items-end pt-1 border-t border-slate-100">
                             <div class="flex-grow w-full">
                                 <label class="block text-xs font-semibold text-slate-700 mb-1">📎 צירוף קבלה / מסמך (תמונה או PDF)</label>
@@ -924,27 +905,33 @@
                     </form>
                 </div>
 
-                <!-- Warranties Grid Container -->
                 <div class="space-y-3">
                     <h3 class="text-base font-bold text-slate-900">מוצרים במעקב</h3>
                     <div id="warranties-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
             </div>
 
-            <!-- SUB TAB 2: MEDICAL EQUIPMENT TRACKER (ציוד רפואי & תרופות) -->
+            <!-- SUB TAB 2: MEDICAL EQUIPMENT TRACKER WITH SORTING -->
             <div id="sub-med-equipment" class="sub-tab-content space-y-6 max-w-6xl mx-auto">
-                <div class="border-b border-slate-200 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div class="border-b border-slate-200 pb-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                             <span>🩺</span> מעקב ציוד רפואי ותרופות (איחוד הצלה)
                         </h2>
-                        <p class="text-slate-500 text-xs mt-0.5">ניהול תקן נדרש מול מלאי בפועל, תאריכי תוקף (בתוקף / 3 חודשים / פג תוקף) וסינון לפי ערכות.</p>
+                        <p class="text-slate-500 text-xs mt-0.5">ניהול תקן נדרש מול מלאי בפועל, תאריכי תוקף, סינון לפי ערכות ומיון מתקדם להזמנת ציוד.</p>
                     </div>
-                    <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <!-- CONTROLS: FILTER, SORT & SEARCH -->
+                    <div class="flex flex-wrap gap-2 w-full md:w-auto">
                         <select id="eq-filter-location" onchange="renderMedEquipment()" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="all">כל הערכות 🎒</option>
                             <option value="תיק ALS (פראמדיק)">תיק ALS (פראמדיק) 🚑</option>
                             <option value="ערכת תרופות">ערכת תרופות 💊</option>
+                        </select>
+                        <select id="eq-sort" onchange="renderMedEquipment()" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="default">מיון: ברירת מחדל</option>
+                            <option value="missing">מיון: חוסרים בראש 🟠</option>
+                            <option value="expiry">מיון: פג תוקף/קרוב בראש 🔴</option>
+                            <option value="name">מיון: לפי שם (א-ת)</option>
                         </select>
                         <input type="text" id="eq-search" placeholder="🔍 חפש לפי שם/מק&quot;ט..." class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 flex-grow sm:w-44">
                     </div>
@@ -1088,7 +1075,6 @@
             notes: 'איסוף נתונים מתיקים רפואיים'
         };
 
-        // ALL 67 ITEMS FULLY POPULATED FROM PDF 1 (ALS Kit 1004) & PDF 2 (Medication Kit 1006)
         const DEFAULT_MED_EQUIPMENT = [
             // --- ערכת תיק ALS פראמדיק (מק"ט 1004) ---
             { id: 101, sku: '100009', name: 'סט 30 כפפות ניטריל מידה L', targetQty: 1, qty: 1, location: 'תיק ALS (פראמדיק)', expDate: '', notes: '' },
@@ -1227,7 +1213,6 @@
             if (!Array.isArray(appData.quickLinks)) appData.quickLinks = [...DEFAULT_QUICK_LINKS];
             if (!Array.isArray(appData.warranties)) appData.warranties = [...DEFAULT_WARRANTIES];
             
-            // If local storage has fewer items than our newly added PDF default items, load defaults
             if (!Array.isArray(appData.medEquipment) || appData.medEquipment.length < DEFAULT_MED_EQUIPMENT.length) {
                 appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
             }
@@ -1898,7 +1883,7 @@
             });
         }
 
-        // --- MEDICAL EQUIPMENT TRACKER LOGIC ---
+        // --- MEDICAL EQUIPMENT TRACKER LOGIC WITH SORTING ---
         document.getElementById('med-eq-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const editId = document.getElementById('eq-id').value;
@@ -1981,13 +1966,33 @@
 
             const query = document.getElementById('eq-search')?.value.toLowerCase() || '';
             const locationFilter = document.getElementById('eq-filter-location')?.value || 'all';
+            const sortBy = document.getElementById('eq-sort')?.value || 'default';
 
-            const filtered = appData.medEquipment.filter(item => {
+            let filtered = appData.medEquipment.filter(item => {
                 const matchesSearch = item.name.toLowerCase().includes(query) || 
                                       (item.sku && item.sku.toLowerCase().includes(query)) ||
                                       (item.notes && item.notes.toLowerCase().includes(query));
                 const matchesLocation = (locationFilter === 'all') || (item.location === locationFilter);
                 return matchesSearch && matchesLocation;
+            });
+
+            // --- SORTING LOGIC ---
+            filtered.sort((a, b) => {
+                if (sortBy === 'missing') {
+                    // Sort items with larger missing amount first
+                    const missingA = (a.targetQty || 1) - (a.qty !== undefined ? a.qty : 0);
+                    const missingB = (b.targetQty || 1) - (b.qty !== undefined ? b.qty : 0);
+                    return missingB - missingA;
+                } else if (sortBy === 'expiry') {
+                    // Expired or earliest expiry date first; empty dates at the bottom
+                    if (!a.expDate && !b.expDate) return 0;
+                    if (!a.expDate) return 1;
+                    if (!b.expDate) return -1;
+                    return new Date(a.expDate) - new Date(b.expDate);
+                } else if (sortBy === 'name') {
+                    return a.name.localeCompare(b.name, 'he');
+                }
+                return 0; // default order
             });
 
             if (filtered.length === 0) {
@@ -1999,7 +2004,6 @@
             today.setHours(0,0,0,0);
 
             filtered.forEach(item => {
-                // Target vs Actual Stock status
                 const targetQty = item.targetQty || 1;
                 const qty = item.qty !== undefined ? item.qty : 0;
                 const isMissing = qty < targetQty;
@@ -2007,7 +2011,6 @@
                     ? `<span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-full border border-amber-200">🟠 חסר (${targetQty - qty})</span>`
                     : `<span class="bg-slate-100 text-slate-700 text-[11px] font-bold px-2 py-0.5 rounded-full">✅ מלא</span>`;
 
-                // Expiry Date Logic (Green > 3 months, Yellow <= 3 months, Red = Expired)
                 let expBadge = '<span class="text-slate-400 text-xs">ללא תוקף</span>';
                 let rowBgClass = '';
 
@@ -2020,7 +2023,7 @@
                     if (diffDays < 0) {
                         expBadge = '<span class="bg-rose-100 text-rose-800 border border-rose-200 text-[11px] font-black px-2.5 py-0.5 rounded-full">🔴 פג תוקף</span>';
                         rowBgClass = 'bg-rose-50/40';
-                    } else if (diffDays <= 90) { // 3 months or less
+                    } else if (diffDays <= 90) {
                         expBadge = `<span class="bg-amber-100 text-amber-800 border border-amber-200 text-[11px] font-black px-2.5 py-0.5 rounded-full">🟡 תוקף קרוב (${diffDays} ימים)</span>`;
                         rowBgClass = 'bg-amber-50/30';
                     } else {

@@ -473,7 +473,7 @@
             <div class="sub-tabs-header">
                 <button type="button" class="sub-tab-btn active" onclick="openSubTab('tab-studies', 'sub-rotations', this)">📅 סבבים ומבחנים</button>
                 <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-thesis', this)">📄 עבודת גמר</button>
-                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-med-calc', this)">🧮 מחשבונים רפואיים</button>
+                <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-med-calc', this)">🧮 מחשבונים רפואיים & מינונים</button>
                 <button type="button" class="sub-tab-btn" onclick="openSubTab('tab-studies', 'sub-med-pearls', this)">💡 פנינים רפואיות</button>
             </div>
 
@@ -643,9 +643,49 @@
                 </div>
             </div>
 
-            <!-- SUB TAB 2: MEDICAL CALCULATORS -->
+            <!-- SUB TAB 2: MEDICAL CALCULATORS & DOSAGE CALCULATOR -->
             <div id="sub-med-calc" class="sub-tab-content space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                
+                <!-- NEW FEATURE: PEDIATRIC & WEIGHT-BASED DOSAGE CALCULATOR -->
+                <div class="bg-white border border-brand-200 p-6 rounded-2xl shadow-md max-w-6xl mx-auto space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl font-bold shrink-0">
+                                👶
+                            </div>
+                            <div>
+                                <h2 class="text-xl font-black text-slate-900">מחשבון מינונים לפי משקל (רפואת חירום ופדיאטריה)</h2>
+                                <p class="text-xs text-slate-500 mt-0.5">חישוב מהיר של מינונים (mg/mcg) ונפחי הזרקה (cc/ml) לתרופות חירום נפוצות בשטח.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 p-2 rounded-xl w-full sm:w-auto">
+                            <label for="pedia-weight" class="text-xs font-bold text-slate-700 whitespace-nowrap">משקל מטופל (ק"ג):</label>
+                            <input type="number" id="pedia-weight" placeholder="10" min="1" max="150" step="0.5" oninput="calcPediatricDosages()" class="w-24 bg-white border border-brand-300 rounded-lg px-3 py-1.5 text-base font-black text-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500 text-center">
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-slate-500 bg-slate-50">
+                                    <th class="p-2.5 rounded-r-xl">שם התרופה ודרך מתן</th>
+                                    <th class="p-2.5">ריכוז אמפולה / תכשיר</th>
+                                    <th class="p-2.5 text-center">נוסחת מינון לק"ג</th>
+                                    <th class="p-2.5 text-center">מינון מחושב</th>
+                                    <th class="p-2.5 text-center rounded-l-xl bg-blue-50/80 text-brand-700 font-bold">נפח להזרקה (cc / ml)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pedia-dosage-tbody" class="text-sm divide-y divide-slate-100">
+                                <tr>
+                                    <td colspan="5" class="p-4 text-center text-slate-400">הכנס משקל מטופל בק"ג לקבלת מפתח מינונים ונפחים.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- STANDARD CALCULATORS GRID -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto pt-2">
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                             <span class="text-2xl">⚖️</span>
@@ -1216,7 +1256,6 @@
             if (!Array.isArray(appData.medEquipment) || appData.medEquipment.length === 0) {
                 appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
             } else {
-                // Remap legacy locations if needed
                 appData.medEquipment.forEach(item => {
                     if (item.location.includes('ALS') || item.location.includes('פראמדיק')) item.location = 'תיק פראמדיק';
                     else if (item.location.includes('תרופות')) item.location = 'תרופות';
@@ -1293,6 +1332,7 @@
             renderWarranties();
             renderMedEquipment();
             renderThesis();
+            calcPediatricDosages();
         }
 
         // PWA PROMPT
@@ -1714,6 +1754,55 @@
             if (homePieChart) homePieChart.style.background = `conic-gradient(#10b981 0% ${percent}%, #f1f5f9 ${percent}% 100%)`;
             if (homePiePct) homePiePct.innerText = `${percent}%`;
         }
+
+        // PEDIATRIC & WEIGHT-BASED DOSAGE CALCULATOR LOGIC
+        window.calcPediatricDosages = function() {
+            const weightInput = document.getElementById('pedia-weight');
+            const tbody = document.getElementById('pedia-dosage-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            const weight = parseFloat(weightInput?.value) || 0;
+            if (weight <= 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="p-4 text-center text-slate-400">הכנס משקל מטופל בק"ג בשדה למעלה לחישוב מפתח מינונים ונפחי הזרקה.</td></tr>';
+                return;
+            }
+
+            const drugs = [
+                { name: "Amp. Adrenaline (אנפילקסיס IM)", conc: "1mg/1ml (1:1000)", dosePerKg: 0.01, unit: "mg", maxDose: 0.5, concRatio: 1, route: "IM (ירך חיצונית)" },
+                { name: "Amp. Adrenaline (החייאה IV/IO)", conc: "1mg/10ml (1:10,000)", dosePerKg: 0.01, unit: "mg", maxDose: 1.0, concRatio: 0.1, route: "IV / IO" },
+                { name: "Amp. Dormicum / Midazolam (פרכוס IN/IV)", conc: "5mg/1ml", dosePerKg: 0.1, unit: "mg", maxDose: 5.0, concRatio: 5, route: "IN / IV / IM" },
+                { name: "Amp. Fentanyl (שכוך כאב IV/IN)", conc: "50mcg/ml (0.05mg/ml)", dosePerKg: 1.5, unit: "mcg", maxDose: 100, concRatio: 50, route: "IV / IN" },
+                { name: "Amp. Solu-Medrol (אסטמה/התקף)", conc: "125mg/2ml (62.5mg/ml)", dosePerKg: 2.0, unit: "mg", maxDose: 125, concRatio: 62.5, route: "IV / IM" },
+                { name: "Amp. Acamol / Paracetamol (חום/כאב)", conc: "10mg/ml (1000mg/100ml)", dosePerKg: 15, unit: "mg", maxDose: 1000, concRatio: 10, route: "IV (עירוי)" },
+                { name: "Amp. Optalgin / Dipyrone (חום/כאב)", conc: "1000mg/2ml (500mg/ml)", dosePerKg: 15, unit: "mg", maxDose: 1000, concRatio: 500, route: "IV (איטי)" },
+                { name: "נוזלים (Saline 0.9% - בולוס)", conc: "0.9% N.S", dosePerKg: 20, unit: "ml", maxDose: 1000, concRatio: 1, route: "IV / IO" }
+            ];
+
+            drugs.forEach(d => {
+                let calcDose = weight * d.dosePerKg;
+                let isMax = false;
+                if (d.maxDose && calcDose > d.maxDose) {
+                    calcDose = d.maxDose;
+                    isMax = true;
+                }
+
+                let volumeCc = (calcDose / d.concRatio).toFixed(2);
+                if (d.unit === "ml") volumeCc = Math.round(calcDose).toString();
+
+                const doseFormatted = d.unit === "mcg" ? Math.round(calcDose) : (calcDose < 1 ? calcDose.toFixed(2) : calcDose.toFixed(1));
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                        <td class="p-2.5 font-bold text-slate-900">${d.name} <span class="text-[11px] text-slate-500 font-normal">(${d.route})</span></td>
+                        <td class="p-2.5 text-xs text-slate-600 font-mono">${d.conc}</td>
+                        <td class="p-2.5 text-center text-xs text-slate-700">${d.dosePerKg} ${d.unit}/kg</td>
+                        <td class="p-2.5 text-center font-bold text-slate-800">${doseFormatted} ${d.unit} ${isMax ? '<span class="text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">מקס\'</span>' : ''}</td>
+                        <td class="p-2.5 text-center font-black text-brand-600 text-sm bg-blue-50/50">${volumeCc} cc</td>
+                    </tr>
+                `;
+            });
+        };
 
         // MEDICAL CALCULATORS
         function setupMedicalCalculators() {

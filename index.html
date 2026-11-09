@@ -839,7 +839,7 @@
                         </div>
                     </div>
                     
-                    <!-- NEW ABG CALCULATOR -->
+                    <!-- ABG CALCULATOR -->
                     <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
                         <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                             <span class="text-2xl">🫁</span>
@@ -981,22 +981,24 @@
                 </div>
             </div>
 
-            <!-- SUB TAB 2: MEDICAL EQUIPMENT TRACKER (3 EXACT KITS ONLY) -->
+            <!-- SUB TAB 2: MEDICAL EQUIPMENT TRACKER (UPDATED KITS) -->
             <div id="sub-med-equipment" class="sub-tab-content space-y-6 max-w-6xl mx-auto">
                 <div class="border-b border-slate-200 pb-3 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div>
                         <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                             <span>🩺</span> מעקב ציוד רפואי ותרופות (איחוד הצלה)
                         </h2>
-                        <p class="text-slate-500 text-xs mt-0.5">ניהול תקן נדרש מול מלאי בפועל, תאריכי תוקף, סינון לפי ערכות (ווסט / תיק פראמדיק / תרופות) והעברה מהירה.</p>
+                        <p class="text-slate-500 text-xs mt-0.5">ניהול תקן נדרש מול מלאי בפועל, תאריכי תוקף, סינון לפי ערכות והעברה מהירה.</p>
                     </div>
                     <!-- CONTROLS: FILTER, SORT & SEARCH -->
                     <div class="flex flex-wrap gap-2 w-full md:w-auto">
                         <select id="eq-filter-location" onchange="renderMedEquipment()" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="all">כל הערכות 🎒</option>
-                            <option value="תיק פראמדיק">תיק פראמדיק 🚑</option>
-                            <option value="תרופות">תרופות 💊</option>
+                            <option value="תיק פרמדיק ארוך">תיק פרמדיק ארוך 🚑</option>
+                            <option value="תיק פרמדיק גב">תיק פרמדיק גב 🎒</option>
                             <option value="ווסט">ווסט 🎽</option>
+                            <option value="תרופות פרמדיק ארוך">תרופות פרמדיק ארוך 💊</option>
+                            <option value="תרופות פרמדיק גב">תרופות פרמדיק גב 💊</option>
                         </select>
                         <select id="eq-sort" onchange="renderMedEquipment()" class="bg-white border border-slate-300 rounded-xl px-3 py-1.5 text-xs font-bold text-brand-600 focus:outline-none focus:ring-2 focus:ring-brand-500">
                             <option value="default">מיון: ברירת מחדל</option>
@@ -1034,9 +1036,11 @@
                         <div>
                             <label class="block text-xs font-semibold text-slate-700 mb-1">מיקום / ערכה</label>
                             <select id="eq-location" class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-brand-500 font-semibold">
-                                <option value="תיק פראמדיק">תיק פראמדיק 🚑</option>
-                                <option value="תרופות">תרופות 💊</option>
+                                <option value="תיק פרמדיק ארוך">תיק פרמדיק ארוך 🚑</option>
+                                <option value="תיק פרמדיק גב">תיק פרמדיק גב 🎒</option>
                                 <option value="ווסט">ווסט 🎽</option>
+                                <option value="תרופות פרמדיק ארוך">תרופות פרמדיק ארוך 💊</option>
+                                <option value="תרופות פרמדיק גב">תרופות פרמדיק גב 💊</option>
                             </select>
                         </div>
                         <div>
@@ -1145,78 +1149,108 @@
             notes: 'איסוף נתונים מתיקים רפואיים'
         };
 
-        const DEFAULT_MED_EQUIPMENT = [
-            // --- ערכת תיק פראמדיק ---
-            { id: 101, sku: '100009', name: 'סט 30 כפפות ניטריל מידה L', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 102, sku: '100072', name: 'ערכת תיק חבישה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 103, sku: '100073', name: 'סט אינטובציה לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 104, sku: '100098', name: 'ערכת חמצן לתיק פראמדיק', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 105, sku: '1035', name: 'ערכת ניקור חזה (וייגון)', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 106, sku: '1120', name: 'סד מתכוונן לקיבוע 1120', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 107, sku: '1204', name: 'סקשן ידני + קטטר אדום וכחול 1204', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 108, sku: '1209', name: 'מסכת הנשמה מס\' 0 1209', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 109, sku: '1210', name: 'קטטר לסקשן - אדום (18) 1210', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 110, sku: '1211', name: 'קטטר לסקשן - כחול (8) 1211', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 111, sku: '1212', name: 'ערכת מנתבי אוויר 1212', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 112, sku: '1219', name: 'מסנן ויראלי מבוגר 1219', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 113, sku: '1220', name: 'מסנן ויראלי ילד 1220', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 114, sku: '14016', name: 'סוגר ביטחון פלסטיק - אזיקון כתום', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 115, sku: '1404', name: 'גלוקוג\'ל/דקסטרוג\'ל 15 גר\' 1404', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 116, sku: '1603', name: 'ג\'ל לחיטוי ידיים - 100 מ"ל 1603', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 117, sku: '1604', name: 'מסכת הגנה - N95 1604', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 118, sku: '1639', name: 'מגבון אישי לחיטוי 70% אלכוהול 1639', targetQty: 5, qty: 5, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 119, sku: '1701', name: 'ערכה לפתיחת וריד - ללא סליין 1701', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 120, sku: '1704', name: 'סט עירוי (צינורית בלבד) 1704', targetQty: 2, qty: 2, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 121, sku: '1705', name: 'סליין 0.5 ליטר 1705', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 122, sku: '1708', name: 'פח מחטים נפח 0.6 ליטר 1708', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 123, sku: '1709', name: 'ונפלון כחול - G22, בטיחותי 1709', targetQty: 2, qty: 2, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 124, sku: '1710', name: 'וונפלון ירוק - G18, בטיחותי 1710', targetQty: 2, qty: 2, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 125, sku: '1711', name: 'וונפלון ורוד- G20, בטיחותי 1711', targetQty: 2, qty: 2, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 126, sku: '1801', name: 'צווארון מתכוונן מבוגר 1801', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 127, sku: '1902', name: 'מדל"ד מבוגר + סטטוסקופ 1902', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 128, sku: '2001', name: 'ערכת לידה 2001', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 129, sku: '2201', name: 'מחט סטר G18 1 1/2 - ורוד 2201', targetQty: 6, qty: 6, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 130, sku: '2202', name: 'מחט סטרילית 1 1/2 " G21 - ירוק 2202', targetQty: 6, qty: 6, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 131, sku: '2203', name: 'מזרק 20 סמ"ק ללא מחט 2203', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 132, sku: '2208', name: 'וונפלון צהוב G24 2208', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 133, sku: '2209', name: 'מזרק נזאלי - קונוס להחדרת תרופות 2209', targetQty: 2, qty: 2, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 134, sku: '2210', name: 'מזרק תוך גרמי לילדים BIG 2210', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 135, sku: '2211', name: 'מזרק תוך גרמי למבוגר BIG 2211', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 136, sku: '2212', name: 'ברז תלת כיווני + מאריך 10 ס"מ 2212', targetQty: 2, qty: 2, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 137, sku: '2218', name: 'מזרק 1 מ"ל 2218', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 138, sku: '2223', name: 'מזרק 10 סמ"ק ללא מחט 2223', targetQty: 4, qty: 4, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 139, sku: '2224', name: 'מזרק 2.5/3 סמ"ק ללא מחט 2224', targetQty: 4, qty: 4, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 140, sku: '2227', name: 'מזרק 5 סמ"ק ללא מחט 2227', targetQty: 4, qty: 4, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 141, sku: '2401', name: 'Sodium cloride 0.9% 100ml 2401', targetQty: 2, qty: 2, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 142, sku: '2424', name: 'Amp. Acamol 1g/100cc (אקמול נוזלי) 2424', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 143, sku: '2917', name: 'תיק כוננים חדש ALS/BLS (ריק) 2917', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 144, sku: '3207', name: 'אלונקה טקטית מתקפלת מבד 3207', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 145, sku: '3708', name: 'אמבו PVC למבוגר כולל מסכה 5 3708', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 146, sku: '3733', name: 'אמבו PVC לילד כולל מסכה 2 3733', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 147, sku: '4377', name: 'קטטר פולי - מידה FN18 4377', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-            { id: 148, sku: '4608', name: 'טופס עץ מוצר (ערכת ALS) 4608', targetQty: 1, qty: 1, location: 'תיק פראמדיק', expDate: '', notes: '' },
-
-            // --- ערכת תרופות ---
-            { id: 201, sku: '14016', name: 'אזיקון כתום (ערכת תרופות)', targetQty: 1, qty: 1, location: 'תרופות', expDate: '', notes: '' },
-            { id: 202, sku: '2403', name: 'Sol. Aerovent 0.25mg/1cc (ארוונט)', targetQty: 1, qty: 1, location: 'תרופות', expDate: '', notes: '' },
-            { id: 203, sku: '2404', name: 'Tab Aspirin 300mg (אספירין 300 מ"ג)', targetQty: 10, qty: 10, location: 'תרופות', expDate: '', notes: '' },
-            { id: 204, sku: '2405', name: 'Nitrolingual-Spray 0.4mg (איזוט ספריי)', targetQty: 1, qty: 1, location: 'תרופות', expDate: '', notes: '' },
-            { id: 205, sku: '2406', name: 'Amp. Adrenaline 1mg/1cc (אדרנלין)', targetQty: 10, qty: 10, location: 'תרופות', expDate: '', notes: '' },
-            { id: 206, sku: '2408', name: 'Amp. Fusid 20mg/2cc (פוסיד)', targetQty: 6, qty: 6, location: 'תרופות', expDate: '', notes: '' },
-            { id: 207, sku: '2409', name: 'Normal Saline 10ml (סודיום 0.9%)', targetQty: 9, qty: 9, location: 'תרופות', expDate: '', notes: '' },
-            { id: 208, sku: '2410', name: 'Amp. Dormicum 5mg/1cc (דורמיקום)', targetQty: 3, qty: 3, location: 'תרופות', expDate: '', notes: '' },
-            { id: 209, sku: '2412', name: 'Amp. Solo-medrol 125mg/2cc (סולומדרול)', targetQty: 1, qty: 1, location: 'תרופות', expDate: '', notes: '' },
-            { id: 210, sku: '2413', name: 'Amp. Narcan 0.4mg/1cc (נרקן)', targetQty: 5, qty: 5, location: 'תרופות', expDate: '', notes: '' },
-            { id: 211, sku: '2414', name: 'Amp. Dextrose 10GR 20CC-50%', targetQty: 3, qty: 3, location: 'תרופות', expDate: '', notes: '' },
-            { id: 212, sku: '2415', name: 'Sol Ventolin 5mg/1cc (ונטולין 20 מ"ל)', targetQty: 1, qty: 1, location: 'תרופות', expDate: '', notes: '' },
-            { id: 213, sku: '2416', name: 'אקמול אברול / דקסמול (טבליות)', targetQty: 10, qty: 10, location: 'תרופות', expDate: '', notes: '' },
-            { id: 214, sku: '2418', name: 'מארז לתרופות כתום ממותג (ריק)', targetQty: 1, qty: 1, location: 'תרופות', expDate: '', notes: '' },
-            { id: 215, sku: '2425', name: 'Amp. Pramin 10mg (פראמין)', targetQty: 2, qty: 2, location: 'תרופות', expDate: '', notes: '' },
-            { id: 216, sku: '2426', name: 'Amp. Optalgin 1000mg/2cc (אופטלגין)', targetQty: 2, qty: 2, location: 'תרופות', expDate: '', notes: '' },
-            { id: 217, sku: '2432', name: 'Amp. Tramal 100mg/2cc (טרמל)', targetQty: 2, qty: 2, location: 'תרופות', expDate: '', notes: '' },
-            { id: 218, sku: '2433', name: 'Amp. Etomidate 20mg/10cc (אטומידאט)', targetQty: 2, qty: 2, location: 'תרופות', expDate: '', notes: '' },
-            { id: 219, sku: '4608', name: 'טופס עץ מוצר (ערכת תרופות)', targetQty: 1, qty: 1, location: 'תרופות', expDate: '', notes: '' }
+        // BASE EQUIPMENT ITEMS TEMPLATES FOR DUPLICATION
+        const RAW_BAG_ITEMS = [
+            { sku: '100009', name: 'סט 30 כפפות ניטריל מידה L', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '100072', name: 'ערכת תיק חבישה', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '100073', name: 'סט אינטובציה', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '100098', name: 'ערכת חמצן', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1035', name: 'ערכת ניקור חזה (וייגון)', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1120', name: 'סד מתכוונן לקיבוע 1120', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1204', name: 'סקשן ידני + קטטר אדום וכחול 1204', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1209', name: 'מסכת הנשמה מס\' 0 1209', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1210', name: 'קטטר לסקשן - אדום (18) 1210', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1211', name: 'קטטר לסקשן - כחול (8) 1211', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1212', name: 'ערכת מנתבי אוויר 1212', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1219', name: 'מסנן ויראלי מבוגר 1219', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1220', name: 'מסנן ויראלי ילד 1220', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '14016', name: 'סוגר ביטחון פלסטיק - אזיקון כתום', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1404', name: 'גלוקוג\'ל/דקסטרוג\'ל 15 גר\' 1404', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1603', name: 'ג\'ל לחיטוי ידיים - 100 מ"ל 1603', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1604', name: 'מסכת הגנה - N95 1604', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1639', name: 'מגבון אישי לחיטוי 70% אלכוהול 1639', targetQty: 5, qty: 5, expDate: '', notes: '' },
+            { sku: '1701', name: 'ערכה לפתיחת וריד - ללא סליין 1701', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1704', name: 'סט עירוי (צינורית בלבד) 1704', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '1705', name: 'סליין 0.5 ליטר 1705', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1708', name: 'פח מחטים נפח 0.6 ליטר 1708', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1709', name: 'ונפלון כחול - G22, בטיחותי 1709', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '1710', name: 'וונפלון ירוק - G18, בטיחותי 1710', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '1711', name: 'וונפלון ורוד- G20, בטיחותי 1711', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '1801', name: 'צווארון מתכוונן מבוגר 1801', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '1902', name: 'מדל"ד מבוגר + סטטוסקופ 1902', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2001', name: 'ערכת לידה 2001', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2201', name: 'מחט סטר G18 1 1/2 - ורוד 2201', targetQty: 6, qty: 6, expDate: '', notes: '' },
+            { sku: '2202', name: 'מחט סטרילית 1 1/2 " G21 - ירוק 2202', targetQty: 6, qty: 6, expDate: '', notes: '' },
+            { sku: '2203', name: 'מזרק 20 סמ"ק ללא מחט 2203', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2208', name: 'וונפלון צהוב G24 2208', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2209', name: 'מזרק נזאלי - קונוס להחדרת תרופות 2209', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '2210', name: 'מזרק תוך גרמי לילדים BIG 2210', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2211', name: 'מזרק תוך גרמי למבוגר BIG 2211', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2212', name: 'ברז תלת כיווני + מאריך 10 ס"מ 2212', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '2218', name: 'מזרק 1 מ"ל 2218', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2223', name: 'מזרק 10 סמ"ק ללא מחט 2223', targetQty: 4, qty: 4, expDate: '', notes: '' },
+            { sku: '2224', name: 'מזרק 2.5/3 סמ"ק ללא מחט 2224', targetQty: 4, qty: 4, expDate: '', notes: '' },
+            { sku: '2227', name: 'מזרק 5 סמ"ק ללא מחט 2227', targetQty: 4, qty: 4, expDate: '', notes: '' },
+            { sku: '2401', name: 'Sodium cloride 0.9% 100ml 2401', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '2424', name: 'Amp. Acamol 1g/100cc (אקמול נוזלי) 2424', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2917', name: 'תיק כוננים חדש ALS/BLS (ריק) 2917', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '3207', name: 'אלונקה טקטית מתקפלת מבד 3207', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '3708', name: 'אמבו PVC למבוגר כולל מסכה 5 3708', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '3733', name: 'אמבו PVC לילד כולל מסכה 2 3733', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '4377', name: 'קטטר פולי - מידה FN18 4377', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '4608', name: 'טופס עץ מוצר (ערכת ALS) 4608', targetQty: 1, qty: 1, expDate: '', notes: '' }
         ];
+
+        const RAW_DRUG_ITEMS = [
+            { sku: '14016', name: 'אזיקון כתום (ערכת תרופות)', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2403', name: 'Sol. Aerovent 0.25mg/1cc (ארוונט)', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2404', name: 'Tab Aspirin 300mg (אספירין 300 מ"ג)', targetQty: 10, qty: 10, expDate: '', notes: '' },
+            { sku: '2405', name: 'Nitrolingual-Spray 0.4mg (איזוט ספריי)', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2406', name: 'Amp. Adrenaline 1mg/1cc (אדרנלין)', targetQty: 10, qty: 10, expDate: '', notes: '' },
+            { sku: '2408', name: 'Amp. Fusid 20mg/2cc (פוסיד)', targetQty: 6, qty: 6, expDate: '', notes: '' },
+            { sku: '2409', name: 'Normal Saline 10ml (סודיום 0.9%)', targetQty: 9, qty: 9, expDate: '', notes: '' },
+            { sku: '2410', name: 'Amp. Dormicum 5mg/1cc (דורמיקום)', targetQty: 3, qty: 3, expDate: '', notes: '' },
+            { sku: '2412', name: 'Amp. Solo-medrol 125mg/2cc (סולומדרול)', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2413', name: 'Amp. Narcan 0.4mg/1cc (נרקן)', targetQty: 5, qty: 5, expDate: '', notes: '' },
+            { sku: '2414', name: 'Amp. Dextrose 10GR 20CC-50%', targetQty: 3, qty: 3, expDate: '', notes: '' },
+            { sku: '2415', name: 'Sol Ventolin 5mg/1cc (ונטולין 20 מ"ל)', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2416', name: 'אקמול אברול / דקסמול (טבליות)', targetQty: 10, qty: 10, expDate: '', notes: '' },
+            { sku: '2418', name: 'מארז לתרופות כתום ממותג (ריק)', targetQty: 1, qty: 1, expDate: '', notes: '' },
+            { sku: '2425', name: 'Amp. Pramin 10mg (פראמין)', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '2426', name: 'Amp. Optalgin 1000mg/2cc (אופטלגין)', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '2432', name: 'Amp. Tramal 100mg/2cc (טרמל)', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '2433', name: 'Amp. Etomidate 20mg/10cc (אטומידאט)', targetQty: 2, qty: 2, expDate: '', notes: '' },
+            { sku: '4608', name: 'טופס עץ מוצר (ערכת תרופות)', targetQty: 1, qty: 1, expDate: '', notes: '' }
+        ];
+
+        function generateDefaultEquipment() {
+            let list = [];
+            let idCounter = 1000;
+
+            // 1. תיק פרמדיק ארוך
+            RAW_BAG_ITEMS.forEach(item => {
+                list.push({ ...item, id: ++idCounter, location: 'תיק פרמדיק ארוך' });
+            });
+
+            // 2. תיק פרמדיק גב (הכפלה)
+            RAW_BAG_ITEMS.forEach(item => {
+                list.push({ ...item, id: ++idCounter, location: 'תיק פרמדיק גב' });
+            });
+
+            // 3. תרופות פרמדיק ארוך
+            RAW_DRUG_ITEMS.forEach(item => {
+                list.push({ ...item, id: ++idCounter, location: 'תרופות פרמדיק ארוך' });
+            });
+
+            // 4. תרופות פרמדיק גב (הכפלה)
+            RAW_DRUG_ITEMS.forEach(item => {
+                list.push({ ...item, id: ++idCounter, location: 'תרופות פרמדיק גב' });
+            });
+
+            return list;
+        }
+
+        const DEFAULT_MED_EQUIPMENT = generateDefaultEquipment();
 
         let appData = {
             shifts: [
@@ -1287,10 +1321,17 @@
                 appData.medEquipment = [...DEFAULT_MED_EQUIPMENT];
             } else {
                 appData.medEquipment.forEach(item => {
-                    if (item.location.includes('ALS') || item.location.includes('פראמדיק')) item.location = 'תיק פראמדיק';
-                    else if (item.location.includes('תרופות')) item.location = 'תרופות';
-                    else if (item.location.includes('ווסט')) item.location = 'ווסט';
-                    else item.location = 'תיק פראמדיק';
+                    if (item.location === 'תיק פראמדיק' || item.location.includes('ארוך')) {
+                        if (item.location.includes('תרופות')) item.location = 'תרופות פרמדיק ארוך';
+                        else item.location = 'תיק פרמדיק ארוך';
+                    } else if (item.location.includes('גב')) {
+                        if (item.location.includes('תרופות')) item.location = 'תרופות פרמדיק גב';
+                        else item.location = 'תיק פרמדיק גב';
+                    } else if (item.location === 'תרופות') {
+                        item.location = 'תרופות פרמדיק ארוך';
+                    } else if (item.location !== 'ווסט') {
+                        item.location = 'תיק פרמדיק ארוך';
+                    }
                 });
             }
             if (!appData.thesis) appData.thesis = { ...DEFAULT_THESIS };
@@ -1891,7 +1932,7 @@
             }
             chadsChecks.forEach(cb => cb.addEventListener('change', calcCHADS));
 
-            // NEW ABG CALCULATOR
+            // ABG CALCULATOR
             const abgPh = document.getElementById('calc-abg-ph'), abgPco2 = document.getElementById('calc-abg-pco2'), abgHco3 = document.getElementById('calc-abg-hco3');
             function calcABG() {
                 const ph = parseFloat(abgPh.value), pco2 = parseFloat(abgPco2.value), hco3 = parseFloat(abgHco3.value);
@@ -2046,7 +2087,7 @@
             });
         }
 
-        // --- MEDICAL EQUIPMENT TRACKER LOGIC (3 KITS ONLY) ---
+        // --- MEDICAL EQUIPMENT TRACKER LOGIC (5 UPDATED KITS) ---
         document.getElementById('med-eq-form')?.addEventListener('submit', (e) => {
             e.preventDefault();
             const editId = document.getElementById('eq-id').value;
@@ -2083,7 +2124,7 @@
             document.getElementById('eq-name').value = item.name || '';
             document.getElementById('eq-target').value = item.targetQty || 1;
             document.getElementById('eq-qty').value = item.qty !== undefined ? item.qty : 1;
-            document.getElementById('eq-location').value = item.location || 'תיק פראמדיק';
+            document.getElementById('eq-location').value = item.location || 'תיק פרמדיק ארוך';
             document.getElementById('eq-exp-date').value = item.expDate || '';
             document.getElementById('eq-notes').value = item.notes || '';
 
@@ -2120,7 +2161,7 @@
             }
         };
 
-        // QUICK TRANSFER ITEM LOCATION FROM TABLE (3 KITS ONLY)
+        // QUICK TRANSFER ITEM LOCATION FROM TABLE (5 KITS)
         window.transferMedEqLocation = function(id, newLocation) {
             const item = appData.medEquipment.find(eq => eq.id === id);
             if (item) {
@@ -2208,9 +2249,11 @@
                         <td class="p-3 font-bold text-slate-900">${item.name}</td>
                         <td class="p-3">
                             <select onchange="transferMedEqLocation(${item.id}, this.value)" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg px-2 py-1 text-xs font-semibold text-slate-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-500 transition">
-                                <option value="תיק פראמדיק" ${item.location === 'תיק פראמדיק' ? 'selected' : ''}>תיק פראמדיק 🚑</option>
-                                <option value="תרופות" ${item.location === 'תרופות' ? 'selected' : ''}>תרופות 💊</option>
+                                <option value="תיק פרמדיק ארוך" ${item.location === 'תיק פרמדיק ארוך' ? 'selected' : ''}>תיק פרמדיק ארוך 🚑</option>
+                                <option value="תיק פרמדיק גב" ${item.location === 'תיק פרמדיק גב' ? 'selected' : ''}>תיק פרמדיק גב 🎒</option>
                                 <option value="ווסט" ${item.location === 'ווסט' ? 'selected' : ''}>ווסט 🎽</option>
+                                <option value="תרופות פרמדיק ארוך" ${item.location === 'תרופות פרמדיק ארוך' ? 'selected' : ''}>תרופות פרמדיק ארוך 💊</option>
+                                <option value="תרופות פרמדיק גב" ${item.location === 'תרופות פרמדיק גב' ? 'selected' : ''}>תרופות פרמדיק גב 💊</option>
                             </select>
                         </td>
                         <td class="p-3 text-center font-bold text-slate-700">${targetQty}</td>
